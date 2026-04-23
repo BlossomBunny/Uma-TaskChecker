@@ -13,11 +13,13 @@
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
 
-        #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 20px; }
+        #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 20px; position: relative; }
         
         #checklist { width: 320px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .task-desc { font-weight: 600; font-size: 0.85em; }
+        .task-info { display: flex; flex-direction: column; }
+        .task-name { font-weight: 600; font-size: 0.85em; }
+        .task-stat { font-size: 0.7em; color: #a5b1c2; font-weight: bold; }
         .btn-check { background: var(--accent); color: white; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
@@ -38,54 +40,43 @@
     </div>
 
 <script>
-    let agnes, bubble;
+    let agnes, bubble, sceneContext;
     let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
     let history = JSON.parse(localStorage.getItem('agnesHistory')) || {};
+    let lastInteraction = Date.now();
 
     const tasks = [
-        { id: 'Breakfast', name: 'Have Breakfast With Agnes', type: 'power', anim: 'eating', check: h => h < 12 },
-        { id: 'Lunch', name: 'Eat Lunch Together', type: 'power', anim: 'eating', check: h => h >= 12 && h < 15 },
-        { id: 'Dinner', name: 'Have Dinner With Agnes', type: 'power', anim: 'eating', check: h => h >= 15 && h < 22 },
-        { id: 'Water', name: 'Drink 1 glass of water', type: 'stamina', anim: 'walk_left', check: h => h >= 8 && h < 24 && h % 2 === 0 },
+        { id: 'Breakfast', name: 'Have Breakfast', type: 'power', anim: 'eating', check: h => h < 12 },
+        { id: 'Lunch', name: 'Eat Lunch', type: 'power', anim: 'eating', check: h => h >= 12 && h < 15 },
+        { id: 'Dinner', name: 'Have Dinner', type: 'power', anim: 'eating', check: h => h >= 15 && h < 22 },
+        { id: 'Water', name: 'Drink Water', type: 'stamina', anim: 'walk_left', check: h => h >= 8 && h < 24 && h % 2 === 0 },
         { id: 'Teeth', name: 'Clean Teeth', type: 'guts', anim: 'sit_down', check: h => h < 9 || h >= 20 }
     ];
-
-    function getRank(val) {
-        if (val < 50) return 'F'; if (val < 100) return 'E'; if (val < 200) return 'D';
-        if (val < 300) return 'C'; if (val < 400) return 'B'; if (val < 500) return 'A'; return 'S';
-    }
 
     function updateUI() {
         ['power', 'stamina', 'guts', 'wit'].forEach(s => {
             const val = stats[s];
             document.getElementById(`bar-${s}`).style.width = Math.min(val / 5, 100) + '%';
-            document.getElementById(`rank-${s}`).innerText = getRank(val);
+            document.getElementById(`rank-${s}`).innerText = ['F','E','D','C','B','A','S'][Math.floor(Math.min(val/100, 6))];
         });
 
         const h = new Date().getHours();
-        const today = new Date().toDateString();
         const container = document.getElementById('task-list');
         container.innerHTML = '';
-
         tasks.forEach(task => {
-            if (task.check(h) && history[task.id] !== today) {
-                container.innerHTML += `
-                    <div class="task-item">
-                        <span class="task-desc">${task.name}</span>
-                        <button class="btn-check" onclick="complete('${task.id}', '${task.anim}', '${task.type}')">Done</button>
-                    </div>`;
+            if (task.check(h) && history[task.id] !== new Date().toDateString()) {
+                container.innerHTML += `<div class="task-item"><div class="task-info"><span class="task-name">${task.name}</span><span class="task-stat">${task.type.toUpperCase()}</span></div><button class="btn-check" onclick="complete('${task.id}', '${task.anim}', '${task.type}')">Done</button></div>`;
             }
         });
     }
 
     function complete(id, anim, type) {
+        lastInteraction = Date.now();
         history[id] = new Date().toDateString();
         stats[type] += 10;
         localStorage.setItem('agnesHistory', JSON.stringify(history));
         localStorage.setItem('agnesStats', JSON.stringify(stats));
         agnes.play(anim);
-        bubble.setText("Yummy!").setAlpha(1);
-        setTimeout(() => bubble.setAlpha(0), 2000);
         updateUI();
     }
 
@@ -94,28 +85,39 @@
 
     function preload() { this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json'); }
     function create() {
+        sceneContext = this;
         agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5);
-        bubble = this.add.text(20, 20, "", { font: "12px Arial", fill: "#596275", backgroundColor: "#fff", padding: 5 }).setAlpha(0);
-
-        this.anims.create({ key: 'idle', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }], repeat: -1 });
-        this.anims.create({ key: 'eating', frames: [
-            { key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_07.png' },
-            { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },{ key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },{ key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },
-            { key: 'agnes', frame: 'agtc360_10.png' }, { key: 'agnes', frame: 'agtc360_11.png' },
-            { key: 'agnes', frame: 'agtc360_12.png' }
-        ], frameRate: 6, repeat: 0 });
+        
+        this.anims.create({ key: 'idle1', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }], frameRate: 2, repeat: 1 });
+        this.anims.create({ key: 'idle2', frames: [{ key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc001A_02.png' }], frameRate: 2, repeat: 1 });
+        this.anims.create({ key: 'walk_random', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_02.png' }], frameRate: 4, repeat: 3 });
+        this.anims.create({ key: 'eating', frames: [{ key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_12.png' }], frameRate: 4, repeat: 2 });
         this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }], frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_04.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 8, repeat: 2 });
 
         agnes.on('animationcomplete', (a) => {
-            if (a.key === 'victory') agnes.play('idle');
+            if (a.key === 'victory') agnes.play('idle1');
             else if (['eating', 'walk_left', 'sit_down'].includes(a.key)) agnes.play('victory');
+            else {
+                const behaviors = ['idle1', 'idle2', 'walk_random'];
+                const choice = behaviors[Math.floor(Math.random() * behaviors.length)];
+                if (choice === 'walk_random') {
+                    const targetX = Math.random() > 0.5 ? 40 : 160;
+                    agnes.flipX = (targetX > agnes.x);
+                    sceneContext.tweens.add({ targets: agnes, x: targetX, duration: 1500, ease: 'Linear' });
+                }
+                agnes.play(choice);
+            }
         });
 
-        setInterval(updateUI, 60000);
+        setInterval(() => {
+            if ((Date.now() - lastInteraction) / 60000 >= 15 && agnes.anims.currentAnim.key !== 'sit_down') agnes.play('sit_down');
+        }, 10000);
+
+        agnes.play('idle1');
         updateUI();
-        agnes.play('idle');
+        setInterval(updateUI, 60000);
     }
 </script>
 </body>

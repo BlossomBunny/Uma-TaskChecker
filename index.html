@@ -27,8 +27,9 @@
     const game = new Phaser.Game(config);
 
     function preload() {
-             this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
-    }
+   
+    this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
+}
 
     function create() {
         this.agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');

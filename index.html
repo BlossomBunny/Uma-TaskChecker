@@ -41,7 +41,7 @@
     <h3>Daily Life With Uma</h3>
     <button id="menu-btn" onclick="toggleMenu()">⚙️</button>
 </header>
-<div id="clock-display">Loading time...</div>
+<div id="clock">Loading time...</div>
 
     <div id="settings-menu">
     <h3>Custom Tasks</h3>
@@ -223,6 +223,10 @@
     setTimeout(() => bubble.style.display = 'none', 3000);
 }
 
+function preload() {
+    this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
+}
+    
     function create() {
     sceneContext = this;
     agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5).setInteractive();
@@ -269,11 +273,12 @@
         }
     });
 
-    agnes.on('animationcomplete', (anim) => {
+agnes.on('animationcomplete', (anim) => {
         if (anim.key === 'super_dash') {
             agnes.play('sudden_stop');
-        } else if (anim.key !== 'say') { 
-            // If it's not the 'say' animation, return to random idle loop
+        } else { 
+            // This now catches 'say', 'snack', 'victory', etc. 
+            // and returns her to the idle loop
             playRandomIdle();
         }
     });

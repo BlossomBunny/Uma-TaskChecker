@@ -3,94 +3,118 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        :root { --accent: #f8a5c2; --bg: #fff0f5; }
+        :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; }
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 20px; }
         
+        /* Stats HUD */
+        #hud { width: 320px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .stat-label { width: 40px; font-weight: bold; font-size: 0.8em; }
+        .bar-container { flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
+        .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
+
         #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 20px; }
         
-        /* Checklist Style */
+        /* Checklist */
         #checklist { width: 320px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
-        .task-desc { font-weight: 600; font-size: 0.9em; }
-        .btn-check { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
-        .btn-check:hover { filter: brightness(1.1); }
-        .hidden { display: none; }
+        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .task-desc { font-weight: 600; font-size: 0.85em; }
+        .btn-check { background: var(--accent); color: white; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <div id="hud">
+        <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
+    </div>
+
     <div id="game-container"></div>
     
     <div id="checklist">
-        <h3>Today's Schedule</h3>
+        <h3 style="margin-top:0;">Today's Schedule</h3>
         <div id="task-list"></div>
     </div>
 
 <script>
-    let agnes;
-    let completedTasks = JSON.parse(localStorage.getItem('agnesHistory')) || {};
+    let agnes, bubble;
+    let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
+    let history = JSON.parse(localStorage.getItem('agnesHistory')) || {};
 
-    // Task Configuration
     const tasks = [
         { id: 'Breakfast', name: 'Have Breakfast With Agnes', type: 'power', anim: 'dash_left', check: h => h < 12 },
         { id: 'Lunch', name: 'Eat Lunch Together', type: 'power', anim: 'dash_left', check: h => h >= 12 && h < 15 },
         { id: 'Dinner', name: 'Have Dinner With Agnes', type: 'power', anim: 'dash_left', check: h => h >= 15 && h < 22 },
-        { id: 'Water', name: 'Drink 1 glass of water', type: 'power', anim: 'dash_left', check: h => h >= 8 && h < 24 && h % 2 === 0 },
-        { id: 'Snack', name: 'Have a small snack', type: 'power', anim: 'dash_left', check: h => h >= 8 && h < 24 && h % 4 === 0 },
-        { id: 'Teeth', name: 'Clean Teeth', type: 'guts', anim: 'sit_down', check: h => h < 9 }
+        { id: 'Water', name: 'Drink 1 glass of water', type: 'stamina', anim: 'walk_left', check: h => h >= 8 && h < 24 && h % 2 === 0 },
+        { id: 'Teeth', name: 'Clean Teeth', type: 'guts', anim: 'sit_down', check: h => h < 9 || h >= 20 }
     ];
 
-    function renderTasks() {
-        const now = new Date();
-        const h = now.getHours();
-        const today = now.toDateString();
+    function getRank(val) {
+        if (val < 50) return 'F'; if (val < 100) return 'E'; if (val < 200) return 'D';
+        if (val < 300) return 'C'; if (val < 400) return 'B'; if (val < 500) return 'A'; return 'S';
+    }
+
+    function updateUI() {
+        // Update Stats Bars
+        ['power', 'stamina', 'guts', 'wit'].forEach(s => {
+            const val = stats[s];
+            document.getElementById(`bar-${s}`).style.width = Math.min(val / 5, 100) + '%';
+            document.getElementById(`rank-${s}`).innerText = getRank(val);
+        });
+
+        // Update Checklist
+        const h = new Date().getHours();
+        const today = new Date().toDateString();
         const container = document.getElementById('task-list');
         container.innerHTML = '';
 
         tasks.forEach(task => {
-            const isDone = completedTasks[task.id] === today;
-            const isActive = task.check(h);
-
-            if (isActive && !isDone) {
-                const div = document.createElement('div');
-                div.className = 'task-item';
-                div.innerHTML = `<span class="task-desc">${task.name}</span>
-                                 <button class="btn-check" onclick="complete('${task.id}', '${task.anim}', '${task.type}')">Done</button>`;
-                container.appendChild(div);
+            if (task.check(h) && history[task.id] !== today) {
+                container.innerHTML += `
+                    <div class="task-item">
+                        <span class="task-desc">${task.name}</span>
+                        <button class="btn-check" onclick="complete('${task.id}', '${task.anim}', '${task.type}')">Done</button>
+                    </div>`;
             }
         });
-        
-        if (container.innerHTML === '') {
-            container.innerHTML = '<p style="text-align:center; color:#ccc;">No tasks right now. Relax!</p>';
-        }
     }
 
     function complete(id, anim, type) {
-        completedTasks[id] = new Date().toDateString();
-        localStorage.setItem('agnesHistory', JSON.stringify(completedTasks));
+        history[id] = new Date().toDateString();
+        stats[type] += 10;
+        localStorage.setItem('agnesHistory', JSON.stringify(history));
+        localStorage.setItem('agnesStats', JSON.stringify(stats));
         agnes.play(anim);
-        renderTasks();
+        bubble.setText("Good job!").setAlpha(1);
+        setTimeout(() => bubble.setAlpha(0), 2000);
+        updateUI();
     }
 
-    // --- Game Engine ---
     const config = { type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container', scene: { preload: preload, create: create } };
     new Phaser.Game(config);
 
     function preload() { this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json'); }
     function create() {
         agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5);
+        bubble = this.add.text(20, 20, "", { font: "12px Arial", fill: "#596275", backgroundColor: "#fff", padding: 5 }).setAlpha(0);
+
         this.anims.create({ key: 'idle', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }], repeat: -1 });
         this.anims.create({ key: 'dash_left', frames: [{ key: 'agnes', frame: 'agtc102_00.png' }], frameRate: 10, repeat: 0 });
+        this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 8, repeat: 2 });
 
         agnes.on('animationcomplete', (a) => {
             if (a.key === 'victory') agnes.play('idle');
-            else if (['dash_left', 'sit_down'].includes(a.key)) agnes.play('victory');
+            else if (['dash_left', 'walk_left', 'sit_down'].includes(a.key)) agnes.play('victory');
         });
 
-        setInterval(renderTasks, 60000); // Auto-refresh every minute
-        renderTasks();
+        setInterval(updateUI, 60000);
+        updateUI();
+        agnes.play('idle');
     }
 </script>
 </body>

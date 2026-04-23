@@ -3,41 +3,69 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        :root { --accent: #f8a5c2; --bg: #fff0f5; }
+        :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; }
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 20px; }
         
-        #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; }
-        
-        #hud { display: flex; gap: 10px; margin-bottom: 20px; }
-        .stat { background: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; border: 2px solid var(--accent); }
+        /* Stats Display */
+        #hud { width: 320px; margin-bottom: 20px; }
+        .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .stat-label { width: 40px; font-weight: bold; font-size: 0.9em; }
+        .bar-container { flex-grow: 1; height: 12px; background: var(--bar-bg); border-radius: 6px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
+        .rank { width: 25px; font-weight: bold; text-align: center; color: var(--accent); }
 
+        #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 20px; }
+        
         #ui-wrapper { width: 320px; background: white; padding: 20px; border-radius: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn { border: none; padding: 12px; border-radius: 15px; background: var(--accent); color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .hidden { display: none; }
         
-        #history { margin-top: 20px; font-size: 0.9em; max-height: 100px; overflow-y: auto; color: #778ca3; }
+        #history { margin-top: 20px; font-size: 0.85em; max-height: 120px; overflow-y: auto; color: #778ca3; border-top: 1px solid #eee; padding-top: 10px; }
     </style>
 </head>
 <body>
 
     <div id="hud">
-        <div class="stat">Pwr: <span id="stat-power">0</span></div>
-        <div class="stat">Stm: <span id="stat-stamina">0</span></div>
-        <div class="stat">Gts: <span id="stat-guts">0</span></div>
-        <div class="stat">Wit: <span id="stat-wit">0</span></div>
+        <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
     </div>
 
     <div id="game-container"></div>
     
     <div id="ui-wrapper">
-        <div class="task-grid" id="main-ui">
-            <button class="btn" onclick="doTask('Power', 'dash_left', 'power')">Cook/Hydrate</button>
-            <button class="btn" onclick="doTask('Stamina', 'walk_left', 'stamina')">Chores/Walk</button>
-            <button class="btn" onclick="doTask('Guts', 'sit_down', 'guts')">Hygiene</button>
-            <button class="btn" onclick="doTask('Wit', 'idle', 'wit')">Study</button>
+        <div id="main-menu" class="task-grid">
+            <button class="btn" onclick="showTasks('power')">Power</button>
+            <button class="btn" onclick="showTasks('stamina')">Stamina</button>
+            <button class="btn" onclick="showTasks('guts')">Guts</button>
+            <button class="btn" onclick="showTasks('wit')">Wit</button>
         </div>
-        <div id="history"><strong>Today's Log:</strong><ul id="log-list"></ul></div>
+
+        <div id="menu-power" class="task-grid hidden">
+            <button class="btn" onclick="doTask('Breakfast', 'dash_left', 'power')">Breakfast</button>
+            <button class="btn" onclick="doTask('Hydrate', 'dash_left', 'power')">Water</button>
+            <button class="btn" onclick="resetMenu()">Back</button>
+        </div>
+        <div id="menu-stamina" class="task-grid hidden">
+            <button class="btn" onclick="doTask('Clean Room', 'dash_left', 'stamina')">Room</button>
+            <button class="btn" onclick="doTask('Walk', 'dash_left', 'stamina')">Walk</button>
+            <button class="btn" onclick="resetMenu()">Back</button>
+        </div>
+        <div id="menu-guts" class="task-grid hidden">
+            <button class="btn" onclick="doTask('Teeth', 'sit_down', 'guts')">Teeth</button>
+            <button class="btn" onclick="doTask('Shower', 'sit_down', 'guts')">Shower</button>
+            <button class="btn" onclick="resetMenu()">Back</button>
+        </div>
+        <div id="menu-wit" class="task-grid hidden">
+            <button class="btn" onclick="doTask('Study', 'idle', 'wit')">Study</button>
+            <button class="btn" onclick="doTask('Lecture', 'idle', 'wit')">Lecture</button>
+            <button class="btn" onclick="resetMenu()">Back</button>
+        </div>
+
+        <div id="history"><strong>Log:</strong><ul id="log-list" style="padding-left: 20px;"></ul></div>
     </div>
 
 <script>
@@ -48,46 +76,59 @@
     const config = { type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container', scene: { preload: preload, create: create } };
     new Phaser.Game(config);
 
-    function doTask(name, anim, type) {
-        stats[type] += 10;
-        localStorage.setItem('agnesStats', JSON.stringify(stats));
-        
-        // Add to log
-        log.unshift(`${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${name}`);
-        localStorage.setItem('agnesLog', JSON.stringify(log.slice(0, 5))); // Keep last 5
-        
-        updateUI();
-        agnes.play(anim);
+    function getRank(val) {
+        if (val < 50) return 'F';
+        if (val < 100) return 'E';
+        if (val < 200) return 'D';
+        if (val < 300) return 'C';
+        if (val < 400) return 'B';
+        if (val < 500) return 'A';
+        return 'S';
     }
 
     function updateUI() {
-        document.getElementById('stat-power').innerText = stats.power;
-        document.getElementById('stat-stamina').innerText = stats.stamina;
-        document.getElementById('stat-guts').innerText = stats.guts;
-        document.getElementById('stat-wit').innerText = stats.wit;
-        
+        ['power', 'stamina', 'guts', 'wit'].forEach(s => {
+            const val = stats[s];
+            document.getElementById(`bar-${s}`).style.width = Math.min(val / 5, 100) + '%';
+            document.getElementById(`rank-${s}`).innerText = getRank(val);
+        });
         const list = document.getElementById('log-list');
         list.innerHTML = log.map(item => `<li>${item}</li>`).join('');
+    }
+
+    function showTasks(cat) {
+        document.getElementById('main-menu').classList.add('hidden');
+        document.getElementById('menu-' + cat).classList.remove('hidden');
+    }
+
+    function resetMenu() {
+        document.querySelectorAll('.task-grid').forEach(el => el.classList.add('hidden'));
+        document.getElementById('main-menu').classList.remove('hidden');
+    }
+
+    function doTask(name, anim, type) {
+        stats[type] += 10;
+        localStorage.setItem('agnesStats', JSON.stringify(stats));
+        log.unshift(`${name}`);
+        localStorage.setItem('agnesLog', JSON.stringify(log.slice(0, 5)));
+        updateUI();
+        agnes.play(anim);
+        resetMenu();
     }
 
     function preload() { this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json'); }
 
     function create() {
         agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5);
-
-        // Animations
         this.anims.create({ key: 'idle', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc001A_02.png' }], frameRate: 3, repeat: -1 });
         this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_01.png' }, { key: 'agnes', frame: 'agtc101_02.png' }, { key: 'agnes', frame: 'agtc101_03.png' }, { key: 'agnes', frame: 'agtc101_04.png' }, { key: 'agnes', frame: 'agtc101_05.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'dash_left', frames: [{ key: 'agnes', frame: 'agtc102_00.png' }, { key: 'agnes', frame: 'agtc102_01.png' }, { key: 'agnes', frame: 'agtc102_02.png' }, { key: 'agnes', frame: 'agtc102_03.png' }, { key: 'agnes', frame: 'agtc102_04.png' }, { key: 'agnes', frame: 'agtc102_05.png' }], frameRate: 10, repeat: 0 });
         this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_01.png' }, { key: 'agnes', frame: 'agtc320_02.png' }, { key: 'agnes', frame: 'agtc320_03.png' }, { key: 'agnes', frame: 'agtc320_04.png' }, { key: 'agnes', frame: 'agtc320_06.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_01.png' }, { key: 'agnes', frame: 'agtc940_02.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 8, repeat: 2 });
-        this.anims.create({ key: 'sitting_loop', frames: [{ key: 'agnes', frame: 'agtc320_04.png' }, { key: 'agnes', frame: 'agtc320_06.png' }], frameRate: 2, repeat: -1 });
-
-        // Logic Chain
+        
         agnes.on('animationcomplete', (anim) => {
             if (anim.key === 'victory') { agnes.play('idle'); }
             else if (['walk_left', 'dash_left', 'sit_down'].includes(anim.key)) { agnes.play('victory'); }
-            else if (anim.key === 'sit_down') { /* handled by loop logic above */ }
         });
 
         updateUI();

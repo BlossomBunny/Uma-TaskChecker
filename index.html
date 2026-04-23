@@ -100,7 +100,7 @@
         this.anims.create({ key: 'idle', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }], repeat: -1 });
         this.anims.create({ key: 'eating', frames: [
             { key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_07.png' },
-            { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },
+            { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },{ key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },{ key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },
             { key: 'agnes', frame: 'agtc360_10.png' }, { key: 'agnes', frame: 'agtc360_11.png' },
             { key: 'agnes', frame: 'agtc360_12.png' }
         ], frameRate: 6, repeat: 0 });
@@ -110,7 +110,6 @@
 
         agnes.on('animationcomplete', (a) => {
             if (a.key === 'victory') agnes.play('idle');
-            // Added 'eating' to the trigger list here
             else if (['eating', 'walk_left', 'sit_down'].includes(a.key)) agnes.play('victory');
         });
 

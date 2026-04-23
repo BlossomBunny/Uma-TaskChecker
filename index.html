@@ -6,7 +6,6 @@
         :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; }
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 20px; }
         
-        /* Stats HUD */
         #hud { width: 320px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .stat-label { width: 40px; font-weight: bold; font-size: 0.8em; }
@@ -16,7 +15,6 @@
 
         #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 20px; }
         
-        /* Checklist */
         #checklist { width: 320px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
         .task-desc { font-weight: 600; font-size: 0.85em; }
@@ -45,9 +43,9 @@
     let history = JSON.parse(localStorage.getItem('agnesHistory')) || {};
 
     const tasks = [
-        { id: 'Breakfast', name: 'Have Breakfast With Agnes', type: 'power', anim: 'dash_left', check: h => h < 12 },
-        { id: 'Lunch', name: 'Eat Lunch Together', type: 'power', anim: 'dash_left', check: h => h >= 12 && h < 15 },
-        { id: 'Dinner', name: 'Have Dinner With Agnes', type: 'power', anim: 'dash_left', check: h => h >= 15 && h < 22 },
+        { id: 'Breakfast', name: 'Have Breakfast With Agnes', type: 'power', anim: 'eating', check: h => h < 12 },
+        { id: 'Lunch', name: 'Eat Lunch Together', type: 'power', anim: 'eating', check: h => h >= 12 && h < 15 },
+        { id: 'Dinner', name: 'Have Dinner With Agnes', type: 'power', anim: 'eating', check: h => h >= 15 && h < 22 },
         { id: 'Water', name: 'Drink 1 glass of water', type: 'stamina', anim: 'walk_left', check: h => h >= 8 && h < 24 && h % 2 === 0 },
         { id: 'Teeth', name: 'Clean Teeth', type: 'guts', anim: 'sit_down', check: h => h < 9 || h >= 20 }
     ];
@@ -58,14 +56,12 @@
     }
 
     function updateUI() {
-        // Update Stats Bars
         ['power', 'stamina', 'guts', 'wit'].forEach(s => {
             const val = stats[s];
             document.getElementById(`bar-${s}`).style.width = Math.min(val / 5, 100) + '%';
             document.getElementById(`rank-${s}`).innerText = getRank(val);
         });
 
-        // Update Checklist
         const h = new Date().getHours();
         const today = new Date().toDateString();
         const container = document.getElementById('task-list');
@@ -88,7 +84,7 @@
         localStorage.setItem('agnesHistory', JSON.stringify(history));
         localStorage.setItem('agnesStats', JSON.stringify(stats));
         agnes.play(anim);
-        bubble.setText("Good job!").setAlpha(1);
+        bubble.setText("Yummy!").setAlpha(1);
         setTimeout(() => bubble.setAlpha(0), 2000);
         updateUI();
     }
@@ -102,14 +98,20 @@
         bubble = this.add.text(20, 20, "", { font: "12px Arial", fill: "#596275", backgroundColor: "#fff", padding: 5 }).setAlpha(0);
 
         this.anims.create({ key: 'idle', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }], repeat: -1 });
-        this.anims.create({ key: 'dash_left', frames: [{ key: 'agnes', frame: 'agtc102_00.png' }], frameRate: 10, repeat: 0 });
+        this.anims.create({ key: 'eating', frames: [
+            { key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_07.png' },
+            { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },
+            { key: 'agnes', frame: 'agtc360_10.png' }, { key: 'agnes', frame: 'agtc360_11.png' },
+            { key: 'agnes', frame: 'agtc360_12.png' }
+        ], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 8, repeat: 2 });
 
         agnes.on('animationcomplete', (a) => {
             if (a.key === 'victory') agnes.play('idle');
-            else if (['dash_left', 'walk_left', 'sit_down'].includes(a.key)) agnes.play('victory');
+            // Added 'eating' to the trigger list here
+            else if (['eating', 'walk_left', 'sit_down'].includes(a.key)) agnes.play('victory');
         });
 
         setInterval(updateUI, 60000);

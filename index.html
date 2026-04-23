@@ -15,7 +15,31 @@
         .bar-container { flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
-        #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 15px; position: relative; cursor: pointer; }
+        #agnes-wrap {
+            display: flex; flex-direction: column; align-items: center;
+            width: 95%; max-width: 400px; margin-bottom: 15px;
+        }
+        #status-box {
+            width: 100%; background: white;
+            border: 2px solid var(--accent); border-radius: 16px 16px 0 0;
+            border-bottom: none;
+            padding: 10px 14px; box-sizing: border-box;
+            font-size: 0.78em; color: #596275; line-height: 1.5;
+            text-align: center; min-height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 -2px 8px rgba(248,165,194,0.08);
+        }
+        #status-text {
+            transition: opacity 0.5s ease;
+            opacity: 1;
+        }
+        #game-container {
+            border: 2px solid var(--accent); border-radius: 0 0 24px 24px;
+            border-top: none;
+            box-shadow: 0 8px 20px rgba(248,165,194,0.15);
+            background: #fff; width: 200px; height: 200px;
+            overflow: hidden; cursor: pointer;
+        }
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
         .task-info { display: flex; flex-direction: column; }
         .task-name { font-weight: 600; font-size: 0.85em; }
@@ -27,18 +51,7 @@
         .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
         .btn-del { background: #ff7675; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; }
         #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
-        #bubble {
-            background: white; padding: 8px 12px; border-radius: 12px;
-            border: 2px solid var(--accent); display: none;
-            font-size: 0.75em; color: #596275;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            max-width: 320px; width: 95%; text-align: center;
-            margin-bottom: 10px; line-height: 1.4;
-        }
-        .all-done {
-            text-align: center; padding: 20px; color: var(--accent);
-            font-weight: bold; font-size: 0.9em;
-        }
+        .all-done { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; font-size: 0.9em; }
     </style>
 </head>
 <body>
@@ -81,8 +94,10 @@
     <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
 </div>
 
-<div id="game-container"></div>
-<div id="bubble"></div>
+<div id="agnes-wrap">
+    <div id="status-box"><span id="status-text">Agnes is here! 🌸</span></div>
+    <div id="game-container"></div>
+</div>
 
 <div id="checklist">
     <h3>Today's Schedule</h3>
@@ -222,11 +237,18 @@
     }
 
     function complete(id, anim, type) {
+        const rankBefore = Math.floor(Math.min((stats[type] || 0) / 100, 6));
         history[id] = new Date().toDateString();
         stats[type] = (stats[type] || 0) + 10;
+        const rankAfter = Math.floor(Math.min(stats[type] / 100, 6));
         localStorage.setItem('agnesHistory', JSON.stringify(history));
         localStorage.setItem('agnesStats',   JSON.stringify(stats));
         if (agnes) agnes.play(anim);
+        if (rankAfter > rankBefore) {
+            setStatus(rankUpMessages[type] || '✨ Level up!', 5000);
+        } else {
+            setStatus('Good work! 🌸', 3000);
+        }
         updateUI();
     }
 
@@ -236,13 +258,69 @@
         updateUI();
     }
 
-    function say(text) {
-        const bubble = document.getElementById('bubble');
-        bubble.innerText = text;
-        bubble.style.display = 'block';
-        if (agnes) agnes.play('say');
-        setTimeout(() => bubble.style.display = 'none', 3000);
+    // ── Status box ───────────────────────────────────────────────────────────
+    let statusTimeout = null;
+    let boredTimeout  = null;
+    let lastActivity  = Date.now();
+
+    const defaultMessages = [
+        "Agnes is here! 🌸",
+        "Ready for today?",
+        "What's on the schedule?",
+    ];
+
+    const boredMessages = [
+        "Agnes is bored... 😴",
+        "Hmm... nothing to do?",
+        "Agnes is waiting patiently...",
+        "Is anyone there...? 🌸",
+    ];
+
+    const rankUpMessages = {
+        power:   "Agnes feels Stronger! 💪",
+        stamina: "Agnes has more energy! ✨",
+        guts:    "Agnes is tougher now! 🔥",
+        wit:     "Agnes feels Smarter! 📚",
+    };
+
+    function setStatus(text, duration) {
+        // duration = ms to show before reverting to default, or 0 to set permanently
+        const el = document.getElementById('status-text');
+        if (!el) return;
+        el.style.opacity = '0';
+        if (statusTimeout) clearTimeout(statusTimeout);
+        setTimeout(() => {
+            el.textContent = text;
+            el.style.opacity = '1';
+        }, 300); // wait for fade-out then swap text
+        if (duration) {
+            statusTimeout = setTimeout(() => {
+                setStatus(defaultMessages[Math.floor(Math.random() * defaultMessages.length)], 0);
+            }, duration);
+        }
+        resetBoredTimer();
     }
+
+    function resetBoredTimer() {
+        lastActivity = Date.now();
+        if (boredTimeout) clearTimeout(boredTimeout);
+        boredTimeout = setTimeout(() => {
+            const msg = boredMessages[Math.floor(Math.random() * boredMessages.length)];
+            setStatus(msg, 0);
+            // Keep cycling bored messages every 2 min
+            boredTimeout = setInterval(() => {
+                const m = boredMessages[Math.floor(Math.random() * boredMessages.length)];
+                setStatus(m, 0);
+            }, 120000);
+        }, 300000); // 5 min of inactivity
+    }
+
+    function say(text) {
+        setStatus(text, 4000);
+        if (agnes) agnes.play('say');
+    }
+
+    resetBoredTimer(); // start the inactivity clock on load
 
     // ── Clock ────────────────────────────────────────────────────────────────
     function updateClock() {
@@ -287,7 +365,7 @@
         this.anims.create({ key: 'sit_down',    frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_04.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'victory',     frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 4, repeat: 2 });
         this.anims.create({ key: 'dash',        frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 10, repeat: -1 });
-        this.anims.create({ key: 'super_dash',  frames: ['agtc110_00','agtc110_00','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 12, repeat: 0 });
+        this.anims.create({ key: 'super_dash',  frames: ['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 12, repeat: 0 });
         this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00.png' }, { key: 'agnes', frame: 'agtc120_01.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00.png' }, { key: 'agnes', frame: 'agtc362_01.png' }], frameRate: 4, repeat: -1 });
         this.anims.create({ key: 'giggle',      frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 6, repeat: 0 });
@@ -320,7 +398,7 @@
                 let idx;
                 do { idx = Math.floor(Math.random() * idleQuotes.length); } while (idx === lastQuoteIndex);
                 lastQuoteIndex = idx;
-                say(idleQuotes[idx]);
+                setStatus(idleQuotes[idx], 5000); // show in status box, no say anim
             }
         };
 
@@ -371,7 +449,7 @@
             } else if (key === 'super_dash') {
                 const goRight = Math.random() > 0.5;
                 agnes.setFlipX(goRight);
-                agnesVX = goRight ? 280 : -280;
+                agnesVX = goRight ? 220 : -220;
                 moveMode = 'superdash';
                 agnes.play('super_dash');
 
@@ -403,8 +481,9 @@
         // ── animationcomplete ────────────────────────────────────────────────
         agnes.on('animationcomplete', (anim) => {
             if (anim.key === 'super_dash') {
-                // She's zoomed off — will be caught by update() boundary check
-                // which calls stopMoving() + sudden_stop. Nothing to do here.
+                stopMoving();
+                resetHome();
+                scheduleNext(Phaser.Math.Between(3000, 6000));
             } else if (anim.key === 'sudden_stop') {
                 resetHome();
                 scheduleNext(Phaser.Math.Between(3000, 6000));
@@ -466,11 +545,11 @@
                 stopMoving();
                 resetHome();
                 scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (moveMode === 'superdash' && (agnes.x < -30 || agnes.x > 230)) {
-                agnes.anims.stop();
-                stopMoving();
-                resetHome();
-                agnes.play('sudden_stop');
+            } else if (moveMode === 'superdash' && (agnes.x < 10 || agnes.x > 190)) {
+                // Hit the wall mid-run — stop moving, let the wind-down frames play out
+                agnesVX = 0;
+                agnesVY = 0;
+                moveMode = 'none';
             }
         });
     }

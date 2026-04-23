@@ -283,18 +283,29 @@
     updateUI();
 }
     
+// This function updates the text on your screen (make sure you have an <div id="clock"></div> in your HTML)
+function updateClock() {
+    const now = new Date();
+    // Formats time like "3:38 PM"
+    const timeString = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     
-function heartbeat() {
-    updateClock();
-    updateUI(); 
+    const clockElement = document.getElementById('clock');
+    if (clockElement) {
+        clockElement.innerText = timeString;
+    }
 }
 
+// Ensure updateUI is accessible (it should be defined elsewhere in your code)
+function heartbeat() {
+    updateClock();
+    if (typeof updateUI === 'function') {
+        updateUI(); // Refreshes the task list
+    }
+}
 
-setInterval(updateClock, 1000);
-setInterval(heartbeat, 60000); 
-
-
-heartbeat();
+// Start the Heartbeat
+setInterval(updateClock, 1000); // Updates the clock visually every second
+setInterval(heartbeat, 60000);  // Refreshes the task list logic every minute
     
 </script>
 </body>

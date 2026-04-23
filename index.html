@@ -41,13 +41,16 @@
     <h3>Custom Tasks</h3>
     <input type="text" id="new-task-name" placeholder="Task Name">
     <select id="new-task-type"><option value="power">Power</option><option value="stamina">Stamina</option><option value="guts">Guts</option><option value="wit">Wit</option></select>
-    <select id="new-task-day">
-        <option value="7">Every Day</option>
-        <option value="1">Mon</option><option value="2">Tue</option>
-        <option value="3">Wed</option><option value="4">Thu</option>
-        <option value="5">Fri</option><option value="6">Sat</option>
-        <option value="0">Sun</option>
-    </select>
+    <p>Repeat on days:</p>
+<div id="new-task-days" style="display: flex; gap: 5px; flex-wrap: wrap;">
+    <label><input type="checkbox" value="0"> Sun</label>
+    <label><input type="checkbox" value="1"> Mon</label>
+    <label><input type="checkbox" value="2"> Tue</label>
+    <label><input type="checkbox" value="3"> Wed</label>
+    <label><input type="checkbox" value="4"> Thu</label>
+    <label><input type="checkbox" value="5"> Fri</label>
+    <label><input type="checkbox" value="6"> Sat</label>
+</div>
     <button onclick="addCustomTask()">Add Task</button>
     <hr>
     <div id="custom-task-list"></div>
@@ -93,26 +96,31 @@
         renderCustomTasks();
     }
 
-    function addCustomTask() {
+   function addCustomTask() {
     const name = document.getElementById('new-task-name').value;
     const type = document.getElementById('new-task-type').value;
-    const day = parseInt(document.getElementById('new-task-day').value);
     
-    if (!name) return;
+    // Get all checked checkboxes
+    const dayCheckboxes = document.querySelectorAll('#new-task-days input:checked');
+    const days = Array.from(dayCheckboxes).map(cb => parseInt(cb.value));
     
-    // If day is 7 (Every Day), use all days, otherwise use specific day
-    const days = day === 7 ? [0,1,2,3,4,5,6] : [day];
+    if (!name || days.length === 0) {
+        alert("Please provide a name and select at least one day.");
+        return;
+    }
     
     customTasks.push({ 
         id: 'custom_' + Date.now(), 
         name, type, 
-        days: days, // New property
+        days: days, 
         isEssential: false, 
         check: h => true 
     });
     
     localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasks));
     document.getElementById('new-task-name').value = '';
+    // Uncheck boxes after saving
+    dayCheckboxes.forEach(cb => cb.checked = false);
     renderCustomTasks();
     updateUI();
 }

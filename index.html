@@ -132,43 +132,36 @@
         });
     }
 
-    function updateUI() {
-        ['power', 'stamina', 'guts', 'wit'].forEach(s => {
-            const val = stats[s];
-            document.getElementById(`bar-${s}`).style.width = Math.min(val / 5, 100) + '%';
-            document.getElementById(`rank-${s}`).innerText = ['F','E','D','C','B','A','S'][Math.floor(Math.min(val/100, 6))];
-        });
+  function updateUI() {
+    ['power', 'stamina', 'guts', 'wit'].forEach(s => {
+        const val = stats[s];
+        document.getElementById(`bar-${s}`).style.width = Math.min(val / 5, 100) + '%';
+        document.getElementById(`rank-${s}`).innerText = ['F','E','D','C','B','A','S'][Math.floor(Math.min(val/100, 6))];
+    });
 
-        const h = new Date().getHours();
-        const today = new Date().toDateString();
-        const container = document.getElementById('task-list');
-        container.innerHTML = '';
-        
+    const h = new Date().getHours();
+    const today = new Date().toDateString();
+    const container = document.getElementById('task-list');
+    container.innerHTML = '';
 
-const allTasks = [...coreTasks, ...customTasks];
-const currentDay = new Date().getDay(); 
+    const allTasks = [...coreTasks, ...customTasks];
+    const currentDay = new Date().getDay();
 
-allTasks.forEach(task => {
-
-    const taskDays = task.days || [0,1,2,3,4,5,6]; 
-    
-
-    if (taskDays.includes(currentDay) && task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
-       
-        let dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
-        container.innerHTML += `
-            <div class="task-item">
-                <div class="task-info">
-                    <span class="task-name">${task.name}</span>
-                    <div class="task-meta"><span class="task-stat">${task.type.toUpperCase()}</span></div>
-                </div>
-                <div class="btn-group">${dismissBtn}<button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button></div>
-            </div>`;
-    }
-});
-            }
-        });
-    }
+    allTasks.forEach(task => {
+        const taskDays = task.days || [0,1,2,3,4,5,6];
+        if (taskDays.includes(currentDay) && task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
+            let dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
+            container.innerHTML += `
+                <div class="task-item">
+                    <div class="task-info">
+                        <span class="task-name">${task.name}</span>
+                        <div class="task-meta"><span class="task-stat">${task.type.toUpperCase()}</span></div>
+                    </div>
+                    <div class="btn-group">${dismissBtn}<button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button></div>
+                </div>`;
+        }
+    });
+}
 
     function complete(id, anim, type) {
         lastInteraction = Date.now();

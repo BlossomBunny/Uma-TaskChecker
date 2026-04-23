@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; --dismiss: #b2bec3; }
-        body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 20px; }
+        body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 10px; box-sizing: border-box; }
         
-        #hud { width: 320px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        /* Changed from fixed width to responsive width */
+        #hud, #checklist { width: 95%; max-width: 400px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
         .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .stat-label { width: 40px; font-weight: bold; font-size: 0.8em; }
         .bar-container { flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
 
-        #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 20px; position: relative; }
+        /* Game container now keeps its aspect ratio nicely */
+        #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 15px; position: relative; cursor: pointer; }
         
-        #checklist { width: 320px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
         .task-info { display: flex; flex-direction: column; }
         .task-name { font-weight: 600; font-size: 0.85em; }
@@ -23,8 +26,8 @@
         .task-stat { font-size: 0.7em; color: #a5b1c2; font-weight: bold; }
         .task-time { font-size: 0.7em; color: var(--accent); font-weight: bold; }
         .btn-group { display: flex; gap: 5px; }
-        .btn-check { background: var(--accent); color: white; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
+        .btn-check { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
     </style>
 </head>
 <body>
@@ -44,10 +47,11 @@
     </div>
 
 <script>
-    let agnes, sceneContext;
+    let agnes, sceneContext, bubble;
+    // (Logic remains the same as previous version)
     let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
-    let history = JSON.parse(localStorage.getItem('agnesHistory')) || {}; // { taskId: date }
-    let dismissed = JSON.parse(localStorage.getItem('agnesDismissed')) || {}; // { taskId: date }
+    let history = JSON.parse(localStorage.getItem('agnesHistory')) || {};
+    let dismissed = JSON.parse(localStorage.getItem('agnesDismissed')) || {};
     let lastInteraction = Date.now();
 
     const tasks = [
@@ -60,6 +64,8 @@
         { id: 'Tidy', name: 'Tidy Up Room', type: 'wit', anim: 'walk_left', timeLabel: 'Anytime', isEssential: false, check: h => h >= 8 && h < 22 },
         { id: 'Study', name: 'Study 30 Mins', type: 'wit', anim: 'sit_down', timeLabel: 'Afternoon', isEssential: false, check: h => h >= 12 && h < 18 }
     ];
+
+    const phrases = ["Hello!", "Working hard?", "Take a break!", "You're doing great!", "Let's keep going!", "I'm here for you!"];
 
     function updateUI() {
         ['power', 'stamina', 'guts', 'wit'].forEach(s => {
@@ -74,7 +80,6 @@
         container.innerHTML = '';
         
         tasks.forEach(task => {
-            // Only show if it's currently "valid" (check), not completed today, AND not dismissed today
             if (task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
                 let dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
                 container.innerHTML += `
@@ -111,15 +116,35 @@
         updateUI();
     }
 
-    // --- GAME ENGINE ---
-    const config = { type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container', scene: { preload: preload, create: create } };
+    // --- RESPONSIVE GAME CONFIG ---
+    const config = { 
+        type: Phaser.AUTO, 
+        width: 200, 
+        height: 200, 
+        parent: 'game-container', 
+        scale: {
+            mode: Phaser.Scale.FIT, // This forces the game to scale within the container
+            autoCenter: Phaser.Scale.CENTER_BOTH
+        },
+        scene: { preload: preload, create: create } 
+    };
     new Phaser.Game(config);
 
     function preload() { this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json'); }
     function create() {
         sceneContext = this;
-        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5);
+        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5).setInteractive();
+        bubble = this.add.text(10, 10, "", { font: "12px Arial", fill: "#596275", backgroundColor: "#fff", padding: {x:5, y:5}, borderRadius: 5 }).setAlpha(0);
         
+        agnes.on('pointerdown', () => {
+            lastInteraction = Date.now();
+            if (agnes.anims.currentAnim.key !== 'victory') {
+                agnes.play('victory');
+                bubble.setText(phrases[Math.floor(Math.random() * phrases.length)]).setAlpha(1);
+                setTimeout(() => bubble.setAlpha(0), 2000);
+            }
+        });
+
         this.anims.create({ key: 'idle1', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }], frameRate: 2, repeat: 1 });
         this.anims.create({ key: 'idle2', frames: [{ key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc001A_02.png' }], frameRate: 2, repeat: 1 });
         this.anims.create({ key: 'walk_random', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_02.png' }], frameRate: 4, repeat: 3 });

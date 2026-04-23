@@ -28,10 +28,12 @@
         .btn-del { background: #ff7675; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; }
         #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
         #bubble {
-            position: absolute; top: 10px; left: 10px; background: white;
-            padding: 8px; border-radius: 10px; border: 2px solid var(--accent);
-            display: none; font-size: 0.8em; z-index: 10; max-width: 150px;
-            color: #596275; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: white; padding: 8px 12px; border-radius: 12px;
+            border: 2px solid var(--accent); display: none;
+            font-size: 0.75em; color: #596275;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 320px; width: 95%; text-align: center;
+            margin-bottom: 10px; line-height: 1.4;
         }
         .all-done {
             text-align: center; padding: 20px; color: var(--accent);
@@ -79,9 +81,8 @@
     <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
 </div>
 
-<div id="game-container">
-    <div id="bubble"></div>
-</div>
+<div id="game-container"></div>
+<div id="bubble"></div>
 
 <div id="checklist">
     <h3>Today's Schedule</h3>
@@ -295,7 +296,15 @@
         this.anims.create({ key: 'cheer',       frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
         this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
 
-        // ── Idle loop ─────────────────────────────────────────────────────────
+        // ── Movement state (read by update()) ────────────────────────────────
+        // We never tween agnes.x/y — instead we set a velocity and let update()
+        // move her each frame. This means Phaser's animation system is never
+        // competing with a tween for control of the sprite.
+        let agnesVX = 0;   // pixels per second, x
+        let agnesVY = 0;   // pixels per second, y
+        let moveMode = 'none'; // 'none' | 'walk' | 'dash' | 'superdash' | 'float'
+        let floatAngle = 0;    // for the gentle float bob
+
         const scene = this;
         const HOME_X = 100;
         const HOME_Y = 100;
@@ -306,7 +315,6 @@
             "Witness me. Watch me run. Burn the sight into your eyes."
         ];
         let lastQuoteIndex = -1;
-        // ~1 in 5 idle cycles will trigger a quote
         const maybeQuote = () => {
             if (Math.random() < 0.2) {
                 let idx;
@@ -316,133 +324,146 @@
             }
         };
 
-        // Weighted pool — idle1 appears 6x so it wins ~60% of draws
+        // Weighted pool — idle1 x6 so she's calm most of the time
         const weightedPool = [
             'idle1','idle1','idle1','idle1','idle1','idle1',
             'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave', 'cheer'
         ];
 
         let idleTimer = null;
-
         const scheduleNext = (delayMs) => {
             if (idleTimer) idleTimer.remove(false);
             maybeQuote();
             idleTimer = scene.time.delayedCall(delayMs, playRandomIdle);
         };
 
+        const stopMoving = () => {
+            agnesVX = 0;
+            agnesVY = 0;
+            moveMode = 'none';
+            agnes.setPosition(HOME_X, HOME_Y);
+        };
+
         const playRandomIdle = () => {
-            scene.tweens.killTweensOf(agnes);
             const key = weightedPool[Math.floor(Math.random() * weightedPool.length)];
 
-            if (key === 'dash') {
-                // Run from one side to the other
+            stopMoving(); // reset position & velocity before each action
+
+            if (key === 'walk_left') {
                 const goRight = Math.random() > 0.5;
                 agnes.setFlipX(!goRight);
-                agnes.setX(goRight ? 10 : 190);
+                agnesVX = goRight ? 50 : -50;   // px/sec — gentle stroll
+                moveMode = 'walk';
+                agnes.play('walk_left');
+                // animation is only 1 frame so repeat it manually while moving
+                agnes.anims.msPerFrame = 300;
+                // movement stops when she hits the edge; handled in update()
+
+            } else if (key === 'dash') {
+                const goRight = Math.random() > 0.5;
+                agnes.setFlipX(!goRight);
+                agnesVX = goRight ? 160 : -160;  // fast run
+                moveMode = 'dash';
                 agnes.play('dash');
-                scene.tweens.add({
-                    targets: agnes,
-                    x: goRight ? 190 : 10,
-                    duration: 1000,
-                    ease: 'Linear',
-                    onComplete: () => {
-                        agnes.setX(HOME_X);
-                        agnes.setFlipX(false);
-                        scheduleNext(Phaser.Math.Between(3000, 6000));
-                    }
-                });
-                return; // tween handles the next cycle
 
             } else if (key === 'super_dash') {
                 const goRight = Math.random() > 0.5;
                 agnes.setFlipX(!goRight);
-                agnes.setX(goRight ? 10 : 190);
+                agnesVX = goRight ? 280 : -280;  // rocket
+                moveMode = 'superdash';
                 agnes.play('super_dash');
-                scene.tweens.add({
-                    targets: agnes,
-                    x: goRight ? 220 : -20,
-                    duration: 700,
-                    ease: 'Cubic.easeIn'
-                });
-                // sudden_stop and return handled in animationcomplete
-                return;
-
-            } else if (key === 'walk_left') {
-                const goRight = Math.random() > 0.5;
-                agnes.setFlipX(!goRight);
-                agnes.setX(HOME_X);
-                agnes.play('walk_left');
-                scene.tweens.add({
-                    targets: agnes,
-                    x: goRight ? HOME_X + 50 : HOME_X - 50,
-                    duration: 1200,
-                    ease: 'Linear',
-                    yoyo: true,
-                    onComplete: () => {
-                        agnes.setX(HOME_X);
-                        agnes.setFlipX(false);
-                        scheduleNext(Phaser.Math.Between(3000, 6000));
-                    }
-                });
-                return;
 
             } else if (key === 'float') {
-                agnes.setPosition(HOME_X, HOME_Y);
+                floatAngle = 0;
+                moveMode = 'float';
                 agnes.play('float');
-                // Drift gently across then come back
-                scene.tweens.add({
-                    targets: agnes,
-                    x: HOME_X + 30,
-                    y: HOME_Y - 15,
-                    duration: 1500,
-                    ease: 'Sine.easeInOut',
-                    yoyo: true,
-                    repeat: 1,
-                    onComplete: () => {
+                // float loops; we stop it after 3 s
+                scene.time.delayedCall(3000, () => {
+                    if (moveMode === 'float') {
                         agnes.anims.stop();
-                        scene.tweens.killTweensOf(agnes);
-                        agnes.setPosition(HOME_X, HOME_Y);
+                        stopMoving();
                         scheduleNext(Phaser.Math.Between(3000, 6000));
                     }
                 });
-                return;
 
             } else {
-                // idle1, giggle, wave, cheer — play in place
-                agnes.setPosition(HOME_X, HOME_Y);
+                // idle1, giggle, wave, cheer — stationary
                 agnes.setFlipX(false);
                 agnes.play(key);
-                // animationcomplete will call scheduleNext
+                // animationcomplete handles scheduling
             }
         };
 
+        // ── animationcomplete ────────────────────────────────────────────────
         agnes.on('animationcomplete', (anim) => {
             if (anim.key === 'super_dash') {
-                // Snap back to centre, play stop animation
-                agnes.setX(HOME_X);
-                agnes.setFlipX(false);
+                stopMoving();
                 agnes.play('sudden_stop');
             } else if (anim.key === 'sudden_stop') {
                 scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (anim.key === 'say') {
+            } else if (anim.key === 'say' || anim.key === 'victory') {
                 scheduleNext(500);
-            } else if (anim.key === 'victory') {
-                scheduleNext(500);
+            } else if (anim.key === 'dash') {
+                // dash animation finished but she may still be moving —
+                // loop it until update() stops her
+                if (moveMode === 'dash') agnes.play('dash');
             } else {
-                // idle1, giggle, wave, cheer etc — wait a beat then next
                 scheduleNext(Phaser.Math.Between(3000, 6000));
             }
         });
 
-        // Tap Agnes to make her wave
+        // Tap to greet
         agnes.on('pointerdown', () => {
             if (idleTimer) idleTimer.remove(false);
-            scene.tweens.killTweensOf(agnes);
+            stopMoving();
             say('Hi! Don\'t forget your tasks today! 🌸');
         });
 
         // Kick off
         scheduleNext(1000);
+
+        // ── update() — runs every frame, moves agnes via velocity ─────────────
+        scene.events.on('update', (time, delta) => {
+            if (!agnes || agnesVX === 0 && agnesVY === 0 && moveMode !== 'float') return;
+
+            const dt = delta / 1000; // seconds
+
+            if (moveMode === 'float') {
+                // Gentle figure-eight drift
+                floatAngle += delta * 0.001;
+                agnes.x = HOME_X + Math.sin(floatAngle * 1.5) * 25;
+                agnes.y = HOME_Y + Math.sin(floatAngle) * 12;
+                return;
+            }
+
+            agnes.x += agnesVX * dt;
+            agnes.y += agnesVY * dt;
+
+            // Boundary checks — when she hits an edge, decide what to do
+            const hitLeft  = agnes.x < 15;
+            const hitRight = agnes.x > 185;
+
+            if (moveMode === 'walk' && (hitLeft || hitRight)) {
+                // Bounce back
+                agnesVX *= -1;
+                agnes.setFlipX(agnesVX < 0);
+                // After one bounce, stop and schedule next
+                scene.time.delayedCall(800, () => {
+                    if (moveMode === 'walk') {
+                        stopMoving();
+                        agnes.setFlipX(false);
+                        scheduleNext(Phaser.Math.Between(3000, 6000));
+                    }
+                });
+            } else if (moveMode === 'dash' && (hitLeft || hitRight)) {
+                stopMoving();
+                scheduleNext(Phaser.Math.Between(3000, 6000));
+            } else if (moveMode === 'superdash' && (agnes.x < -30 || agnes.x > 230)) {
+                // She's off screen — snap back and play sudden_stop
+                stopMoving();
+                agnes.play('sudden_stop');
+            }
+        });
     }
 </script>
 </body>

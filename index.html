@@ -2,44 +2,51 @@
 <html>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
-    <style> body { margin: 0; background: #FFFDF0; display: flex; justify-content: center; align-items: center; height: 100vh; } </style>
+    <style>
+        body { background: #EEDCC3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: sans-serif; }
+        #game-container { border: 8px solid #4C566A; border-radius: 15px; background: white; width: 200px; height: 200px; }
+        #ui { margin-top: 20px; background: white; padding: 20px; border-radius: 15px; width: 250px; }
+        .item { margin-bottom: 10px; cursor: pointer; }
+    </style>
 </head>
 <body>
+
     <div id="game-container"></div>
+    
+    <div id="ui">
+        <div class="item"><input type="checkbox" onclick="react()"> Brush Teeth</div>
+        <div class="item"><input type="checkbox" onclick="react()"> Drink Water</div>
+        <div class="item"><input type="checkbox" onclick="react()"> Tidy Desk</div>
+    </div>
 
 <script>
     const config = {
         type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container',
-        backgroundColor: '#FFFFFF',
-        scene: { preload, create }
+        scene: { preload: preload, create: create }
     };
-
     const game = new Phaser.Game(config);
 
     function preload() {
-        console.log("Attempting to load: agnes-sprites.jpg");
-        // Loading the atlas
-        this.load.atlas('agnes', 'agnes-sprites.jpg', 'agnes-sprites.json');
-        
-        // This checks if the file loaded
-        this.load.on('loaderror', (file) => {
-            console.error("Error loading file:", file.key);
-            alert("Error: Could not load " + file.key + ". Check your filenames!");
-        });
+        // FIXED: Using .png instead of .jpg
+        this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites.json');
     }
 
     function create() {
-        // If the atlas loaded, this should show the first frame
-        // I am using 'agtc001A_00.png' based on your file snippet
         this.agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');
-        
-        if (!this.agnes.texture) {
-            console.error("Texture not found! The JSON might not match the image.");
-            // Draw a red square to show the game IS running, even if the sprite is broken
-            this.add.rectangle(100, 100, 50, 50, 0xff0000); 
-        } else {
-            console.log("Agnes loaded successfully!");
-        }
+        this.agnes.setScale(1.5);
+
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNames('agnes', { prefix: 'agtc001A_00', suffix: '.png', start: 0, end: 2 }),
+            frameRate: 3, repeat: -1
+        });
+        this.agnes.play('idle');
+    }
+
+    function react() {
+        const agnes = game.scene.scenes[0].agnes;
+        agnes.setFrame('agtc950_04.png');
+        setTimeout(() => agnes.play('idle'), 1000);
     }
 </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; }
+        :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; --dismiss: #b2bec3; }
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 20px; }
         
         #hud { width: 320px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
@@ -22,7 +22,9 @@
         .task-meta { display: flex; gap: 8px; }
         .task-stat { font-size: 0.7em; color: #a5b1c2; font-weight: bold; }
         .task-time { font-size: 0.7em; color: var(--accent); font-weight: bold; }
+        .btn-group { display: flex; gap: 5px; }
         .btn-check { background: var(--accent); color: white; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
     </style>
 </head>
 <body>
@@ -44,15 +46,19 @@
 <script>
     let agnes, sceneContext;
     let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
-    let history = JSON.parse(localStorage.getItem('agnesHistory')) || {};
+    let history = JSON.parse(localStorage.getItem('agnesHistory')) || {}; // { taskId: date }
+    let dismissed = JSON.parse(localStorage.getItem('agnesDismissed')) || {}; // { taskId: date }
     let lastInteraction = Date.now();
 
     const tasks = [
-        { id: 'Breakfast', name: 'Have Breakfast', type: 'power', anim: 'eating', timeLabel: 'Until 12PM', check: h => h < 12 },
-        { id: 'Lunch', name: 'Eat Lunch', type: 'power', anim: 'eating', timeLabel: '12PM - 3PM', check: h => h >= 12 && h < 15 },
-        { id: 'Dinner', name: 'Have Dinner', type: 'power', anim: 'eating', timeLabel: '3PM - 10PM', check: h => h >= 15 && h < 22 },
-        { id: 'Water', name: 'Drink Water', type: 'stamina', anim: 'walk_left', timeLabel: 'Every 2hrs', check: h => h >= 8 && h < 24 && h % 2 === 0 },
-        { id: 'Teeth', name: 'Clean Teeth', type: 'guts', anim: 'sit_down', timeLabel: 'Until 9AM', check: h => h < 9 || h >= 20 }
+        { id: 'Breakfast', name: 'Have Breakfast', type: 'power', anim: 'eating', timeLabel: 'Until 12PM', isEssential: true, check: h => h < 12 },
+        { id: 'Lunch', name: 'Eat Lunch', type: 'power', anim: 'eating', timeLabel: '12PM - 3PM', isEssential: true, check: h => h >= 12 && h < 15 },
+        { id: 'Dinner', name: 'Have Dinner', type: 'power', anim: 'eating', timeLabel: '3PM - 10PM', isEssential: true, check: h => h >= 15 && h < 22 },
+        { id: 'Water', name: 'Drink Water', type: 'stamina', anim: 'walk_left', timeLabel: 'Every 2hrs', isEssential: true, check: h => h >= 8 && h < 24 && h % 2 === 0 },
+        { id: 'Snack', name: 'Have a Snack', type: 'stamina', anim: 'eating', timeLabel: 'Every 4hrs', isEssential: true, check: h => h >= 8 && h < 24 && h % 4 === 0 },
+        { id: 'Teeth', name: 'Clean Teeth', type: 'guts', anim: 'sit_down', timeLabel: 'Until 9AM', isEssential: true, check: h => h < 9 },
+        { id: 'Tidy', name: 'Tidy Up Room', type: 'wit', anim: 'walk_left', timeLabel: 'Anytime', isEssential: false, check: h => h >= 8 && h < 22 },
+        { id: 'Study', name: 'Study 30 Mins', type: 'wit', anim: 'sit_down', timeLabel: 'Afternoon', isEssential: false, check: h => h >= 12 && h < 18 }
     ];
 
     function updateUI() {
@@ -63,11 +69,14 @@
         });
 
         const h = new Date().getHours();
+        const today = new Date().toDateString();
         const container = document.getElementById('task-list');
         container.innerHTML = '';
         
         tasks.forEach(task => {
-            if (task.check(h) && history[task.id] !== new Date().toDateString()) {
+            // Only show if it's currently "valid" (check), not completed today, AND not dismissed today
+            if (task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
+                let dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
                 container.innerHTML += `
                     <div class="task-item">
                         <div class="task-info">
@@ -77,13 +86,16 @@
                                 <span class="task-time">${task.timeLabel}</span>
                             </div>
                         </div>
-                        <button class="btn-check" onclick="complete('${task.id}', '${task.anim}', '${task.type}')">Done</button>
+                        <div class="btn-group">
+                            ${dismissBtn}
+                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim}', '${task.type}')">Done</button>
+                        </div>
                     </div>`;
             }
         });
     }
 
-   function complete(id, anim, type) {
+    function complete(id, anim, type) {
         lastInteraction = Date.now();
         history[id] = new Date().toDateString();
         stats[type] += 10;
@@ -93,6 +105,13 @@
         updateUI();
     }
 
+    function dismiss(id) {
+        dismissed[id] = new Date().toDateString();
+        localStorage.setItem('agnesDismissed', JSON.stringify(dismissed));
+        updateUI();
+    }
+
+    // --- GAME ENGINE ---
     const config = { type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container', scene: { preload: preload, create: create } };
     new Phaser.Game(config);
 
@@ -104,20 +123,7 @@
         this.anims.create({ key: 'idle1', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }], frameRate: 2, repeat: 1 });
         this.anims.create({ key: 'idle2', frames: [{ key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc001A_02.png' }], frameRate: 2, repeat: 1 });
         this.anims.create({ key: 'walk_random', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_02.png' }], frameRate: 4, repeat: 3 });
-        
-        // --- RESTORED ALL EATING FRAMES ---
-        this.anims.create({ 
-            key: 'eating', 
-            frames: [
-                { key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_07.png' }, 
-                { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },  { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' },  { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, 
-                { key: 'agnes', frame: 'agtc360_10.png' }, { key: 'agnes', frame: 'agtc360_11.png' }, 
-                { key: 'agnes', frame: 'agtc360_12.png' }
-            ], 
-            frameRate: 6, 
-            repeat: 0 
-        });
-
+        this.anims.create({ key: 'eating', frames: [{ key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_07.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_10.png' }, { key: 'agnes', frame: 'agtc360_11.png' }, { key: 'agnes', frame: 'agtc360_12.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_04.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 8, repeat: 2 });

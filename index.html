@@ -1,39 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f9f9f9; font-family: sans-serif; }
-        
-        /* The "Card" container from your mockup */
-        #ui-layer { text-align: center; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-
-        #progress-container { width: 300px; height: 20px; background: #eee; border-radius: 10px; margin: 20px 0; overflow: hidden; }
-        #progress-bar { width: 0%; height: 100%; background: #4CAF50; transition: width 0.5s ease; }
-        
-        button { padding: 10px 20px; cursor: pointer; font-size: 16px; border: none; border-radius: 8px; background: #4CAF50; color: white; }
+        body { 
+            margin: 0; 
+            background: #FDF6E3; /* Soft cream background */
+            font-family: 'Segoe UI', sans-serif;
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+        }
+        #app-card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 30px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+            width: 320px;
+        }
+        #game-container { margin: 20px 0; }
+        .progress-bar-bg { 
+            background: #EEE; height: 15px; border-radius: 10px; 
+            overflow: hidden; margin: 15px 0; 
+        }
+        #progress-bar { 
+            background: #88C0D0; height: 100%; width: 0%; 
+            transition: width 1s ease-in-out; 
+        }
+        button { 
+            background: #A3BE8C; border: none; padding: 12px 25px; 
+            border-radius: 20px; color: white; font-weight: bold; cursor: pointer;
+        }
+        h2 { color: #4C566A; margin: 0; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
 </head>
 <body>
 
-    <div id="ui-layer">
-        <h3>Agnes the Helper</h3>
+    <div id="app-card">
+        <h2>Agnes</h2>
         <div id="game-container"></div>
-        <div id="progress-container"><div id="progress-bar"></div></div>
-        <div id="status">0/5 Tasks Done</div>
-        <button id="taskBtn">Complete Task!</button>
+        <div class="progress-bar-bg"><div id="progress-bar"></div></div>
+        <button id="taskBtn">Check off a task!</button>
     </div>
 
 <script>
-    let tasksCompleted = 0;
-    const totalTasks = 5;
+    // Load happiness from browser memory
+    let happiness = parseInt(localStorage.getItem('agnesHappiness')) || 0;
 
     const config = {
         type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container',
-        transparent: true, // Makes the background transparent to match your mockup
-        scene: { preload: preload, create: create }
+        transparent: true, scene: { preload, create }
     };
-
     const game = new Phaser.Game(config);
 
     function preload() {
@@ -44,27 +60,32 @@
         this.agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');
         this.agnes.setScale(2);
         
+        // Define animation
         this.anims.create({
             key: 'idle',
             frames: this.anims.generateFrameNames('agnes', { prefix: 'agtc001A_00', suffix: '.png', start: 0, end: 2 }),
-            frameRate: 4, repeat: -1
+            frameRate: 3, repeat: -1
         });
         this.agnes.play('idle');
+        
+        updateUI(); // Set progress bar on load
+    }
+
+    function updateUI() {
+        const bar = document.getElementById('progress-bar');
+        bar.style.width = (happiness * 10) + '%'; // 10 tasks = 100%
     }
 
     document.getElementById('taskBtn').onclick = () => {
-        if (tasksCompleted < totalTasks) {
-            tasksCompleted++;
+        if (happiness < 10) {
+            happiness++;
+            localStorage.setItem('agnesHappiness', happiness);
+            updateUI();
             
-            // Update Progress Bar
-            const percent = (tasksCompleted / totalTasks) * 100;
-            document.getElementById('progress-bar').style.width = percent + '%';
-            document.getElementById('status').innerText = tasksCompleted + '/' + totalTasks + ' Tasks Done';
-
-            // Trigger Animation (Assuming you have a 'celebrate' frame/anim)
-            // Just swapping frame for now
-            game.scene.scenes[0].agnes.setFrame('agtc950_04.png');
-            setTimeout(() => game.scene.scenes[0].agnes.play('idle'), 1500);
+            // Agnes Reaction
+            const agnes = game.scene.scenes[0].agnes;
+            agnes.setFrame('agtc950_04.png'); // Happy frame
+            setTimeout(() => agnes.play('idle'), 1000);
         }
     };
 </script>

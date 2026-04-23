@@ -1,89 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <style>
-        body { 
-            /* Warm, creamy light background - very gentle on eyes */
-            background: #FFFDF0; 
-            color: #4A4A4A; /* Soft grey text, not harsh black */
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            height: 100vh; font-family: 'Segoe UI', sans-serif; margin: 0;
-        }
-        
-        /* The "Tamagotchi" Shell - Soft beige wood tone */
-        #console-shell { 
-            background: #EEDCC3; 
-            padding: 20px; 
-            border-radius: 30px; 
-            border: 6px solid #D2B48C;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        /* Screen - Bright and clear */
-        #game-container { 
-            width: 200px; height: 200px; border-radius: 15px; overflow: hidden;
-            background: #FFFFFF; /* Bright screen */
-            border: 2px solid #D2B48C;
-        }
-
-        /* The Task UI */
-        #task-list { 
-            margin-top: 30px; width: 280px;
-        }
-        .task-item { 
-            background: #FFFFFF; /* Bright white cards */
-            padding: 15px; margin-bottom: 12px; 
-            border-radius: 15px; display: flex; align-items: center; cursor: pointer;
-            border: 2px solid #EEDCC3; /* Soft border */
-            transition: transform 0.2s;
-        }
-        .task-item:hover { transform: scale(1.02); }
-        
-        input { margin-right: 15px; transform: scale(1.5); cursor: pointer; }
-    </style>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+    <style> body { margin: 0; background: #FFFDF0; display: flex; justify-content: center; align-items: center; height: 100vh; } </style>
 </head>
 <body>
-
-    <div id="console-shell">
-        <div id="game-container"></div>
-    </div>
-
-    <div id="task-list">
-        <label class="task-item"><input type="checkbox" onclick="celebrate()"> Brush Teeth</label>
-        <label class="task-item"><input type="checkbox" onclick="celebrate()"> Drink Water</label>
-        <label class="task-item"><input type="checkbox" onclick="celebrate()"> Tidy Desk</label>
-    </div>
+    <div id="game-container"></div>
 
 <script>
     const config = {
         type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container',
-        backgroundColor: '#FFFFFF', // Bright screen
+        backgroundColor: '#FFFFFF',
         scene: { preload, create }
     };
+
     const game = new Phaser.Game(config);
 
     function preload() {
+        console.log("Attempting to load: agnes-sprites.jpg");
+        // Loading the atlas
         this.load.atlas('agnes', 'agnes-sprites.jpg', 'agnes-sprites.json');
+        
+        // This checks if the file loaded
+        this.load.on('loaderror', (file) => {
+            console.error("Error loading file:", file.key);
+            alert("Error: Could not load " + file.key + ". Check your filenames!");
+        });
     }
 
     function create() {
+        // If the atlas loaded, this should show the first frame
+        // I am using 'agtc001A_00.png' based on your file snippet
         this.agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');
-        this.agnes.setScale(1.5);
         
-        this.anims.create({
-            key: 'idle',
-            frames: this.anims.generateFrameNames('agnes', { prefix: 'agtc001A_00', suffix: '.png', start: 0, end: 2 }),
-            frameRate: 3, repeat: -1
-        });
-        this.agnes.play('idle');
-    }
-
-    function celebrate() {
-        const agnes = game.scene.scenes[0].agnes;
-        agnes.setFrame('agtc950_04.png');
-        setTimeout(() => agnes.play('idle'), 1500);
+        if (!this.agnes.texture) {
+            console.error("Texture not found! The JSON might not match the image.");
+            // Draw a red square to show the game IS running, even if the sprite is broken
+            this.add.rectangle(100, 100, 50, 50, 0xff0000); 
+        } else {
+            console.log("Agnes loaded successfully!");
+        }
     }
 </script>
 </body>

@@ -17,20 +17,19 @@
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
         #agnes-wrap {
             display: flex; flex-direction: column; align-items: center;
-            width: 95%; max-width: 400px; margin-bottom: 15px;
+            margin-bottom: 15px;
         }
         #status-box {
-            width: 100%; background: white;
+            width: 200px; background: white;
             border: 2px solid var(--accent); border-radius: 16px 16px 0 0;
             border-bottom: none;
-            padding: 10px 14px; box-sizing: border-box;
-            font-size: 0.78em; color: #596275; line-height: 1.5;
-            text-align: center; min-height: 48px;
+            padding: 8px 12px; box-sizing: border-box;
+            font-size: 0.72em; color: #596275; line-height: 1.4;
+            text-align: center; min-height: 44px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 -2px 8px rgba(248,165,194,0.08);
         }
         #status-text {
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
             opacity: 1;
         }
         #game-container {
@@ -411,9 +410,17 @@
         let idleTimer = null;
         const scheduleNext = (delayMs) => {
             if (idleTimer) idleTimer.remove(false);
-            maybeQuote();
             idleTimer = scene.time.delayedCall(delayMs, playRandomIdle);
         };
+
+        // Quotes fire independently, every 25–45 seconds, not tied to animation cycles
+        const scheduleNextQuote = () => {
+            scene.time.delayedCall(Phaser.Math.Between(25000, 45000), () => {
+                maybeQuote();
+                scheduleNextQuote();
+            });
+        };
+        scheduleNextQuote();
 
         const stopMoving = () => {
             agnesVX = 0;
@@ -434,14 +441,14 @@
 
             if (key === 'walk_left') {
                 const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);   // sprite faces LEFT; flip to go right
+                agnes.setFlipX(goRight);
                 agnesVX = goRight ? 50 : -50;
                 moveMode = 'walk';
                 agnes.play('walk_left');
 
             } else if (key === 'dash') {
                 const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);   // same — faces left naturally
+                agnes.setFlipX(goRight);
                 agnesVX = goRight ? 160 : -160;
                 moveMode = 'dash';
                 agnes.play('dash');
@@ -461,20 +468,23 @@
                     if (moveMode === 'float') {
                         agnes.anims.stop();
                         stopMoving();
-                        resetHome();
+                        // float leaves her drifted — gently return her to home
+                        agnes.setPosition(HOME_X, HOME_Y);
                         scheduleNext(Phaser.Math.Between(3000, 6000));
                     }
                 });
 
-            } else {
-                // idle1, giggle, wave, cheer — stationary
+            } else if (key === 'idle1') {
+                // idle1 always plays from home so she doesn't drift off-centre permanently
                 resetHome();
+                agnes.play('idle1');
+                scheduleNext(Phaser.Math.Between(4000, 8000));
+
+            } else {
+                // giggle, wave, cheer — play at current position, no snap
+                agnes.setFlipX(false);
                 agnes.play(key);
-                // idle1 loops forever so we must schedule the next action manually
-                // For the others, animationcomplete will fire and handle it
-                if (key === 'idle1') {
-                    scheduleNext(Phaser.Math.Between(4000, 8000));
-                }
+                // animationcomplete handles scheduling
             }
         };
 
@@ -482,15 +492,16 @@
         agnes.on('animationcomplete', (anim) => {
             if (anim.key === 'super_dash') {
                 stopMoving();
-                resetHome();
+                // She could be anywhere — don't snap, just schedule next from here
+                agnes.setFlipX(false);
                 scheduleNext(Phaser.Math.Between(3000, 6000));
             } else if (anim.key === 'sudden_stop') {
-                resetHome();
+                agnes.setFlipX(false);
                 scheduleNext(Phaser.Math.Between(3000, 6000));
             } else if (anim.key === 'say' || anim.key === 'victory') {
                 scheduleNext(500);
             } else if (anim.key === 'walk_left' || anim.key === 'dash') {
-                // These now loop (repeat: -1) so this fires only if stopped externally — ignore
+                // looping — only fires if externally stopped, ignore
             } else {
                 scheduleNext(Phaser.Math.Between(3000, 6000));
             }
@@ -531,25 +542,26 @@
 
             if (moveMode === 'walk' && (hitLeft || hitRight)) {
                 agnesVX *= -1;
-                agnes.setFlipX(agnesVX > 0); // going right = flip (faces left naturally)
+                agnes.setFlipX(agnesVX > 0);
+                // After one bounce, stop walking and do something in place
                 scene.time.delayedCall(800, () => {
                     if (moveMode === 'walk') {
                         agnes.anims.stop();
                         stopMoving();
-                        resetHome();
+                        agnes.setFlipX(false);
                         scheduleNext(Phaser.Math.Between(3000, 6000));
                     }
                 });
             } else if (moveMode === 'dash' && (hitLeft || hitRight)) {
                 agnes.anims.stop();
                 stopMoving();
-                resetHome();
+                agnes.setFlipX(false);
                 scheduleNext(Phaser.Math.Between(3000, 6000));
             } else if (moveMode === 'superdash' && (agnes.x < 10 || agnes.x > 190)) {
-                // Hit the wall mid-run — stop moving, let the wind-down frames play out
                 agnesVX = 0;
                 agnesVY = 0;
                 moveMode = 'none';
+                // animation keeps playing its wind-down frames in place
             }
         });
     }

@@ -27,6 +27,12 @@
         .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
         .btn-del { background: #ff7675; color: white; border: none; padding: 4px 8px; border-radius: 5px; }
         #clock-display { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
+        #bubble { 
+    position: absolute; top: 10px; left: 10px; background: white; 
+    padding: 8px; border-radius: 10px; border: 2px solid var(--accent); 
+    display: none; font-size: 0.8em; z-index: 10; max-width: 150px; 
+    color: #596275; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
     </style>
 </head>
 <body>
@@ -64,7 +70,9 @@
         <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
     </div>
 
-    <div id="game-container"></div>
+   <div id="game-container">
+    <div id="bubble"></div>
+</div>
     
     <div id="checklist">
         <h3>Today's Schedule</h3>
@@ -156,20 +164,22 @@
     const currentDay = new Date().getDay();
 
     allTasks.forEach(task => {
-        const taskDays = task.days || [0,1,2,3,4,5,6];
-        if (taskDays.includes(currentDay) && task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
-            let dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
-            container.innerHTML += `
-                <div class="task-item">
-                    <div class="task-info">
-                        <span class="task-name">${task.name}</span>
-                        <div class="task-meta"><span class="task-stat">${task.type.toUpperCase()}</span></div>
+    const taskDays = task.days || [0,1,2,3,4,5,6]; 
+    if (taskDays.includes(currentDay) && task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
+        let dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
+        container.innerHTML += `
+            <div class="task-item">
+                <div class="task-info" onclick="say('Don\\'t forget to ${task.name.toLowerCase()}! ${task.timeLabel}')">
+                    <span class="task-name" style="text-decoration: underline; cursor: pointer;">${task.name}</span>
+                    <div class="task-meta">
+                        <span class="task-stat">${task.type.toUpperCase()}</span>
+                        <span class="task-time">${task.timeLabel || 'Anytime'}</span>
                     </div>
-                    <div class="btn-group">${dismissBtn}<button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button></div>
-                </div>`;
-        }
-    });
-}
+                </div>
+                <div class="btn-group">${dismissBtn}<button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button></div>
+            </div>`;
+    }
+});
 
     function complete(id, anim, type) {
         lastInteraction = Date.now();
@@ -210,6 +220,14 @@
 // Start the clock and update it every second
 updateClock();
 setInterval(updateClock, 1000);
+
+    function say(text) {
+    const bubble = document.getElementById('bubble');
+    bubble.innerText = text;
+    bubble.style.display = 'block';
+    // Hide after 3 seconds
+    setTimeout(() => bubble.style.display = 'none', 3000);
+}
 </script>
 </body>
 </html>

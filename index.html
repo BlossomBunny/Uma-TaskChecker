@@ -3,39 +3,78 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { background: #EEDCC3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: sans-serif; }
+        body { background: #EEDCC3; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
         #game-container { border: 8px solid #4C566A; border-radius: 15px; background: white; width: 200px; height: 200px; overflow: hidden; }
-        #ui { margin-top: 20px; background: white; padding: 20px; border-radius: 15px; width: 250px; text-align: center; }
-        .btn { margin: 5px; padding: 10px; cursor: pointer; }
+        
+        /* Stats HUD */
+        #hud { display: flex; justify-content: space-around; width: 300px; background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 12px; }
+        
+        /* Task Sections */
+        #ui { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 300px; }
+        .category { background: white; padding: 10px; border-radius: 10px; }
+        .btn { display: block; width: 100%; margin: 5px 0; padding: 5px; cursor: pointer; background: #eee; border: none; border-radius: 5px; }
+        .btn:hover { background: #ddd; }
     </style>
 </head>
 <body>
 
+    <div id="hud">
+        <div>Pwr: <span id="stat-power">0</span></div>
+        <div>Stm: <span id="stat-stamina">0</span></div>
+        <div>Gts: <span id="stat-guts">0</span></div>
+        <div>Wit: <span id="stat-wit">0</span></div>
+    </div>
+
     <div id="game-container"></div>
     
     <div id="ui">
-        <button class="btn" onclick="agnes.play('walk_left')">Walk</button>
-        <button class="btn" onclick="agnes.play('dash_left')">Dash</button>
-        <button class="btn" onclick="agnes.play('sit_down')">Sit</button>
-        <button class="btn" onclick="agnes.play('idle')">Idle</button>
+        <div class="category">
+            <strong>Power</strong>
+            <button class="btn" onclick="doTask('power', 'dash_left')">Cook/Hydrate</button>
+        </div>
+        <div class="category">
+            <strong>Stamina</strong>
+            <button class="btn" onclick="doTask('stamina', 'walk_left')">Chores/Walk</button>
+        </div>
+        <div class="category">
+            <strong>Guts</strong>
+            <button class="btn" onclick="doTask('guts', 'sit_down')">Hygiene</button>
+        </div>
+        <div class="category">
+            <strong>Wit</strong>
+            <button class="btn" onclick="doTask('wit', 'idle')">Study</button>
+        </div>
     </div>
 
 <script>
-    let agnes; 
+    let agnes;
+    // Load Stats from storage
+    let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
 
-    const config = {
-        type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container',
-        scene: { preload: preload, create: create }
-    };
+    const config = { type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container', scene: { preload: preload, create: create } };
     const game = new Phaser.Game(config);
 
-    function preload() {
-        this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
+    function updateHud() {
+        document.getElementById('stat-power').innerText = stats.power;
+        document.getElementById('stat-stamina').innerText = stats.stamina;
+        document.getElementById('stat-guts').innerText = stats.guts;
+        document.getElementById('stat-wit').innerText = stats.wit;
     }
 
+    function doTask(type, anim) {
+        // Boost stat
+        stats[type] += 10;
+        localStorage.setItem('agnesStats', JSON.stringify(stats));
+        updateHud();
+        
+        // Play animation
+        agnes.play(anim);
+    }
+
+    function preload() { this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json'); }
+
     function create() {
-        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');
-        agnes.setScale(1.5);
+        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5);
 
         // 1. Idle
         this.anims.create({
@@ -114,6 +153,13 @@
             }
         });
 
+    agnes.on('animationcomplete', (animation) => {
+            if (animation.key !== 'idle' && animation.key !== 'sitting_loop') {
+                agnes.play('idle');
+            }
+        });
+
+        updateHud();
         agnes.play('idle');
     }
 </script>

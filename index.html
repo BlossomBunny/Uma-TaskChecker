@@ -3,136 +3,94 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; }
+        :root { --accent: #f8a5c2; --bg: #fff0f5; }
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 20px; }
         
-        /* Stats Display */
-        #hud { width: 320px; margin-bottom: 20px; }
-        .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .stat-label { width: 40px; font-weight: bold; font-size: 0.9em; }
-        .bar-container { flex-grow: 1; height: 12px; background: var(--bar-bg); border-radius: 6px; overflow: hidden; }
-        .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
-        .rank { width: 25px; font-weight: bold; text-align: center; color: var(--accent); }
-
         #game-container { border: 8px solid #fff; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 20px; }
         
-        #ui-wrapper { width: 320px; background: white; padding: 20px; border-radius: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn { border: none; padding: 12px; border-radius: 15px; background: var(--accent); color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        /* Checklist Style */
+        #checklist { width: 320px; background: white; padding: 15px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .task-desc { font-weight: 600; font-size: 0.9em; }
+        .btn-check { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .btn-check:hover { filter: brightness(1.1); }
         .hidden { display: none; }
-        
-        #history { margin-top: 20px; font-size: 0.85em; max-height: 120px; overflow-y: auto; color: #778ca3; border-top: 1px solid #eee; padding-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="hud">
-        <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
-    </div>
-
     <div id="game-container"></div>
     
-    <div id="ui-wrapper">
-        <div id="main-menu" class="task-grid">
-            <button class="btn" onclick="showTasks('power')">Power</button>
-            <button class="btn" onclick="showTasks('stamina')">Stamina</button>
-            <button class="btn" onclick="showTasks('guts')">Guts</button>
-            <button class="btn" onclick="showTasks('wit')">Wit</button>
-        </div>
-
-        <div id="menu-power" class="task-grid hidden">
-            <button class="btn" onclick="doTask('Breakfast', 'dash_left', 'power')">Breakfast</button>
-            <button class="btn" onclick="doTask('Hydrate', 'dash_left', 'power')">Water</button>
-            <button class="btn" onclick="resetMenu()">Back</button>
-        </div>
-        <div id="menu-stamina" class="task-grid hidden">
-            <button class="btn" onclick="doTask('Clean Room', 'dash_left', 'stamina')">Room</button>
-            <button class="btn" onclick="doTask('Walk', 'dash_left', 'stamina')">Walk</button>
-            <button class="btn" onclick="resetMenu()">Back</button>
-        </div>
-        <div id="menu-guts" class="task-grid hidden">
-            <button class="btn" onclick="doTask('Teeth', 'sit_down', 'guts')">Teeth</button>
-            <button class="btn" onclick="doTask('Shower', 'sit_down', 'guts')">Shower</button>
-            <button class="btn" onclick="resetMenu()">Back</button>
-        </div>
-        <div id="menu-wit" class="task-grid hidden">
-            <button class="btn" onclick="doTask('Study', 'idle', 'wit')">Study</button>
-            <button class="btn" onclick="doTask('Lecture', 'idle', 'wit')">Lecture</button>
-            <button class="btn" onclick="resetMenu()">Back</button>
-        </div>
-
-        <div id="history"><strong>Log:</strong><ul id="log-list" style="padding-left: 20px;"></ul></div>
+    <div id="checklist">
+        <h3>Today's Schedule</h3>
+        <div id="task-list"></div>
     </div>
 
 <script>
     let agnes;
-    let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
-    let log = JSON.parse(localStorage.getItem('agnesLog')) || [];
+    let completedTasks = JSON.parse(localStorage.getItem('agnesHistory')) || {};
 
+    // Task Configuration
+    const tasks = [
+        { id: 'Breakfast', name: 'Have Breakfast With Agnes', type: 'power', anim: 'dash_left', check: h => h < 12 },
+        { id: 'Lunch', name: 'Eat Lunch Together', type: 'power', anim: 'dash_left', check: h => h >= 12 && h < 15 },
+        { id: 'Dinner', name: 'Have Dinner With Agnes', type: 'power', anim: 'dash_left', check: h => h >= 15 && h < 22 },
+        { id: 'Water', name: 'Drink 1 glass of water', type: 'power', anim: 'dash_left', check: h => h >= 8 && h < 24 && h % 2 === 0 },
+        { id: 'Snack', name: 'Have a small snack', type: 'power', anim: 'dash_left', check: h => h >= 8 && h < 24 && h % 4 === 0 },
+        { id: 'Teeth', name: 'Clean Teeth', type: 'guts', anim: 'sit_down', check: h => h < 9 }
+    ];
+
+    function renderTasks() {
+        const now = new Date();
+        const h = now.getHours();
+        const today = now.toDateString();
+        const container = document.getElementById('task-list');
+        container.innerHTML = '';
+
+        tasks.forEach(task => {
+            const isDone = completedTasks[task.id] === today;
+            const isActive = task.check(h);
+
+            if (isActive && !isDone) {
+                const div = document.createElement('div');
+                div.className = 'task-item';
+                div.innerHTML = `<span class="task-desc">${task.name}</span>
+                                 <button class="btn-check" onclick="complete('${task.id}', '${task.anim}', '${task.type}')">Done</button>`;
+                container.appendChild(div);
+            }
+        });
+        
+        if (container.innerHTML === '') {
+            container.innerHTML = '<p style="text-align:center; color:#ccc;">No tasks right now. Relax!</p>';
+        }
+    }
+
+    function complete(id, anim, type) {
+        completedTasks[id] = new Date().toDateString();
+        localStorage.setItem('agnesHistory', JSON.stringify(completedTasks));
+        agnes.play(anim);
+        renderTasks();
+    }
+
+    // --- Game Engine ---
     const config = { type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container', scene: { preload: preload, create: create } };
     new Phaser.Game(config);
 
-    function getRank(val) {
-        if (val < 50) return 'F';
-        if (val < 100) return 'E';
-        if (val < 200) return 'D';
-        if (val < 300) return 'C';
-        if (val < 400) return 'B';
-        if (val < 500) return 'A';
-        return 'S';
-    }
-
-    function updateUI() {
-        ['power', 'stamina', 'guts', 'wit'].forEach(s => {
-            const val = stats[s];
-            document.getElementById(`bar-${s}`).style.width = Math.min(val / 5, 100) + '%';
-            document.getElementById(`rank-${s}`).innerText = getRank(val);
-        });
-        const list = document.getElementById('log-list');
-        list.innerHTML = log.map(item => `<li>${item}</li>`).join('');
-    }
-
-    function showTasks(cat) {
-        document.getElementById('main-menu').classList.add('hidden');
-        document.getElementById('menu-' + cat).classList.remove('hidden');
-    }
-
-    function resetMenu() {
-        document.querySelectorAll('.task-grid').forEach(el => el.classList.add('hidden'));
-        document.getElementById('main-menu').classList.remove('hidden');
-    }
-
-    function doTask(name, anim, type) {
-        stats[type] += 10;
-        localStorage.setItem('agnesStats', JSON.stringify(stats));
-        log.unshift(`${name}`);
-        localStorage.setItem('agnesLog', JSON.stringify(log.slice(0, 5)));
-        updateUI();
-        agnes.play(anim);
-        resetMenu();
-    }
-
     function preload() { this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json'); }
-
     function create() {
         agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5);
-        this.anims.create({ key: 'idle', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc001A_02.png' }], frameRate: 3, repeat: -1 });
-        this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_01.png' }, { key: 'agnes', frame: 'agtc101_02.png' }, { key: 'agnes', frame: 'agtc101_03.png' }, { key: 'agnes', frame: 'agtc101_04.png' }, { key: 'agnes', frame: 'agtc101_05.png' }], frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'dash_left', frames: [{ key: 'agnes', frame: 'agtc102_00.png' }, { key: 'agnes', frame: 'agtc102_01.png' }, { key: 'agnes', frame: 'agtc102_02.png' }, { key: 'agnes', frame: 'agtc102_03.png' }, { key: 'agnes', frame: 'agtc102_04.png' }, { key: 'agnes', frame: 'agtc102_05.png' }], frameRate: 10, repeat: 0 });
-        this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_01.png' }, { key: 'agnes', frame: 'agtc320_02.png' }, { key: 'agnes', frame: 'agtc320_03.png' }, { key: 'agnes', frame: 'agtc320_04.png' }, { key: 'agnes', frame: 'agtc320_06.png' }], frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_01.png' }, { key: 'agnes', frame: 'agtc940_02.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 8, repeat: 2 });
-        
-        agnes.on('animationcomplete', (anim) => {
-            if (anim.key === 'victory') { agnes.play('idle'); }
-            else if (['walk_left', 'dash_left', 'sit_down'].includes(anim.key)) { agnes.play('victory'); }
+        this.anims.create({ key: 'idle', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }], repeat: -1 });
+        this.anims.create({ key: 'dash_left', frames: [{ key: 'agnes', frame: 'agtc102_00.png' }], frameRate: 10, repeat: 0 });
+        this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 8, repeat: 2 });
+
+        agnes.on('animationcomplete', (a) => {
+            if (a.key === 'victory') agnes.play('idle');
+            else if (['dash_left', 'sit_down'].includes(a.key)) agnes.play('victory');
         });
 
-        updateUI();
-        agnes.play('idle');
+        setInterval(renderTasks, 60000); // Auto-refresh every minute
+        renderTasks();
     }
 </script>
 </body>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+    <style> body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; } </style>
+</head>
+<body>
+
+    <div id="game-container"></div>
+    <button id="taskBtn" style="position: absolute; top: 50px; padding: 10px;">Complete Quest!</button>
+
+<script>
+    const config = {
+        type: Phaser.AUTO,
+        width: 800, height: 600,
+        parent: 'game-container',
+        scene: { preload: preload, create: create }
+    };
+
+    const game = new Phaser.Game(config);
+
+    function preload() {
+        // Load your assets
+        this.load.atlas('agnes', 'Agnes Sprites.jpg', 'Agnes sprites JSON.json');
+    }
+
+    function create() {
+        // 1. Create the Sprite
+        const agnes = this.add.sprite(400, 300, 'agnes', 'agtc001A_00.png');
+        agnes.setScale(2); // Make her a bit bigger
+
+        // 2. Define Animations
+        this.anims.create({
+            key: 'idle',
+            frames: this.anims.generateFrameNames('agnes', { prefix: 'agtc001A_00', suffix: '.png', start: 0, end: 2 }),
+            frameRate: 4, repeat: -1
+        });
+
+        agnes.play('idle');
+
+        // 3. Connect to the Button
+        document.getElementById('taskBtn').onclick = () => {
+            console.log("Quest Completed!");
+            // Switch to a 'celebration' frame if you have one
+            agnes.setFrame('agtc950_04.png'); 
+            
+            // Return to idle after 2 seconds
+            setTimeout(() => agnes.play('idle'), 2000);
+        };
+    }
+</script>
+</body>
+</html>

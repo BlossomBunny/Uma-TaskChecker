@@ -87,15 +87,36 @@
             frameRate: 4, repeat: 0
         });
 
-        // 6. Sitting
-        this.anims.create({
-            key: 'sitting',
-            frames: [
-                { key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_01.png' }, { key: 'agnes', frame: 'agtc320_02.png' },
-                { key: 'agnes', frame: 'agtc320_03.png' }, { key: 'agnes', frame: 'agtc320_04.png' }, { key: 'agnes', frame: 'agtc320_06.png' }, { key: 'agnes', frame: 'agtc320_04.png' }
-            ],
-            frameRate: 3, repeat: 0
-        });
+// 1. The Entrance (Plays once)
+this.anims.create({
+    key: 'sit_down',
+    frames: [
+        { key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_01.png' },
+        { key: 'agnes', frame: 'agtc320_02.png' }, { key: 'agnes', frame: 'agtc320_03.png' },
+        { key: 'agnes', frame: 'agtc320_04.png' }, { key: 'agnes', frame: 'agtc320_05.png' },
+        { key: 'agnes', frame: 'agtc320_06.png' }
+    ],
+    frameRate: 6, 
+    repeat: 0 // Plays once and stops
+});
+
+// 2. The Loop (Plays forever)
+this.anims.create({
+    key: 'sitting_loop',
+    frames: [
+        { key: 'agnes', frame: 'agtc320_04.png' }, 
+        { key: 'agnes', frame: 'agtc320_06.png' }
+    ],
+    frameRate: 2, 
+    repeat: -1 // Loops forever
+});
+
+// 3. The Logic: "When sit_down finishes, switch to sitting_loop"
+this.agnes.on('animationcomplete', (animation) => {
+    if (animation.key === 'sit_down') {
+        this.agnes.play('sitting_loop');
+    }
+});
 
         agnes.play('idle');
     }

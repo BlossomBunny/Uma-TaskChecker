@@ -2,52 +2,71 @@
 <html>
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
-    <style> body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; } </style>
+    <style>
+        body { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f9f9f9; font-family: sans-serif; }
+        
+        /* The "Card" container from your mockup */
+        #ui-layer { text-align: center; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        #progress-container { width: 300px; height: 20px; background: #eee; border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: #4CAF50; transition: width 0.5s ease; }
+        
+        button { padding: 10px 20px; cursor: pointer; font-size: 16px; border: none; border-radius: 8px; background: #4CAF50; color: white; }
+    </style>
 </head>
 <body>
 
-    <div id="game-container"></div>
-    <button id="taskBtn" style="position: absolute; top: 50px; padding: 10px;">Complete Quest!</button>
+    <div id="ui-layer">
+        <h3>Agnes the Helper</h3>
+        <div id="game-container"></div>
+        <div id="progress-container"><div id="progress-bar"></div></div>
+        <div id="status">0/5 Tasks Done</div>
+        <button id="taskBtn">Complete Task!</button>
+    </div>
 
 <script>
+    let tasksCompleted = 0;
+    const totalTasks = 5;
+
     const config = {
-        type: Phaser.AUTO,
-        width: 800, height: 600,
-        parent: 'game-container',
+        type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container',
+        transparent: true, // Makes the background transparent to match your mockup
         scene: { preload: preload, create: create }
     };
 
     const game = new Phaser.Game(config);
 
     function preload() {
-        // Load your assets
-        this.load.atlas('agnes', 'Agnes Sprites.jpg', 'Agnes sprites JSON.json');
+        this.load.atlas('agnes', 'agnes-sprites.jpg', 'agnes-sprites.json');
     }
 
     function create() {
-        // 1. Create the Sprite
-        const agnes = this.add.sprite(400, 300, 'agnes', 'agtc001A_00.png');
-        agnes.setScale(2); // Make her a bit bigger
-
-        // 2. Define Animations
+        this.agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');
+        this.agnes.setScale(2);
+        
         this.anims.create({
             key: 'idle',
             frames: this.anims.generateFrameNames('agnes', { prefix: 'agtc001A_00', suffix: '.png', start: 0, end: 2 }),
             frameRate: 4, repeat: -1
         });
-
-        agnes.play('idle');
-
-        // 3. Connect to the Button
-        document.getElementById('taskBtn').onclick = () => {
-            console.log("Quest Completed!");
-            // Switch to a 'celebration' frame if you have one
-            agnes.setFrame('agtc950_04.png'); 
-            
-            // Return to idle after 2 seconds
-            setTimeout(() => agnes.play('idle'), 2000);
-        };
+        this.agnes.play('idle');
     }
+
+    document.getElementById('taskBtn').onclick = () => {
+        if (tasksCompleted < totalTasks) {
+            tasksCompleted++;
+            
+            // Update Progress Bar
+            const percent = (tasksCompleted / totalTasks) * 100;
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('status').innerText = tasksCompleted + '/' + totalTasks + ' Tasks Done';
+
+            // Trigger Animation (Assuming you have a 'celebrate' frame/anim)
+            // Just swapping frame for now
+            game.scene.scenes[0].agnes.setFrame('agtc950_04.png');
+            setTimeout(() => game.scene.scenes[0].agnes.play('idle'), 1500);
+        }
+    };
 </script>
 </body>
 </html>

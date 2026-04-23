@@ -3,46 +3,71 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
-        body { background: #EEDCC3; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
-        #game-container { border: 8px solid #4C566A; border-radius: 15px; background: white; width: 200px; height: 200px; overflow: hidden; }
+        body { background: #fdf5e6; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; }
         
-        /* Stats HUD */
-        #hud { display: flex; justify-content: space-around; width: 300px; background: #fff; padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 12px; }
+        /* HUD */
+        #hud { display: flex; gap: 10px; padding: 15px; background: #fff; border: 4px solid #4C566A; border-radius: 20px; margin-bottom: 20px; font-weight: bold; color: #4C566A; }
+        .stat-box { background: #f0f0f0; padding: 5px 10px; border-radius: 10px; text-align: center; }
+
+        #game-container { border: 8px solid #4C566A; border-radius: 25px; background: #fff; width: 200px; height: 200px; overflow: hidden; margin-bottom: 20px; }
         
-        /* Task Sections */
-        #ui { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 300px; }
-        .category { background: white; padding: 10px; border-radius: 10px; }
-        .btn { display: block; width: 100%; margin: 5px 0; padding: 5px; cursor: pointer; background: #eee; border: none; border-radius: 5px; }
-        .btn:hover { background: #ddd; }
+        /* Menu System */
+        #ui { width: 320px; }
+        .main-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .task-list { display: none; margin-top: 10px; padding: 10px; background: #eee; border-radius: 15px; }
+        
+        /* Buttons */
+        .btn { padding: 12px; cursor: pointer; border: 3px solid white; border-radius: 50px; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); box-shadow: 0 4px 0 rgba(0,0,0,0.2); transition: transform 0.1s; width: 100%; margin-bottom: 5px; }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+        
+        /* Colors */
+        .power { background-color: #ff7675; }
+        .stamina { background-color: #55efc4; }
+        .guts { background-color: #74b9ff; }
+        .wit { background-color: #a29bfe; }
     </style>
 </head>
 <body>
 
     <div id="hud">
-        <div>Pwr: <span id="stat-power">0</span></div>
-        <div>Stm: <span id="stat-stamina">0</span></div>
-        <div>Gts: <span id="stat-guts">0</span></div>
-        <div>Wit: <span id="stat-wit">0</span></div>
+        <div class="stat-box">Pwr: <span id="stat-power">0</span></div>
+        <div class="stat-box">Stm: <span id="stat-stamina">0</span></div>
+        <div class="stat-box">Gts: <span id="stat-guts">0</span></div>
+        <div class="stat-box">Wit: <span id="stat-wit">0</span></div>
     </div>
 
     <div id="game-container"></div>
     
     <div id="ui">
-        <div class="category">
-            <strong>Power</strong>
-            <button class="btn" onclick="doTask('power', 'dash_left')">Cook/Hydrate</button>
+        <div class="main-menu" id="main-menu">
+            <button class="btn power" onclick="showTasks('power')">Power</button>
+            <button class="btn stamina" onclick="showTasks('stamina')">Stamina</button>
+            <button class="btn guts" onclick="showTasks('guts')">Guts</button>
+            <button class="btn wit" onclick="showTasks('wit')">Wit</button>
         </div>
-        <div class="category">
-            <strong>Stamina</strong>
-            <button class="btn" onclick="doTask('stamina', 'walk_left')">Chores/Walk</button>
+
+        <div id="tasks-power" class="task-list">
+            <button class="btn power" onclick="doTask('power', 'dash_left')">Cook Breakfast</button>
+            <button class="btn power" onclick="doTask('power', 'dash_left')">Drink Water</button>
+            <button class="btn" onclick="hideTasks()">Back</button>
         </div>
-        <div class="category">
-            <strong>Guts</strong>
-            <button class="btn" onclick="doTask('guts', 'sit_down')">Hygiene</button>
+
+        <div id="tasks-stamina" class="task-list">
+            <button class="btn stamina" onclick="doTask('stamina', 'walk_left')">Clean Room</button>
+            <button class="btn stamina" onclick="doTask('stamina', 'walk_left')">Go for Walk</button>
+            <button class="btn" onclick="hideTasks()">Back</button>
         </div>
-        <div class="category">
-            <strong>Wit</strong>
-            <button class="btn" onclick="doTask('wit', 'idle')">Study</button>
+
+        <div id="tasks-guts" class="task-list">
+            <button class="btn guts" onclick="doTask('guts', 'sit_down')">Brush Teeth</button>
+            <button class="btn guts" onclick="doTask('guts', 'sit_down')">Shower</button>
+            <button class="btn" onclick="hideTasks()">Back</button>
+        </div>
+
+        <div id="tasks-wit" class="task-list">
+            <button class="btn wit" onclick="doTask('wit', 'idle')">Homework</button>
+            <button class="btn wit" onclick="doTask('wit', 'idle')">Study</button>
+            <button class="btn" onclick="hideTasks()">Back</button>
         </div>
     </div>
 
@@ -50,6 +75,18 @@
     let agnes;
     let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
 
+    // --- UI Logic ---
+    function showTasks(cat) {
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('tasks-' + cat).style.display = 'block';
+    }
+
+    function hideTasks() {
+        document.querySelectorAll('.task-list').forEach(el => el.style.display = 'none');
+        document.getElementById('main-menu').style.display = 'grid';
+    }
+
+    // --- Game Logic ---
     const config = { type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container', scene: { preload: preload, create: create } };
     const game = new Phaser.Game(config);
 
@@ -65,40 +102,24 @@
         localStorage.setItem('agnesStats', JSON.stringify(stats));
         updateHud();
         agnes.play(anim);
+        hideTasks(); // Automatically go back to main menu after task
     }
 
+    // --- Phaser Setup ---
     function preload() { this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json'); }
 
     function create() {
         agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5);
 
-        // 1. Idle
         this.anims.create({ key: 'idle', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc001A_02.png' }], frameRate: 3, repeat: -1 });
-
-        // 2. Walk Left (Repeats 3 times, then triggers complete)
         this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_01.png' }, { key: 'agnes', frame: 'agtc101_02.png' }, { key: 'agnes', frame: 'agtc101_03.png' }, { key: 'agnes', frame: 'agtc101_04.png' }, { key: 'agnes', frame: 'agtc101_05.png' }], frameRate: 6, repeat: 2 });
-
-        // 3. Dash Left (Repeats 3 times, then triggers complete)
         this.anims.create({ key: 'dash_left', frames: [{ key: 'agnes', frame: 'agtc102_00.png' }, { key: 'agnes', frame: 'agtc102_01.png' }, { key: 'agnes', frame: 'agtc102_02.png' }, { key: 'agnes', frame: 'agtc102_03.png' }, { key: 'agnes', frame: 'agtc102_04.png' }, { key: 'agnes', frame: 'agtc102_05.png' }], frameRate: 10, repeat: 2 });
-
-        // 4. Sudden Stop
-        this.anims.create({ key: 'stop', frames: [{ key: 'agnes', frame: 'agtc120_00.png' }, { key: 'agnes', frame: 'agtc120_01.png' }, { key: 'agnes', frame: 'agtc120_01.png' }, { key: 'agnes', frame: 'agtc121_00.png' }], frameRate: 4, repeat: 0 });
-
-        // 5. Sit Down (Transition)
         this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_01.png' }, { key: 'agnes', frame: 'agtc320_02.png' }, { key: 'agnes', frame: 'agtc320_03.png' }, { key: 'agnes', frame: 'agtc320_04.png' }, { key: 'agnes', frame: 'agtc320_06.png' }], frameRate: 6, repeat: 0 });
-
-        // 6. Sitting Loop
         this.anims.create({ key: 'sitting_loop', frames: [{ key: 'agnes', frame: 'agtc320_04.png' }, { key: 'agnes', frame: 'agtc320_06.png' }], frameRate: 2, repeat: -1 });
 
-        // THE ONE "MASTER" LISTENER
         agnes.on('animationcomplete', (animation) => {
-            if (animation.key === 'sit_down') {
-                agnes.play('sitting_loop');
-            } 
-            // Only return to idle if it's NOT already sitting/idle
-            else if (animation.key !== 'idle' && animation.key !== 'sitting_loop') {
-                agnes.play('idle');
-            }
+            if (animation.key === 'sit_down') { agnes.play('sitting_loop'); }
+            else if (animation.key !== 'idle' && animation.key !== 'sitting_loop') { agnes.play('idle'); }
         });
 
         updateHud();

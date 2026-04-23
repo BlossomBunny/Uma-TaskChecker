@@ -4,9 +4,9 @@
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         body { background: #EEDCC3; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; font-family: sans-serif; }
-        #game-container { border: 8px solid #4C566A; border-radius: 15px; background: white; width: 200px; height: 200px; }
-        #ui { margin-top: 20px; background: white; padding: 20px; border-radius: 15px; width: 250px; }
-        .item { margin-bottom: 10px; cursor: pointer; }
+        #game-container { border: 8px solid #4C566A; border-radius: 15px; background: white; width: 200px; height: 200px; overflow: hidden; }
+        #ui { margin-top: 20px; background: white; padding: 20px; border-radius: 15px; width: 250px; text-align: center; }
+        .btn { margin: 5px; padding: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -14,12 +14,15 @@
     <div id="game-container"></div>
     
     <div id="ui">
-        <div class="item"><input type="checkbox" onclick="react()"> Brush Teeth</div>
-        <div class="item"><input type="checkbox" onclick="react()"> Drink Water</div>
-        <div class="item"><input type="checkbox" onclick="react()"> Tidy Desk</div>
+        <button class="btn" onclick="agnes.play('walk_left')">Walk</button>
+        <button class="btn" onclick="agnes.play('dash_left')">Dash</button>
+        <button class="btn" onclick="agnes.play('sitting')">Sit</button>
+        <button class="btn" onclick="agnes.play('idle')">Idle</button>
     </div>
 
 <script>
+    let agnes; // Global variable to access her in buttons
+
     const config = {
         type: Phaser.AUTO, width: 200, height: 200, parent: 'game-container',
         scene: { preload: preload, create: create }
@@ -27,48 +30,79 @@
     const game = new Phaser.Game(config);
 
     function preload() {
-   
-    this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
-}
+        // Ensure this matches your ACTUAL filenames in GitHub
+        this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
+    }
 
- function create() {
-    this.agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');
-    this.agnes.setScale(1.5);
+    function create() {
+        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');
+        agnes.setScale(1.5);
 
-    // IDLE ANIMATION
-    // We aren't guessing names anymore. We are listing them explicitly.
-    this.anims.create({
-        key: 'idle',
-        frames: [
-            { key: 'agnes', frame: 'agtc001A_00.png' },
-            { key: 'agnes', frame: 'agtc001A_01.png' },
-            { key: 'agnes', frame: 'agtc001A_02.png' }
-        ],
-        frameRate: 3, 
-        repeat: -1
-    });
+        // 1. Idle
+        this.anims.create({
+            key: 'idle',
+            frames: [
+                { key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc001A_02.png' }
+            ],
+            frameRate: 3, repeat: -1
+        });
 
-    // SECONDARY ANIMATION
-    this.anims.create({
-        key: 'second_action',
-        frames: [
-            { key: 'agnes', frame: 'agtc100_00.png' },
-            { key: 'agnes', frame: 'agtc100_01.png' },
-            { key: 'agnes', frame: 'agtc100_02.png' },
-            { key: 'agnes', frame: 'agtc100_03.png' }
-        ],
-        frameRate: 3, 
-        repeat: -1
-    });
+        // 2. Walk Left
+        this.anims.create({
+            key: 'walk_left',
+            frames: [
+                { key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_01.png' }, { key: 'agnes', frame: 'agtc101_02.png' },
+                { key: 'agnes', frame: 'agtc101_03.png' }, { key: 'agnes', frame: 'agtc101_04.png' }, { key: 'agnes', frame: 'agtc101_05.png' }
+            ],
+            frameRate: 6, repeat: -1
+        });
 
-    this.agnes.play('idle');
-}
-    
-    function react() {
-        const agnes = game.scene.scenes[0].agnes;
-        agnes.setFrame('agtc950_04.png');
-        setTimeout(() => agnes.play('idle'), 1000);
+        // 3. Dash Left
+        this.anims.create({
+            key: 'dash_left',
+            frames: [
+                { key: 'agnes', frame: 'agtc102_00.png' }, { key: 'agnes', frame: 'agtc102_01.png' }, { key: 'agnes', frame: 'agtc102_02.png' },
+                { key: 'agnes', frame: 'agtc102_03.png' }, { key: 'agnes', frame: 'agtc102_04.png' }, { key: 'agnes', frame: 'agtc102_05.png' },
+                { key: 'agnes', frame: 'agtc110_00.png' }, { key: 'agnes', frame: 'agtc110_01.png' }
+            ],
+            frameRate: 10, repeat: 0
+        });
+
+        // 4. Mid-Dash Left
+        this.anims.create({
+            key: 'mid_dash',
+            frames: [
+                { key: 'agnes', frame: 'agtc110_00.png' }, { key: 'agnes', frame: 'agtc110_01.png' },
+                { key: 'agnes', frame: 'agtc111_00.png' }, { key: 'agnes', frame: 'agtc111_01.png' }, { key: 'agnes', frame: 'agtc111_02.png' },
+                { key: 'agnes', frame: 'agtc111_03.png' }, { key: 'agnes', frame: 'agtc111_04.png' }, { key: 'agnes', frame: 'agtc111_05.png' }, { key: 'agnes', frame: 'agtc111_06.png' },
+                { key: 'agnes', frame: 'agtc110_00.png' }, { key: 'agnes', frame: 'agtc110_01.png' }
+            ],
+            frameRate: 8, repeat: 0
+        });
+
+        // 5. Sudden Stop
+        this.anims.create({
+            key: 'stop',
+            frames: [
+                { key: 'agnes', frame: 'agtc120_00.png' }, { key: 'agnes', frame: 'agtc120_01.png' }, { key: 'agnes', frame: 'agtc120_01.png' }, { key: 'agnes', frame: 'agtc121_00.png' }
+            ],
+            frameRate: 4, repeat: 0
+        });
+
+        // 6. Sitting
+        this.anims.create({
+            key: 'sitting',
+            frames: [
+                { key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_01.png' }, { key: 'agnes', frame: 'agtc320_02.png' },
+                { key: 'agnes', frame: 'agtc320_03.png' }, { key: 'agnes', frame: 'agtc320_04.png' }, { key: 'agnes', frame: 'agtc320_05.png' }, { key: 'agnes', frame: 'agtc320_06.png' }
+            ],
+            frameRate: 3, repeat: -1
+        });
+
+        agnes.play('idle');
     }
 </script>
+</body>
+</html>
 </body>
 </html>

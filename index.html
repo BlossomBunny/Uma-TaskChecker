@@ -25,14 +25,18 @@
         .btn-group { display: flex; gap: 5px; }
         .btn-check { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
-        .btn-del { background: #ff7675; color: white; border: none; padding: 4px 8px; border-radius: 5px; }
-        #clock-display { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
-        #bubble { 
-    position: absolute; top: 10px; left: 10px; background: white; 
-    padding: 8px; border-radius: 10px; border: 2px solid var(--accent); 
-    display: none; font-size: 0.8em; z-index: 10; max-width: 150px; 
-    color: #596275; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
+        .btn-del { background: #ff7675; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; }
+        #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
+        #bubble {
+            position: absolute; top: 10px; left: 10px; background: white;
+            padding: 8px; border-radius: 10px; border: 2px solid var(--accent);
+            display: none; font-size: 0.8em; z-index: 10; max-width: 150px;
+            color: #596275; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .all-done {
+            text-align: center; padding: 20px; color: var(--accent);
+            font-weight: bold; font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -43,73 +47,80 @@
 </header>
 <div id="clock">Loading time...</div>
 
-    <div id="settings-menu">
+<div id="settings-menu">
     <h3>Custom Tasks</h3>
     <input type="text" id="new-task-name" placeholder="Task Name">
-    <select id="new-task-type"><option value="power">Power</option><option value="stamina">Stamina</option><option value="guts">Guts</option><option value="wit">Wit</option></select>
+    <select id="new-task-type">
+        <option value="power">Power</option>
+        <option value="stamina">Stamina</option>
+        <option value="guts">Guts</option>
+        <option value="wit">Wit</option>
+    </select>
     <p>Repeat on days:</p>
-<div id="new-task-days" style="display: flex; gap: 5px; flex-wrap: wrap;">
-    <label><input type="checkbox" value="0"> Sun</label>
-    <label><input type="checkbox" value="1"> Mon</label>
-    <label><input type="checkbox" value="2"> Tue</label>
-    <label><input type="checkbox" value="3"> Wed</label>
-    <label><input type="checkbox" value="4"> Thu</label>
-    <label><input type="checkbox" value="5"> Fri</label>
-    <label><input type="checkbox" value="6"> Sat</label>
-</div>
+    <div id="new-task-days" style="display: flex; gap: 5px; flex-wrap: wrap;">
+        <label><input type="checkbox" value="0"> Sun</label>
+        <label><input type="checkbox" value="1"> Mon</label>
+        <label><input type="checkbox" value="2"> Tue</label>
+        <label><input type="checkbox" value="3"> Wed</label>
+        <label><input type="checkbox" value="4"> Thu</label>
+        <label><input type="checkbox" value="5"> Fri</label>
+        <label><input type="checkbox" value="6"> Sat</label>
+    </div>
     <button onclick="addCustomTask()">Add Task</button>
     <hr>
     <div id="custom-task-list"></div>
     <button onclick="toggleMenu()">Close</button>
 </div>
 
-    <div id="hud">
-        <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
-    </div>
+<div id="hud">
+    <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div></div>
+    <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div></div>
+    <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div></div>
+    <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
+</div>
 
-   <div id="game-container">
+<div id="game-container">
     <div id="bubble"></div>
 </div>
-    
-    <div id="checklist">
-        <h3>Today's Schedule</h3>
-        <div id="task-list"></div>
-    </div>
+
+<div id="checklist">
+    <h3>Today's Schedule</h3>
+    <div id="task-list"></div>
+</div>
 
 <script>
-    let agnes, sceneContext, bubble;
-    let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
-    let history = JSON.parse(localStorage.getItem('agnesHistory')) || {};
-    let dismissed = JSON.parse(localStorage.getItem('agnesDismissed')) || {};
-    let customTasks = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
-    let lastInteraction = Date.now();
+    // ── State ────────────────────────────────────────────────────────────────
+    let agnes = null;
+    let stats    = JSON.parse(localStorage.getItem('agnesStats'))    || { power: 0, stamina: 0, guts: 0, wit: 0 };
+    let history  = JSON.parse(localStorage.getItem('agnesHistory'))  || {};
+    let dismissed= JSON.parse(localStorage.getItem('agnesDismissed'))|| {};
 
-   const coreTasks = [
-    // Morning
-    { id: 'Stretch', name: 'Morning Stretch', type: 'power', anim: 'cheer', timeLabel: 'Until 10AM', isEssential: true, check: h => h < 10 },
-    { id: 'Breakfast', name: 'Have Breakfast', type: 'stamina', anim: 'eating', timeLabel: 'Until 12PM', isEssential: true, check: h => h < 12 },
-    { id: 'Water', name: 'Drink Glass Of Water', type: 'stamina', anim: 'snack', timeLabel: 'Every 2hrs', isEssential: true, check: h => h >= 8 && h < 24 && h % 2 === 0 },
-    
-    // Day
-    { id: 'Lunch', name: 'Eat Lunch', type: 'stamina', anim: 'eating', timeLabel: '12PM - 3PM', isEssential: true, check: h => h >= 12 && h < 15 },
-    { id: 'Snack', name: 'Share A Snack With Agnes', type: 'stamina', anim: 'snack', timeLabel: '3PM - 5PM', isEssential: false, check: h => h >= 15 && h < 17 },
-    { id: 'Walk', name: 'Go For A Walk with Agnes', type: 'power', anim: 'super_dash', timeLabel: 'After 3PM', isEssential: false, check: h => h >= 15 && h < 19 },
-    
-    // Evening
-    { id: 'Read', name: 'Read/Study', type: 'wit', anim: 'sit_down', timeLabel: 'From 5PM', isEssential: false, check: h => h >= 17 },
-    { id: 'Dinner', name: 'Have Dinner With Agnes', type: 'stamina', anim: 'eating', timeLabel: '6PM - 10PM', isEssential: true, check: h => h >= 18 && h < 22 },
-    { id: 'Teeth', name: 'Brush Your Teeth', type: 'guts', anim: 'giggle', timeLabel: 'AM/PM', isEssential: true, check: h => (h >= 7 && h < 9) || (h >= 17 && h < 24) },
-    
-    // Weekly Chores
-    { id: 'Tidy', name: 'Tidy Up Room', type: 'power', anim: 'float', timeLabel: 'Wed & Sun', isEssential: false, days: [0, 3], check: h => h < 18 },
-    { id: 'Tidy2', name: 'Scrub The Bathroom', type: 'power', anim: 'dash', timeLabel: 'Sundays', isEssential: false, days: [0, 3], check: h => h < 18 },
-    { id: 'Shop', name: 'Go Food Shopping With Agnes', type: 'power', anim: 'dash', timeLabel: 'Saturdays', isEssential: false, days: [6], check: h => h < 20 },
-    { id: 'Laundry', name: 'Do Laundry With Agnes', type: 'guts', anim: 'dash', timeLabel: 'Sundays', isEssential: false, days: [0], check: h => h < 18 }
-];
+    // Custom tasks are stored WITHOUT the check function (functions can't be JSON-serialised).
+    // We restore a default check: () => true when we load them back out.
+    let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
+    function hydrateCustomTasks(raw) {
+        return raw.map(t => Object.assign({}, t, { check: () => true }));
+    }
+    let customTasks = hydrateCustomTasks(customTasksRaw);
 
+    // ── Core Tasks ───────────────────────────────────────────────────────────
+    const coreTasks = [
+        { id: 'Stretch',   name: 'Morning Stretch',            type: 'power',   anim: 'cheer',      timeLabel: 'Until 10AM',  isEssential: true,  check: h => h < 10 },
+        { id: 'Breakfast', name: 'Have Breakfast',             type: 'stamina', anim: 'eating',     timeLabel: 'Until 12PM',  isEssential: true,  check: h => h < 12 },
+        { id: 'Water',     name: 'Drink Glass Of Water',       type: 'stamina', anim: 'snack',      timeLabel: 'Every 2hrs',  isEssential: true,  check: h => h >= 8 && h < 24 && h % 2 === 0 },
+        { id: 'Lunch',     name: 'Eat Lunch',                  type: 'stamina', anim: 'eating',     timeLabel: '12PM - 3PM',  isEssential: true,  check: h => h >= 12 && h < 15 },
+        { id: 'Snack',     name: 'Share A Snack With Agnes',   type: 'stamina', anim: 'snack',      timeLabel: '3PM - 5PM',   isEssential: false, check: h => h >= 15 && h < 17 },
+        { id: 'Walk',      name: 'Go For A Walk with Agnes',   type: 'power',   anim: 'super_dash', timeLabel: 'After 3PM',   isEssential: false, check: h => h >= 15 && h < 19 },
+        { id: 'Read',      name: 'Read/Study',                 type: 'wit',     anim: 'sit_down',   timeLabel: 'From 5PM',    isEssential: false, check: h => h >= 17 },
+        { id: 'Dinner',    name: 'Have Dinner With Agnes',     type: 'stamina', anim: 'eating',     timeLabel: '6PM - 10PM',  isEssential: true,  check: h => h >= 18 && h < 22 },
+        { id: 'Teeth',     name: 'Brush Your Teeth',           type: 'guts',    anim: 'giggle',     timeLabel: 'AM/PM',       isEssential: true,  check: h => (h >= 7 && h < 9) || (h >= 17 && h < 24) },
+        { id: 'Tidy',      name: 'Tidy Up Room',               type: 'power',   anim: 'float',      timeLabel: 'Wed & Sun',   isEssential: false, days: [0, 3], check: h => h < 18 },
+        { id: 'Tidy2',     name: 'Scrub The Bathroom',         type: 'power',   anim: 'dash',       timeLabel: 'Sun & Wed',   isEssential: false, days: [0, 3], check: h => h < 18 },
+        { id: 'Shop',      name: 'Go Food Shopping With Agnes',type: 'power',   anim: 'dash',       timeLabel: 'Saturdays',   isEssential: false, days: [6],    check: h => h < 20 },
+        { id: 'Laundry',   name: 'Do Laundry With Agnes',      type: 'guts',    anim: 'dash',       timeLabel: 'Sundays',     isEssential: false, days: [0],    check: h => h < 18 }
+    ];
+
+    // ── Menu ─────────────────────────────────────────────────────────────────
     function toggleMenu() {
         const menu = document.getElementById('settings-menu');
         menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
@@ -117,26 +128,21 @@
     }
 
     function addCustomTask() {
-        const name = document.getElementById('new-task-name').value;
+        const name = document.getElementById('new-task-name').value.trim();
         const type = document.getElementById('new-task-type').value;
         const dayCheckboxes = document.querySelectorAll('#new-task-days input:checked');
         const days = Array.from(dayCheckboxes).map(cb => parseInt(cb.value));
-        
+
         if (!name || days.length === 0) {
             alert("Please provide a name and select at least one day.");
             return;
         }
-        
-        customTasks.push({ 
-            id: 'custom_' + Date.now(), 
-            name, type, 
-            days: days, 
-            timeLabel: 'Anytime',
-            isEssential: false, 
-            check: h => true 
-        });
-        
-        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasks));
+
+        const raw = { id: 'custom_' + Date.now(), name, type, days, timeLabel: 'Anytime', isEssential: false };
+        customTasksRaw.push(raw);
+        customTasks = hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
+
         document.getElementById('new-task-name').value = '';
         dayCheckboxes.forEach(cb => cb.checked = false);
         renderCustomTasks();
@@ -144,8 +150,9 @@
     }
 
     function deleteCustomTask(id) {
-        customTasks = customTasks.filter(t => t.id !== id);
-        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasks));
+        customTasksRaw = customTasksRaw.filter(t => t.id !== id);
+        customTasks    = hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
         renderCustomTasks();
         updateUI();
     }
@@ -153,32 +160,44 @@
     function renderCustomTasks() {
         const list = document.getElementById('custom-task-list');
         list.innerHTML = '';
-        customTasks.forEach(t => {
+        customTasksRaw.forEach(t => {
             list.innerHTML += `<div class="task-item">${t.name} <button class="btn-del" onclick="deleteCustomTask('${t.id}')">Delete</button></div>`;
         });
     }
 
+    // ── UI ───────────────────────────────────────────────────────────────────
     function updateUI() {
+        // Stats bars
         ['power', 'stamina', 'guts', 'wit'].forEach(s => {
             const val = stats[s];
-            const bar = document.getElementById(`bar-${s}`);
-            if(bar) bar.style.width = Math.min(val / 5, 100) + '%';
+            const bar  = document.getElementById(`bar-${s}`);
+            if (bar) bar.style.width = Math.min(val / 5, 100) + '%';
             const rank = document.getElementById(`rank-${s}`);
-            if(rank) rank.innerText = ['F','E','D','C','B','A','S'][Math.floor(Math.min(val/100, 6))];
+            if (rank) rank.innerText = ['F','E','D','C','B','A','S'][Math.floor(Math.min(val / 100, 6))];
         });
 
-        const h = new Date().getHours();
-        const today = new Date().toDateString();
-        const container = document.getElementById('task-list');
+        // Task list
+        const h          = new Date().getHours();
+        const today      = new Date().toDateString();
+        const currentDay = new Date().getDay();
+        const container  = document.getElementById('task-list');
         container.innerHTML = '';
 
-        const allTasks = [...coreTasks, ...customTasks];
-        const currentDay = new Date().getDay();
+        const allTasks  = [...coreTasks, ...customTasks];
+        let visibleCount = 0;
 
         allTasks.forEach(task => {
-            const taskDays = task.days || [0,1,2,3,4,5,6]; 
-            if (taskDays.includes(currentDay) && task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
-                let dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
+            const taskDays = task.days || [0,1,2,3,4,5,6];
+            if (
+                taskDays.includes(currentDay) &&
+                task.check(h) &&
+                history[task.id]  !== today &&
+                dismissed[task.id] !== today
+            ) {
+                visibleCount++;
+                const dismissBtn = task.isEssential
+                    ? ''
+                    : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
                 container.innerHTML += `
                     <div class="task-item">
                         <div class="task-info" onclick="say('Don\\'t forget to ${task.name.toLowerCase()}! ${task.timeLabel}')">
@@ -188,19 +207,25 @@
                                 <span class="task-time">${task.timeLabel || 'Anytime'}</span>
                             </div>
                         </div>
-                        <div class="btn-group">${dismissBtn}<button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button></div>
+                        <div class="btn-group">
+                            ${dismissBtn}
+                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button>
+                        </div>
                     </div>`;
             }
         });
+
+        if (visibleCount === 0) {
+            container.innerHTML = `<div class="all-done">🌸 All done for today! Great job!</div>`;
+        }
     }
 
     function complete(id, anim, type) {
-        lastInteraction = Date.now();
         history[id] = new Date().toDateString();
-        stats[type] += 10;
+        stats[type] = (stats[type] || 0) + 10;
         localStorage.setItem('agnesHistory', JSON.stringify(history));
-        localStorage.setItem('agnesStats', JSON.stringify(stats));
-        agnes.play(anim);
+        localStorage.setItem('agnesStats',   JSON.stringify(stats));
+        if (agnes) agnes.play(anim);
         updateUI();
     }
 
@@ -210,108 +235,107 @@
         updateUI();
     }
 
-   function say(text) {
-    const bubble = document.getElementById('bubble');
-    bubble.innerText = text;
-    bubble.style.display = 'block';
-    
-    // Play the 'say' animation if the game is loaded
-    if (typeof agnes !== 'undefined') {
-        agnes.play('say');
+    function say(text) {
+        const bubble = document.getElementById('bubble');
+        bubble.innerText = text;
+        bubble.style.display = 'block';
+        if (agnes) agnes.play('say');
+        setTimeout(() => bubble.style.display = 'none', 3000);
     }
-    
-    setTimeout(() => bubble.style.display = 'none', 3000);
-}
 
-function preload() {
-    this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
-}
-    
-    function create() {
-    sceneContext = this;
-    agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5).setInteractive();
+    // ── Clock ────────────────────────────────────────────────────────────────
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        const el = document.getElementById('clock');
+        if (el) el.innerText = timeString;
+    }
 
-    // --- ANIMATIONS ---
-    // Note: Most are repeat: 0 so they can trigger the 'animationcomplete' event to start the next one.
-    this.anims.create({ key: 'idle1', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }], frameRate: 2, repeat: 0 });
-    this.anims.create({ key: 'eating', frames: [{ key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_07.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_10.png' }, { key: 'agnes', frame: 'agtc360_11.png' }, { key: 'agnes', frame: 'agtc360_12.png' }], frameRate: 4, repeat: 0 });
-    this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }], frameRate: 6, repeat: 0 });
-    this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_04.png' }], frameRate: 6, repeat: 0 });
-    this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 4, repeat: 2 });
-    this.anims.create({ key: 'dash', frames: [{key:'agnes', frame:'agtc102_00.png'}, {key:'agnes', frame:'agtc102_01.png'}, {key:'agnes', frame:'agtc102_02.png'}, {key:'agnes', frame:'agtc102_03.png'}, {key:'agnes', frame:'agtc102_04.png'}, {key:'agnes', frame:'agtc102_05.png'}], frameRate: 10, repeat: 0 });
-    this.anims.create({ key: 'super_dash', frames: [{key:'agnes', frame:'agtc110_00.png'}, {key:'agnes', frame:'agtc110_00.png'}, {key:'agnes', frame:'agtc111_00.png'}, {key:'agnes', frame:'agtc111_01.png'}, {key:'agnes', frame:'agtc111_02.png'}, {key:'agnes', frame:'agtc111_03.png'}, {key:'agnes', frame:'agtc111_04.png'}, {key:'agnes', frame:'agtc111_05.png'}, {key:'agnes', frame:'agtc111_06.png'}], frameRate: 12, repeat: 0 });
-    this.anims.create({ key: 'sudden_stop', frames: [{key:'agnes', frame:'agtc120_00.png'}, {key:'agnes', frame:'agtc120_01.png'}], frameRate: 6, repeat: 0 });
-    this.anims.create({ key: 'float', frames: [{key:'agnes', frame:'agtc362_00.png'}, {key:'agnes', frame:'agtc362_01.png'}], frameRate: 4, repeat: -1 });
-    this.anims.create({ key: 'giggle', frames: [{key:'agnes', frame:'agtc500_00.png'}, {key:'agnes', frame:'agtc500_01.png'}, {key:'agnes', frame:'agtc500_02.png'}, {key:'agnes', frame:'agtc500_03.png'}], frameRate: 6, repeat: 0 });
-    this.anims.create({ key: 'snack', frames: [{key:'agnes', frame:'agtc510_00.png'}, {key:'agnes', frame:'agtc510_01.png'}, {key:'agnes', frame:'agtc510_02.png'}, {key:'agnes', frame:'agtc510_03.png'}, {key:'agnes', frame:'agtc510_04.png'}, {key:'agnes', frame:'agtc510_05.png'}], frameRate: 4, repeat: 0 });
-    this.anims.create({ key: 'wave', frames: [{key:'agnes', frame:'agtc540_00.png'}, {key:'agnes', frame:'agtc540_01.png'}], frameRate: 4, repeat: 3 });
-    this.anims.create({ key: 'cheer', frames: [{key:'agnes', frame:'agtc602_00.png'}, {key:'agnes', frame:'agtc602_01.png'}, {key:'agnes', frame:'agtc602_02.png'}], frameRate: 4, repeat: 0 });
-    this.anims.create({ key: 'say', frames: [{key:'agnes', frame:'agtc730_00.png'}, {key:'agnes', frame:'agtc730_01.png'}, {key:'agnes', frame:'agtc730_02.png'}, {key:'agnes', frame:'agtc730_03.png'}], frameRate: 4, repeat: 0 });
+    updateClock();
+    setInterval(updateClock, 1000);
+    setInterval(() => { updateClock(); updateUI(); }, 60000);
 
-    // --- RANDOM IDLE LOGIC ---
-    const idleList = ['idle1', 'walk_left', 'dash', 'float', 'giggle', 'wave', 'cheer'];
+    // Run updateUI immediately on page load (doesn't need Phaser)
+    updateUI();
 
-    const playRandomIdle = () => {
-        const key = idleList[Math.floor(Math.random() * idleList.length)];
-        // Randomly flip only for walk_left
-        agnes.setFlipX(key === 'walk_left' && Math.random() > 0.5);
-        agnes.play(key);
+    // ── Phaser ───────────────────────────────────────────────────────────────
+    const phaserConfig = {
+        type: Phaser.AUTO,
+        width: 200,
+        height: 200,
+        transparent: true,
+        parent: 'game-container',   // mounts the canvas into the existing div
+        scene: { preload, create }
     };
 
-    agnes.on('animationstart', (anim) => {
-        if (anim.key === 'float') {
-            this.tweens.add({ targets: agnes, y: agnes.y - 10, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
-            // Float for 3 seconds then force end
-            this.time.delayedCall(3000, () => {
-                if (agnes.anims.currentAnim.key === 'float') {
-                    agnes.anims.stop();
-                    playRandomIdle();
-                }
-            });
-        } else {
-            this.tweens.killTweensOf(agnes);
-        }
-    });
+    // Only boot Phaser once the DOM is ready (it already is at this point,
+    // but wrapping in a short defer keeps things safe if the script is moved).
+    const game = new Phaser.Game(phaserConfig);
 
-agnes.on('animationcomplete', (anim) => {
-        if (anim.key === 'super_dash') {
-            agnes.play('sudden_stop');
-        } else { 
-            // This now catches 'say', 'snack', 'victory', etc. 
-            // and returns her to the idle loop
-            playRandomIdle();
-        }
-    });
-
-    // Initial Trigger
-    playRandomIdle();
-    updateUI();
-}
-    
-// This function updates the text on your screen (make sure you have an <div id="clock"></div> in your HTML)
-function updateClock() {
-    const now = new Date();
-    // Formats time like "3:38 PM"
-    const timeString = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    
-    const clockElement = document.getElementById('clock');
-    if (clockElement) {
-        clockElement.innerText = timeString;
+    function preload() {
+        this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
     }
-}
 
-// Ensure updateUI is accessible (it should be defined elsewhere in your code)
-function heartbeat() {
-    updateClock();
-    if (typeof updateUI === 'function') {
-        updateUI(); // Refreshes the task list
+    function create() {
+        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5).setInteractive();
+
+        // ── Animations ───────────────────────────────────────────────────────
+        this.anims.create({ key: 'idle1',       frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }], frameRate: 2,  repeat: 0 });
+        this.anims.create({ key: 'eating',      frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'walk_left',   frames: [{ key: 'agnes', frame: 'agtc101_00.png' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'sit_down',    frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_04.png' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'victory',     frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 4, repeat: 2 });
+        this.anims.create({ key: 'dash',        frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 10, repeat: 0 });
+        this.anims.create({ key: 'super_dash',  frames: ['agtc110_00','agtc110_00','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 12, repeat: 0 });
+        this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00.png' }, { key: 'agnes', frame: 'agtc120_01.png' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00.png' }, { key: 'agnes', frame: 'agtc362_01.png' }], frameRate: 4, repeat: -1 });
+        this.anims.create({ key: 'giggle',      frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'snack',       frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'wave',        frames: [{ key: 'agnes', frame: 'agtc540_00.png' }, { key: 'agnes', frame: 'agtc540_01.png' }], frameRate: 4, repeat: 3 });
+        this.anims.create({ key: 'cheer',       frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
+
+        // ── Idle loop ─────────────────────────────────────────────────────────
+        const idleList = ['idle1', 'walk_left', 'dash', 'float', 'giggle', 'wave', 'cheer'];
+        const scene = this;
+
+        const playRandomIdle = () => {
+            const key = idleList[Math.floor(Math.random() * idleList.length)];
+            agnes.setFlipX(key === 'walk_left' && Math.random() > 0.5);
+            agnes.play(key);
+        };
+
+        agnes.on('animationstart', (anim) => {
+            if (anim.key === 'float') {
+                scene.tweens.add({ targets: agnes, y: agnes.y - 10, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
+                scene.time.delayedCall(3000, () => {
+                    if (agnes.anims.currentAnim && agnes.anims.currentAnim.key === 'float') {
+                        agnes.anims.stop();
+                        scene.tweens.killTweensOf(agnes);
+                        agnes.setY(100);
+                        playRandomIdle();
+                    }
+                });
+            } else {
+                scene.tweens.killTweensOf(agnes);
+            }
+        });
+
+        agnes.on('animationcomplete', (anim) => {
+            if (anim.key === 'super_dash') {
+                agnes.play('sudden_stop');
+            } else {
+                playRandomIdle();
+            }
+        });
+
+        // Tap Agnes to make her wave
+        agnes.on('pointerdown', () => {
+            say('Hi! Don\'t forget your tasks today! 🌸');
+        });
+
+        playRandomIdle();
     }
-}
-
-// Start the Heartbeat
-setInterval(updateClock, 1000); // Updates the clock visually every second
-setInterval(heartbeat, 60000);  // Refreshes the task list logic every minute
-    
 </script>
 </body>
 </html>

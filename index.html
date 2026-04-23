@@ -31,38 +31,37 @@
     this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
 }
 
-   function create() {
+ function create() {
     this.agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png');
     this.agnes.setScale(1.5);
 
-    // 1. Idle Group (agtc001A_00 to 02)
+    // IDLE ANIMATION
+    // We aren't guessing names anymore. We are listing them explicitly.
     this.anims.create({
-        key: 'idle_base',
-        frames: this.anims.generateFrameNames('agnes', { 
-            prefix: 'agtc001A_', 
-            suffix: '.png', 
-            start: 0, 
-            end: 2 
-        }),
+        key: 'idle',
+        frames: [
+            { key: 'agnes', frame: 'agtc001A_00.png' },
+            { key: 'agnes', frame: 'agtc001A_01.png' },
+            { key: 'agnes', frame: 'agtc001A_02.png' }
+        ],
         frameRate: 3, 
         repeat: -1
     });
 
-    // 2. Second Action Group (agtc100_00 to 03)
+    // SECONDARY ANIMATION
     this.anims.create({
-        key: 'idle_secondary',
-        frames: this.anims.generateFrameNames('agnes', { 
-            prefix: 'agtc100_', 
-            suffix: '.png', 
-            start: 0, 
-            end: 3 
-        }),
+        key: 'second_action',
+        frames: [
+            { key: 'agnes', frame: 'agtc100_00.png' },
+            { key: 'agnes', frame: 'agtc100_01.png' },
+            { key: 'agnes', frame: 'agtc100_02.png' },
+            { key: 'agnes', frame: 'agtc100_03.png' }
+        ],
         frameRate: 3, 
         repeat: -1
     });
 
-    // Start with the base idle
-    this.agnes.play('idle_base');
+    this.agnes.play('idle');
 }
     
     function react() {

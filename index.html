@@ -160,10 +160,10 @@
         sceneContext = this;
         agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5).setInteractive();
         this.anims.create({ key: 'idle1', frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }], frameRate: 2, repeat: 1 });
-        this.anims.create({ key: 'eating', frames: [{ key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_07.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_10.png' }, { key: 'agnes', frame: 'agtc360_11.png' }, { key: 'agnes', frame: 'agtc360_12.png' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'eating', frames: [{ key: 'agnes', frame: 'agtc360_06.png' }, { key: 'agnes', frame: 'agtc360_07.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_08.png' }, { key: 'agnes', frame: 'agtc360_09.png' }, { key: 'agnes', frame: 'agtc360_10.png' }, { key: 'agnes', frame: 'agtc360_11.png' }, { key: 'agnes', frame: 'agtc360_12.png' }], frameRate: 4, repeat: 0 });
         this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00.png' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_04.png' }], frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 8, repeat: 2 });
+        this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 4, repeat: 2 });
         agnes.on('animationcomplete', (a) => { if (a.key !== 'idle1') agnes.play('idle1'); });
         agnes.play('idle1');
         updateUI();

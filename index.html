@@ -65,7 +65,7 @@
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
         #agnes-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
         #status-box {
-            width: 364px; background: white;
+            width: min(364px, 95vw); background: white;
             border: 2px solid var(--accent); border-bottom: none;
             border-radius: 16px 16px 0 0;
             padding: 8px 12px; box-sizing: border-box;
@@ -77,21 +77,26 @@
         #game-container {
             border: 2px solid var(--accent); border-radius: 0 0 24px 24px; border-top: none;
             box-shadow: 0 8px 20px rgba(248,165,194,0.15);
-            background: #fff; width: 360px; height: 180px;
+            background: #fff;
+            /* Responsive: fill viewport on small screens, cap at 360px on larger */
+            width: min(360px, calc(95vw - 4px)); height: 180px;
             overflow: hidden; cursor: pointer;
         }
-        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .task-info { display: flex; flex-direction: column; }
-        .task-name { font-weight: 600; font-size: 0.85em; }
-        .task-meta { display: flex; gap: 8px; }
+        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; gap: 6px; }
+        .task-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+        .task-name { font-weight: 600; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .task-meta { display: flex; gap: 8px; flex-wrap: wrap; }
         .task-stat { font-size: 0.7em; color: #a5b1c2; font-weight: bold; }
         .task-time { font-size: 0.7em; color: var(--accent); font-weight: bold; }
-        .btn-group { display: flex; gap: 5px; }
-        .btn-check { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
-        .btn-del { background: #ff7675; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 0.75em; border-radius: 6px; }
+        .btn-group { display: flex; gap: 5px; flex-shrink: 0; }
+        .btn-check { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85em; }
+        .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
+        .btn-del { background: #ff7675; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; }
         #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
         .all-done { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; font-size: 0.9em; }
+        /* iOS input resets */
+        input.tp-input, select.tp-input { -webkit-appearance: none; appearance: none; }
+        input[type="time"].tp-input { min-width: 0; }
     </style>
 </head>
 <body>
@@ -340,7 +345,7 @@
         if (window.cancelCurrent) window.cancelCurrent();
         if (agnes) { agnes.setFlipX(false); agnes.play(anim); }
         if (rankAfter > rankBefore) {
-            setStatus(rankUpMessages[type] || '✨ Level up!', 5000);
+            setStatus(rankUpMessages[type] || '✨ RANK UP!', 5000);
             if (window.showEmotion) window.showEmotion('bulb', 2500);
         } else {
             setStatus('Good work! 🌸', 3000);
@@ -431,9 +436,12 @@
     updateUI();
 
     // ── Phaser ───────────────────────────────────────────────────────────────
+    // Calculate canvas width to match the responsive game-container
+    const canvasWidth = Math.min(360, Math.round(window.innerWidth * 0.95) - 4);
+
     const phaserConfig = {
         type: Phaser.AUTO,
-        width: 360,
+        width: canvasWidth,
         height: 180,
         transparent: true,
         parent: 'game-container',
@@ -448,10 +456,8 @@
     }
 
     function create() {
-        agnes = this.add.sprite(180, 90, 'agnes', 'agtc001A_00').setScale(1.5).setInteractive();
-
-        // ── Emotion bubble ────────────────────────────────────────────────────
-        const emo = this.add.sprite(180, 40, 'emotions', 0).setScale(1.2).setAlpha(0).setDepth(10);
+        agnes = this.add.sprite(Math.round(canvasWidth / 2), 90, 'agnes', 'agtc001A_00').setScale(1.5).setInteractive();
+        const emo = this.add.sprite(Math.round(canvasWidth / 2), 40, 'emotions', 0).setScale(1.2).setAlpha(0).setDepth(10);
         const EMO_ROWS = { exclaim:0, question:1, music:2, heart:3, sweat:4, sweat2:5, dizzy:6, ellipsis:7, bulb:8, zzz:9 };
         Object.entries(EMO_ROWS).forEach(([key, row]) => {
             this.anims.create({
@@ -501,8 +507,12 @@
         let isInterrupted = false;
 
         const scene = this;
-        const HOME_X = 180;
+        const HOME_X = Math.round(canvasWidth / 2);
         const HOME_Y = 90;
+        const WALL_L = 20;
+        const WALL_R = canvasWidth - 20;
+        const SDASH_L = 10;
+        const SDASH_R = canvasWidth - 10;
 
         const idleQuotes = [
             "Life is an experiment, and we its guinea pigs.",
@@ -684,8 +694,8 @@
                 if (arrived) { agnes.x = HOME_X; parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000)); return; }
             }
 
-            const hitLeft  = agnes.x < 20;
-            const hitRight = agnes.x > 340;
+            const hitLeft  = agnes.x < WALL_L;
+            const hitRight = agnes.x > WALL_R;
 
             if (moveMode === 'walk' && (hitLeft || hitRight) && !wallBouncing) {
                 wallBouncing = true; agnesVX *= -1; agnes.setFlipX(agnesVX > 0);
@@ -693,7 +703,7 @@
                 wallBouncing = true; parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000));
             } else if (moveMode === 'dash_return' && (hitLeft || hitRight)) {
                 parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000));
-            } else if (moveMode === 'superdash' && (agnes.x < 10 || agnes.x > 350)) {
+            } else if (moveMode === 'superdash' && (agnes.x < SDASH_L || agnes.x > SDASH_R)) {
                 agnesVX = 0; agnesVY = 0; moveMode = 'none';
             }
         });

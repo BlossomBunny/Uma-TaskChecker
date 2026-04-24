@@ -15,12 +15,9 @@
         .bar-container { flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
-        #agnes-wrap {
-            display: flex; flex-direction: column; align-items: center;
-            margin-bottom: 15px;
-        }
+        #agnes-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
         #status-box {
-            width: 364px; /* matches game-container's 360px + 2px border each side */
+            width: 364px;
             background: white;
             border: 2px solid var(--accent);
             border-bottom: none;
@@ -30,10 +27,7 @@
             text-align: center; min-height: 44px;
             display: flex; align-items: center; justify-content: center;
         }
-        #status-text {
-            transition: opacity 0.4s ease;
-            opacity: 1;
-        }
+        #status-text { transition: opacity 0.4s ease; opacity: 1; }
         #game-container {
             border: 2px solid var(--accent);
             border-radius: 0 0 24px 24px;
@@ -114,8 +108,6 @@
     let history  = JSON.parse(localStorage.getItem('agnesHistory'))  || {};
     let dismissed= JSON.parse(localStorage.getItem('agnesDismissed'))|| {};
 
-    // Custom tasks are stored WITHOUT the check function (functions can't be JSON-serialised).
-    // We restore a default check: () => true when we load them back out.
     let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
     function hydrateCustomTasks(raw) {
         return raw.map(t => Object.assign({}, t, { check: () => true }));
@@ -151,17 +143,11 @@
         const type = document.getElementById('new-task-type').value;
         const dayCheckboxes = document.querySelectorAll('#new-task-days input:checked');
         const days = Array.from(dayCheckboxes).map(cb => parseInt(cb.value));
-
-        if (!name || days.length === 0) {
-            alert("Please provide a name and select at least one day.");
-            return;
-        }
-
+        if (!name || days.length === 0) { alert("Please provide a name and select at least one day."); return; }
         const raw = { id: 'custom_' + Date.now(), name, type, days, timeLabel: 'Anytime', isEssential: false };
         customTasksRaw.push(raw);
         customTasks = hydrateCustomTasks(customTasksRaw);
         localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
-
         document.getElementById('new-task-name').value = '';
         dayCheckboxes.forEach(cb => cb.checked = false);
         renderCustomTasks();
@@ -186,7 +172,6 @@
 
     // ── UI ───────────────────────────────────────────────────────────────────
     function updateUI() {
-        // Stats bars
         ['power', 'stamina', 'guts', 'wit'].forEach(s => {
             const val = stats[s];
             const bar  = document.getElementById(`bar-${s}`);
@@ -195,28 +180,19 @@
             if (rank) rank.innerText = ['F','E','D','C','B','A','S'][Math.floor(Math.min(val / 100, 6))];
         });
 
-        // Task list
         const h          = new Date().getHours();
         const today      = new Date().toDateString();
         const currentDay = new Date().getDay();
         const container  = document.getElementById('task-list');
         container.innerHTML = '';
-
         const allTasks  = [...coreTasks, ...customTasks];
         let visibleCount = 0;
 
         allTasks.forEach(task => {
             const taskDays = task.days || [0,1,2,3,4,5,6];
-            if (
-                taskDays.includes(currentDay) &&
-                task.check(h) &&
-                history[task.id]  !== today &&
-                dismissed[task.id] !== today
-            ) {
+            if (taskDays.includes(currentDay) && task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
                 visibleCount++;
-                const dismissBtn = task.isEssential
-                    ? ''
-                    : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
+                const dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
                 container.innerHTML += `
                     <div class="task-item">
                         <div class="task-info" onclick="if(window.showEmotion)window.showEmotion('question',1500); say('Don\'t forget to ${task.name.toLowerCase()}! ${task.timeLabel}')">
@@ -246,9 +222,11 @@
         const rankAfter = Math.floor(Math.min(stats[type] / 100, 6));
         localStorage.setItem('agnesHistory', JSON.stringify(history));
         localStorage.setItem('agnesStats',   JSON.stringify(stats));
-        if (agnes) agnes.play(anim);
+        // Cancel current idle cycle so it can't interrupt the reward anim
+        if (window.cancelCurrent) window.cancelCurrent();
+        if (agnes) { agnes.setFlipX(false); agnes.play(anim); }
         if (rankAfter > rankBefore) {
-            setStatus(rankUpMessages[type] || '✨ Level up!', 5000);
+            setStatus(rankUpMessages[type] || '✨ RANK UP!', 5000);
             if (window.showEmotion) window.showEmotion('bulb', 2500);
         } else {
             setStatus('Good work! 🌸', 3000);
@@ -272,6 +250,10 @@
         "Agnes is here! 🌸",
         "Ready for today?",
         "What's on the schedule?",
+        "Another day, another experiment!",
+        "There's still time for more!",
+        "hehehe~",
+        "Hello test subject!",
     ];
 
     const boredMessages = [
@@ -293,10 +275,7 @@
         if (!el) return;
         el.style.opacity = '0';
         if (statusTimeout) clearTimeout(statusTimeout);
-        setTimeout(() => {
-            el.textContent = text;
-            el.style.opacity = '1';
-        }, 300);
+        setTimeout(() => { el.textContent = text; el.style.opacity = '1'; }, 300);
         if (duration) {
             statusTimeout = setTimeout(() => {
                 setStatus(defaultMessages[Math.floor(Math.random() * defaultMessages.length)], 0);
@@ -312,7 +291,6 @@
             const h = new Date().getHours();
             const msg = boredMessages[Math.floor(Math.random() * boredMessages.length)];
             setStatus(msg, 0);
-            // Show zzz late at night, dizzy otherwise
             if (window.showEmotion) window.showEmotion(h >= 22 || h < 6 ? 'zzz' : 'dizzy', 2500);
             boredTimeout = setInterval(() => {
                 const m = boredMessages[Math.floor(Math.random() * boredMessages.length)];
@@ -325,24 +303,20 @@
     function say(text) {
         setStatus(text, 4000);
         if (agnes) agnes.play('say');
-        // NOTE: emotion bubble is triggered by the caller, not here, to avoid duplicates
+        // emotion bubble triggered by caller to avoid duplicates
     }
 
-    resetBoredTimer(); // start the inactivity clock on load
+    resetBoredTimer();
 
     // ── Clock ────────────────────────────────────────────────────────────────
     function updateClock() {
         const now = new Date();
-        const timeString = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         const el = document.getElementById('clock');
-        if (el) el.innerText = timeString;
+        if (el) el.innerText = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     }
-
     updateClock();
     setInterval(updateClock, 1000);
     setInterval(() => { updateClock(); updateUI(); }, 60000);
-
-    // Run updateUI immediately on page load (doesn't need Phaser)
     updateUI();
 
     // ── Phaser ───────────────────────────────────────────────────────────────
@@ -355,33 +329,24 @@
         scene: { preload, create }
     };
 
-    // Only boot Phaser once the DOM is ready (it already is at this point,
-    // but wrapping in a short defer keeps things safe if the script is moved).
     const game = new Phaser.Game(phaserConfig);
 
     function preload() {
         this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
-        // emotions.png: 8 cols x 10 rows, each cell 32x48px
         this.load.spritesheet('emotions', 'emotions.png', { frameWidth: 32, frameHeight: 48 });
     }
 
     function create() {
         agnes = this.add.sprite(180, 90, 'agnes', 'agtc001A_00').setScale(1.5).setInteractive();
 
-        // ── Emotion bubble sprite (floats above Agnes) ────────────────────────
-        // emotions.png: 8 cols x 10 rows, 32x48px per cell
-        // We only use col 0 (first frame) through col 7 (last frame) per row
-        // Row order: 0=exclaim, 1=question, 2=music, 3=heart, 4=sweat,
-        //            5=sweat2, 6=dizzy, 7=ellipsis, 8=bulb, 9=zzz
+        // ── Emotion bubble ────────────────────────────────────────────────────
         const emo = this.add.sprite(180, 40, 'emotions', 0).setScale(1.2).setAlpha(0).setDepth(10);
-
         const EMO_ROWS = { exclaim:0, question:1, music:2, heart:3, sweat:4, sweat2:5, dizzy:6, ellipsis:7, bulb:8, zzz:9 };
         Object.entries(EMO_ROWS).forEach(([key, row]) => {
             this.anims.create({
                 key: 'emo_' + key,
                 frames: this.anims.generateFrameNumbers('emotions', { start: row * 8, end: row * 8 + 7 }),
-                frameRate: 8,
-                repeat: 0
+                frameRate: 8, repeat: 0
             });
         });
 
@@ -398,13 +363,12 @@
 
         window.showEmotion = showEmotion;
 
-        // Track Agnes's position
         this.events.on('update', () => {
             if (emo.alpha > 0) emo.setPosition(agnes.x, agnes.y - 50);
         });
 
         // ── Animations ───────────────────────────────────────────────────────
-        this.anims.create({ key: 'idle1',       frames: [{ key: 'agnes', frame: 'agtc001A_00' }, { key: 'agnes', frame: 'agtc001A_01' },  { key: 'agnes', frame: 'agtc001A_02' }, { key: 'agnes', frame: 'agtc100_00' }, { key: 'agnes', frame: 'agtc100_01' }, { key: 'agnes', frame: 'agtc100_02' }, { key: 'agnes', frame: 'agtc100_03' }], frameRate: 2, repeat: -1 });
+        this.anims.create({ key: 'idle1',       frames: [{ key: 'agnes', frame: 'agtc001A_00' }, { key: 'agnes', frame: 'agtc001A_01' }, { key: 'agnes', frame: 'agtc001A_02' }, { key: 'agnes', frame: 'agtc100_00' }, { key: 'agnes', frame: 'agtc100_01' }, { key: 'agnes', frame: 'agtc100_02' }, { key: 'agnes', frame: 'agtc100_03' }], frameRate: 2, repeat: -1 });
         this.anims.create({ key: 'eating',      frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
         this.anims.create({ key: 'walk_left',   frames: [{ key: 'agnes', frame: 'agtc101_00' }, { key: 'agnes', frame: 'agtc101_01' }, { key: 'agnes', frame: 'agtc101_02' }, { key: 'agnes', frame: 'agtc101_03' }, { key: 'agnes', frame: 'agtc101_04' }, { key: 'agnes', frame: 'agtc101_05' }], frameRate: 6, repeat: -1 });
         this.anims.create({ key: 'sit_down',    frames: [{ key: 'agnes', frame: 'agtc320_00' }, { key: 'agnes', frame: 'agtc320_01' }, { key: 'agnes', frame: 'agtc320_02' }, { key: 'agnes', frame: 'agtc320_03' }, { key: 'agnes', frame: 'agtc320_04' }, { key: 'agnes', frame: 'agtc320_06' }, { key: 'agnes', frame: 'agtc320_04' }, { key: 'agnes', frame: 'agtc320_06' }, { key: 'agnes', frame: 'agtc320_04' }, { key: 'agnes', frame: 'agtc320_06' }], frameRate: 2, repeat: 0 });
@@ -424,12 +388,13 @@
         let moveMode = 'none';
         let floatAngle = 0;
         let wallBouncing = false;
+        let isInterrupted = false;
 
         const scene = this;
         const HOME_X = 180;
         const HOME_Y = 90;
 
-          const idleQuotes = [
+        const idleQuotes = [
             "Life is an experiment, and we its guinea pigs.",
             "Don't worry about it~",
             "The worst that could happen is your legs would start glowing green for a while!",
@@ -452,14 +417,22 @@
 
         const weightedPool = [
             'idle1','idle1','idle1','idle1','idle1','idle1',
-            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave', 'cheer'
+            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave'
         ];
 
         let idleTimer = null;
         const scheduleNext = (delayMs) => {
             if (idleTimer) idleTimer.remove(false);
+            isInterrupted = false;
             idleTimer = scene.time.delayedCall(delayMs, playRandomIdle);
         };
+
+        const cancelCurrent = () => {
+            isInterrupted = true;
+            if (idleTimer) { idleTimer.remove(false); idleTimer = null; }
+        };
+
+        window.cancelCurrent = cancelCurrent;
 
         const scheduleNextQuote = () => {
             scene.time.delayedCall(Phaser.Math.Between(25000, 45000), () => {
@@ -482,7 +455,6 @@
             agnes.play('idle1');
         };
 
-        // Walk Agnes back to HOME_X using walk animation, then call onArrival
         const walkHome = (onArrival) => {
             if (Math.abs(agnes.x - HOME_X) < 10) {
                 agnes.x = HOME_X;
@@ -495,30 +467,28 @@
             agnesVX = goRight ? 60 : -60;
             moveMode = 'returning';
             agnes.play('walk_left');
-            // Check arrival each frame via update(); onArrival stored for update() to call
             scene._walkHomeCallback = onArrival;
         };
 
         const playRandomIdle = () => {
+            isInterrupted = false;
             const key = weightedPool[Math.floor(Math.random() * weightedPool.length)];
             stopMoving();
 
             if (key === 'walk_left') {
-                // Pick a random direction, walk, optionally flip and walk back
                 const goRight = Math.random() > 0.5;
                 agnes.setFlipX(goRight);
                 agnesVX = goRight ? 50 : -50;
                 moveMode = 'walk';
                 agnes.play('walk_left');
-                // After 2–4 s, flip and walk back to home
                 scene.time.delayedCall(Phaser.Math.Between(2000, 4000), () => {
-                    if (moveMode === 'walk') {
-                        stopMoving();
-                        walkHome(() => {
-                            parkIdle();
-                            scheduleNext(Phaser.Math.Between(2000, 4000));
-                        });
-                    }
+                    if (isInterrupted || moveMode !== 'walk') return;
+                    stopMoving();
+                    walkHome(() => {
+                        if (isInterrupted) return;
+                        parkIdle();
+                        scheduleNext(Phaser.Math.Between(2000, 4000));
+                    });
                 });
 
             } else if (key === 'dash') {
@@ -527,17 +497,14 @@
                 agnesVX = goRight ? 160 : -160;
                 moveMode = 'dash';
                 agnes.play('dash');
-                // After 1–2 s flip and dash back home
                 scene.time.delayedCall(Phaser.Math.Between(1000, 2000), () => {
-                    if (moveMode === 'dash') {
-                        stopMoving();
-                        // Dash back at half speed so she doesn't overshoot
-                        const backRight = agnes.x < HOME_X;
-                        agnes.setFlipX(backRight);
-                        agnesVX = backRight ? 140 : -140;
-                        moveMode = 'dash_return';
-                        agnes.play('dash');
-                    }
+                    if (isInterrupted || moveMode !== 'dash') return;
+                    stopMoving();
+                    const backRight = agnes.x < HOME_X;
+                    agnes.setFlipX(backRight);
+                    agnesVX = backRight ? 140 : -140;
+                    moveMode = 'dash_return';
+                    agnes.play('dash');
                 });
 
             } else if (key === 'super_dash') {
@@ -548,20 +515,17 @@
                 agnes.play('super_dash');
 
             } else if (key === 'float') {
-                // Float sporadically for 5–9 seconds with varying drift
-                floatAngle = Math.random() * Math.PI * 2; // random start phase
+                floatAngle = Math.random() * Math.PI * 2;
                 moveMode = 'float';
                 agnes.play('float');
-                const floatDuration = Phaser.Math.Between(5000, 9000);
-                scene.time.delayedCall(floatDuration, () => {
-                    if (moveMode === 'float') {
-                        // Walk home after floating
-                        stopMoving();
-                        walkHome(() => {
-                            parkIdle();
-                            scheduleNext(Phaser.Math.Between(3000, 6000));
-                        });
-                    }
+                scene.time.delayedCall(Phaser.Math.Between(5000, 9000), () => {
+                    if (isInterrupted || moveMode !== 'float') return;
+                    stopMoving();
+                    walkHome(() => {
+                        if (isInterrupted) return;
+                        parkIdle();
+                        scheduleNext(Phaser.Math.Between(3000, 6000));
+                    });
                 });
 
             } else if (key === 'idle1') {
@@ -579,32 +543,35 @@
         };
 
         agnes.on('animationcomplete', (anim) => {
+            if (isInterrupted) return;
             if (anim.key === 'super_dash') {
                 stopMoving();
-                // Walk back home after super dash
                 walkHome(() => {
+                    if (isInterrupted) return;
                     parkIdle();
                     scheduleNext(Phaser.Math.Between(3000, 6000));
                 });
             } else if (anim.key === 'sudden_stop') {
                 parkIdle();
                 scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (anim.key === 'say' || anim.key === 'cheer') {
+            } else if (anim.key === 'say') {
                 parkIdle();
-                scheduleNext(500);
+                scheduleNext(Phaser.Math.Between(2000, 4000));
             } else if (anim.key === 'walk_left' || anim.key === 'dash') {
                 // looping — handled externally
             } else if (anim.key === 'idle1') {
                 // looping — never completes
             } else {
+                // eating, snack, giggle, wave, cheer, sit_down etc
                 parkIdle();
                 scheduleNext(Phaser.Math.Between(3000, 6000));
             }
         });
 
         agnes.on('pointerdown', () => {
-            if (idleTimer) idleTimer.remove(false);
+            cancelCurrent();
             scene._walkHomeCallback = null;
+            stopMoving();
             parkIdle();
             agnes.setPosition(HOME_X, HOME_Y);
             showEmotion('question', 1800);
@@ -620,7 +587,6 @@
             const dt = delta / 1000;
 
             if (moveMode === 'float') {
-                // Sporadic drift — two sine waves at different speeds for organic feel
                 floatAngle += delta * 0.0008;
                 agnes.x = HOME_X + Math.sin(floatAngle * 1.3) * 70 + Math.sin(floatAngle * 2.7) * 20;
                 agnes.y = HOME_Y + Math.sin(floatAngle * 0.9) * 18 + Math.sin(floatAngle * 2.1) * 8;
@@ -632,7 +598,6 @@
             agnes.x += agnesVX * dt;
             agnes.y += agnesVY * dt;
 
-            // Arrival check for walkHome
             if (moveMode === 'returning' && scene._walkHomeCallback) {
                 const arrived = (agnesVX > 0 && agnes.x >= HOME_X) || (agnesVX < 0 && agnes.x <= HOME_X);
                 if (arrived) {
@@ -646,7 +611,6 @@
                 }
             }
 
-            // Arrival check for dash_return
             if (moveMode === 'dash_return') {
                 const arrived = (agnesVX > 0 && agnes.x >= HOME_X) || (agnesVX < 0 && agnes.x <= HOME_X);
                 if (arrived) {
@@ -662,7 +626,6 @@
 
             if (moveMode === 'walk' && (hitLeft || hitRight) && !wallBouncing) {
                 wallBouncing = true;
-                // Flip and walk back instead of stopping dead
                 agnesVX *= -1;
                 agnes.setFlipX(agnesVX > 0);
             } else if (moveMode === 'dash' && (hitLeft || hitRight) && !wallBouncing) {

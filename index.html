@@ -20,9 +20,11 @@
             margin-bottom: 15px;
         }
         #status-box {
-            width: 200px; background: white;
-            border: 2px solid var(--accent); border-radius: 16px 16px 0 0;
+            width: 204px; /* matches game-container's 200px + 2px border each side */
+            background: white;
+            border: 2px solid var(--accent);
             border-bottom: none;
+            border-radius: 16px 16px 0 0;
             padding: 8px 12px; box-sizing: border-box;
             font-size: 0.72em; color: #596275; line-height: 1.4;
             text-align: center; min-height: 44px;
@@ -33,10 +35,12 @@
             opacity: 1;
         }
         #game-container {
-            border: 2px solid var(--accent); border-radius: 0 0 24px 24px;
+            border: 2px solid var(--accent);
+            border-radius: 0 0 24px 24px;
             border-top: none;
             box-shadow: 0 8px 20px rgba(248,165,194,0.15);
-            background: #fff; width: 200px; height: 200px;
+            background: #fff;
+            width: 200px; height: 200px;
             overflow: hidden; cursor: pointer;
         }
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
@@ -429,9 +433,14 @@
         const HOME_Y = 100;
 
         const idleQuotes = [
-            "Life is an experiment, and we its guinea pigs. You, me, the other Umamusume—everyone!",
-            "Don't worry about it... The worst that could happen is that both of your legs would start glowing green for a while. Isn't that a cute side effect?",
+            "Life is an experiment, and we its guinea pigs.",
+            "Don't worry about it~",
+            "The worst that could happen is your legs would start glowing green for a while!",
+            "Isn't that a cute side effect?",
             "Witness me. Watch me run. Burn the sight into your eyes."
+            "Time for science!",
+            "Want to be my test subject next?",
+            "lets run together next time!",
         ];
         let lastQuoteIndex = -1;
         const maybeQuote = () => {
@@ -447,7 +456,7 @@
         // Weighted pool — idle1 x6 so she's calm most of the time
         const weightedPool = [
             'idle1','idle1','idle1','idle1','idle1','idle1',
-            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave', 'cheer'
+            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave'
         ];
 
         let idleTimer = null;
@@ -545,7 +554,7 @@
             } else if (anim.key === 'sudden_stop') {
                 parkIdle();
                 scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (anim.key === 'say' || anim.key === 'victory') {
+            } else if (anim.key === 'say' || anim.key === 'cheer') {
                 parkIdle();
                 scheduleNext(500);
             } else if (anim.key === 'walk_left' || anim.key === 'dash') {

@@ -49,12 +49,6 @@
         .btn-del { background: #ff7675; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; }
         #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
         .all-done { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; font-size: 0.9em; }
-
-      
-details { width: 100%; margin-bottom: 10px; background: #fff5f7; border-radius: 8px; padding: 10px; }
-summary { cursor: pointer; font-weight: bold; color: var(--accent); list-style: none; }
-.form-group { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
-.form-group input, .form-group select { padding: 5px; border-radius: 5px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -66,37 +60,28 @@ summary { cursor: pointer; font-weight: bold; color: var(--accent); list-style: 
 <div id="clock">Loading time...</div>
 
 <div id="settings-menu">
-    <h3>⚙️ Settings</h3>
-    
-    <details>
-        <summary>+ Add New Custom Task</summary>
-        <div class="form-group">
-            <input type="text" id="new-task-name" placeholder="Task Name">
-            <select id="new-task-type">
-                <option value="power">Power</option>
-                <option value="stamina">Stamina</option>
-                <option value="guts">Guts</option>
-                <option value="wit">Wit</option>
-            </select>
-            <label>Target Hour (0-23):</label>
-            <input type="number" id="new-task-hour" min="0" max="23" value="9">
-            <label>Repeat on:</label>
-            <div id="new-task-days" style="display: flex; gap: 5px; flex-wrap: wrap;">
-                <label><input type="checkbox" value="0" checked> Sun</label>
-                <label><input type="checkbox" value="1" checked> Mon</label>
-                <label><input type="checkbox" value="2" checked> Tue</label>
-                <label><input type="checkbox" value="3" checked> Wed</label>
-                <label><input type="checkbox" value="4" checked> Thu</label>
-                <label><input type="checkbox" value="5" checked> Fri</label>
-                <label><input type="checkbox" value="6" checked> Sat</label>
-            </div>
-            <button onclick="addCustomTask()" style="background: var(--accent); color: white; border: none; padding: 8px; border-radius: 5px;">Save Task</button>
-        </div>
-    </details>
-
+    <h3>Custom Tasks</h3>
+    <input type="text" id="new-task-name" placeholder="Task Name">
+    <select id="new-task-type">
+        <option value="power">Power</option>
+        <option value="stamina">Stamina</option>
+        <option value="guts">Guts</option>
+        <option value="wit">Wit</option>
+    </select>
+    <p>Repeat on days:</p>
+    <div id="new-task-days" style="display: flex; gap: 5px; flex-wrap: wrap;">
+        <label><input type="checkbox" value="0"> Sun</label>
+        <label><input type="checkbox" value="1"> Mon</label>
+        <label><input type="checkbox" value="2"> Tue</label>
+        <label><input type="checkbox" value="3"> Wed</label>
+        <label><input type="checkbox" value="4"> Thu</label>
+        <label><input type="checkbox" value="5"> Fri</label>
+        <label><input type="checkbox" value="6"> Sat</label>
+    </div>
+    <button onclick="addCustomTask()">Add Task</button>
     <hr>
     <div id="custom-task-list"></div>
-    <button onclick="toggleMenu()">Close Menu</button>
+    <button onclick="toggleMenu()">Close</button>
 </div>
 
 <div id="hud">
@@ -118,32 +103,16 @@ summary { cursor: pointer; font-weight: bold; color: var(--accent); list-style: 
 
 <script>
     // ── State ────────────────────────────────────────────────────────────────
-  // ── State ────────────────────────────────────────────────────────────────
-let agnes = null;
-let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
-let history = JSON.parse(localStorage.getItem('agnesHistory')) || {};
-let dismissed = JSON.parse(localStorage.getItem('agnesDismissed')) || {};
+    let agnes = null;
+    let stats    = JSON.parse(localStorage.getItem('agnesStats'))    || { power: 0, stamina: 0, guts: 0, wit: 0 };
+    let history  = JSON.parse(localStorage.getItem('agnesHistory'))  || {};
+    let dismissed= JSON.parse(localStorage.getItem('agnesDismissed'))|| {};
 
-// 1. Load the raw data
-let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
-
-// 2. Define the helper function
-function hydrateCustomTasks(raw) {
-    return raw.map(t => {
-        return Object.assign({}, t, { 
-            check: h => {
-                if (!t.targetHour || t.targetHour === '') return true; 
-                return h === parseInt(t.targetHour);
-            }
-        });
-    });
-}
-
-// 3. CRITICAL: Initialize the global variable here!
-let customTasks = hydrateCustomTasks(customTasksRaw); 
-
-// Now updateUI() can see the 'customTasks' variable
-updateUI();
+    let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
+    function hydrateCustomTasks(raw) {
+        return raw.map(t => Object.assign({}, t, { check: () => true }));
+    }
+    let customTasks = hydrateCustomTasks(customTasksRaw);
 
     // ── Core Tasks ───────────────────────────────────────────────────────────
     const coreTasks = [
@@ -169,38 +138,22 @@ updateUI();
         renderCustomTasks();
     }
 
-
-function addCustomTask() {
-    const name = document.getElementById('new-task-name').value.trim();
-    const type = document.getElementById('new-task-type').value;
-    const hour = document.getElementById('new-task-hour').value;
-    const dayCheckboxes = document.querySelectorAll('#new-task-days input:checked');
-    const days = Array.from(dayCheckboxes).map(cb => parseInt(cb.value));
-
-    if (!name || days.length === 0) { 
-        alert("Please provide a name and select at least one day."); 
-        return; 
+    function addCustomTask() {
+        const name = document.getElementById('new-task-name').value.trim();
+        const type = document.getElementById('new-task-type').value;
+        const dayCheckboxes = document.querySelectorAll('#new-task-days input:checked');
+        const days = Array.from(dayCheckboxes).map(cb => parseInt(cb.value));
+        if (!name || days.length === 0) { alert("Please provide a name and select at least one day."); return; }
+        const raw = { id: 'custom_' + Date.now(), name, type, days, timeLabel: 'Anytime', isEssential: false };
+        customTasksRaw.push(raw);
+        customTasks = hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
+        document.getElementById('new-task-name').value = '';
+        dayCheckboxes.forEach(cb => cb.checked = false);
+        renderCustomTasks();
+        updateUI();
     }
 
-    const raw = { 
-        id: 'custom_' + Date.now(), 
-        name, 
-        type, 
-        days, 
-        targetHour: hour, // Added property
-        timeLabel: `${hour}:00`, 
-        isEssential: false 
-    };
-
-    customTasksRaw.push(raw);
-    customTasks = hydrateCustomTasks(customTasksRaw);
-    localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
-    
-    // Clear form
-    document.getElementById('new-task-name').value = '';
-    renderCustomTasks();
-    updateUI();
-}
     function deleteCustomTask(id) {
         customTasksRaw = customTasksRaw.filter(t => t.id !== id);
         customTasks    = hydrateCustomTasks(customTasksRaw);
@@ -273,7 +226,7 @@ function addCustomTask() {
         if (window.cancelCurrent) window.cancelCurrent();
         if (agnes) { agnes.setFlipX(false); agnes.play(anim); }
         if (rankAfter > rankBefore) {
-            setStatus(rankUpMessages[type] || '✨ RANK UP!', 5000);
+            setStatus(rankUpMessages[type] || '✨ Level up!', 5000);
             if (window.showEmotion) window.showEmotion('bulb', 2500);
         } else {
             setStatus('Good work! 🌸', 3000);
@@ -297,10 +250,6 @@ function addCustomTask() {
         "Agnes is here! 🌸",
         "Ready for today?",
         "What's on the schedule?",
-        "Another day, another experiment!",
-        "There's still time for more!",
-        "hehehe~",
-        "Hello test subject!",
     ];
 
     const boredMessages = [
@@ -364,6 +313,8 @@ function addCustomTask() {
     updateClock();
     setInterval(updateClock, 1000);
     setInterval(() => { updateClock(); updateUI(); }, 60000);
+
+    // All state is now defined — safe to render the task list
     updateUI();
 
     // ── Phaser ───────────────────────────────────────────────────────────────
@@ -424,10 +375,10 @@ function addCustomTask() {
         this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00' }, { key: 'agnes', frame: 'agtc120_01' }], frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00' }, { key: 'agnes', frame: 'agtc362_01' }], frameRate: 4, repeat: -1 });
         this.anims.create({ key: 'giggle',      frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f})), frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'snack',       frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 3 });
+        this.anims.create({ key: 'snack',       frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
         this.anims.create({ key: 'wave',        frames: [{ key: 'agnes', frame: 'agtc540_00' }, { key: 'agnes', frame: 'agtc540_01' }], frameRate: 4, repeat: 5 });
         this.anims.create({ key: 'cheer',       frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 3 });
-        this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 2 });
+        this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
 
         // ── Movement state ────────────────────────────────────────────────────
         let agnesVX = 0;
@@ -464,7 +415,7 @@ function addCustomTask() {
 
         const weightedPool = [
             'idle1','idle1','idle1','idle1','idle1','idle1',
-            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave'
+            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave', 'cheer'
         ];
 
         let idleTimer = null;

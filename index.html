@@ -213,7 +213,6 @@
         document.querySelectorAll('#new-task-days .tp-day').forEach(el=>el.classList.remove('on'));
         renderCustomTasks(); updateUI();
         // bulb only — no second emotion
-        if (window.showEmotion) window.showEmotion('bulb',2000);
         setStatus('New task added! 💡',3000);
     }
 
@@ -325,7 +324,6 @@
             // Expiry: was visible, now window closed, not done or skipped
             if(_lastVisibleTasks.has(task.id)&&!eligible&&!done&&!skipped){
                 // Only show emotion — status update is done separately without playing 'say'
-                if(window.showEmotion) window.showEmotion('dizzy',2500);
                 setStatus("You missed a task! Better try again next time!",4000);
             }
             if(eligible&&!done&&!skipped){
@@ -363,11 +361,9 @@
         if(rankAfter>rankBefore){
             // Rank up: show bulb only (clear enough signal)
             setStatus(rankUpMessages[type]||'✨ Level up!',5000);
-            if(window.showEmotion) window.showEmotion('bulb',3000);
         } else {
             // Normal complete: heart only
             setStatus('Good work! 🌸',3000);
-            if(window.showEmotion) window.showEmotion('heart',2500);
         }
         updateUI();
     }
@@ -376,7 +372,6 @@
         dismissed[id]=new Date().toDateString();
         localStorage.setItem('agnesDismissed',JSON.stringify(dismissed));
         // exclaim only — no status message needed, Agnes's expression says it
-        if(window.showEmotion) window.showEmotion('exclaim',1800);
         setStatus("Okay, skipping that one... 😤",3000);
         updateUI();
     }
@@ -424,32 +419,10 @@
 
     function preload(){
         this.load.atlas('agnes','agnes-sprites.png','agnes-sprites-json.json');
-        this.load.spritesheet('emotions','emotions.png',{frameWidth:32,frameHeight:48});
     }
 
     function create(){
         agnes=this.add.sprite(Math.round(canvasWidth/2),90,'agnes','agtc001A_00').setScale(1.5).setInteractive();
-        const emo=this.add.sprite(Math.round(canvasWidth/2),40,'emotions',0).setScale(1.2).setAlpha(0).setDepth(10);
-
-        // ── Emotion system ────────────────────────────────────────────────────
-        // One active emotion at a time. A new call replaces the current one.
-        const EMO_ROWS={exclaim:0,question:1,music:2,heart:3,sweat:4,sweat2:5,dizzy:6,ellipsis:7,bulb:8,zzz:9};
-        Object.entries(EMO_ROWS).forEach(([key,row])=>{
-            this.anims.create({key:'emo_'+key,frames:this.anims.generateFrameNumbers('emotions',{start:row*8,end:row*8+7}),frameRate:8,repeat:0});
-        });
-        let emoTimer=null;
-        const showEmotion=(key,durationMs=1500)=>{
-            if(emoTimer){emoTimer.remove(false);emoTimer=null;}
-            this.tweens.killTweensOf(emo); // stop any fade-out in progress
-            emo.setPosition(agnes.x,agnes.y-50);
-            emo.setAlpha(1);
-            emo.play('emo_'+key);
-            emoTimer=this.time.delayedCall(durationMs,()=>{
-                this.tweens.add({targets:emo,alpha:0,duration:500});
-            });
-        };
-        window.showEmotion=showEmotion;
-        this.events.on('update',()=>{if(emo.alpha>0)emo.setPosition(agnes.x,agnes.y-50);});
 
         // ── Animations ───────────────────────────────────────────────────────
         this.anims.create({key:'idle1',frames:[{key:'agnes',frame:'agtc001A_00'},{key:'agnes',frame:'agtc001A_01'},{key:'agnes',frame:'agtc001A_02'},{key:'agnes',frame:'agtc100_00'},{key:'agnes',frame:'agtc100_01'},{key:'agnes',frame:'agtc100_02'},{key:'agnes',frame:'agtc100_03'}],frameRate:2,repeat:-1});
@@ -489,7 +462,6 @@
                 lastQuoteIndex=idx;
                 setStatus(idleQuotes[idx],5000);
                 // Music note only — one emotion, no stacking
-                showEmotion('music',2000);
             }
         };
 
@@ -534,8 +506,7 @@
                 });
             } else if(key==='dash'){
                 const goRight=Math.random()>0.5;
-                agnes.setFlipX(goRight);agnesVX=goRight?160:-160;moveMode='dash';agnes.play('dash');
-                showEmotion('exclaim',1200); // ← exclaim for dash
+                agnes.setFlipX(goRight);agnesVX=goRight?160:-160;moveMode='dash';agnes.play('dash'); // ← exclaim for dash
                 scene.time.delayedCall(Phaser.Math.Between(1000,2000),()=>{
                     if(isInterrupted||moveMode!=='dash')return;
                     stopMoving();const backRight=agnes.x<HOME_X;
@@ -543,11 +514,9 @@
                 });
             } else if(key==='super_dash'){
                 const goRight=Math.random()>0.5;
-                agnes.setFlipX(goRight);agnesVX=goRight?220:-220;moveMode='superdash';agnes.play('super_dash');
-                showEmotion('exclaim',1200); // ← exclaim for super dash
+                agnes.setFlipX(goRight);agnesVX=goRight?220:-220;moveMode='superdash';agnes.play('super_dash'); // ← exclaim for super dash
             } else if(key==='float'){
-                floatAngle=Math.random()*Math.PI*2;moveMode='float';agnes.play('float');
-                showEmotion('music',1500); // ← music for float
+                floatAngle=Math.random()*Math.PI*2;moveMode='float';agnes.play('float'); // ← music for float
                 scene.time.delayedCall(Phaser.Math.Between(5000,9000),()=>{
                     if(isInterrupted||moveMode!=='float')return;
                     stopMoving();walkHome(()=>{if(isInterrupted)return;parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));});
@@ -557,8 +526,7 @@
                 scheduleNext(Phaser.Math.Between(4000,8000));
             } else {
                 // giggle, wave, cheer — music only, no quote chance here
-                agnes.setFlipX(false);agnes.play(key);
-                showEmotion('music',1500); // ← music for happy idle
+                agnes.setFlipX(false);agnes.play(key); // ← music for happy idle
             }
         };
 
@@ -570,8 +538,7 @@
                 parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));
             } else if(anim.key==='say'){
                 parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));
-            } else if(anim.key==='sit_down'){
-                showEmotion('zzz',2000); // ← zzz after sitting down
+            } else if(anim.key==='sit_down'){ // ← zzz after sitting down
                 parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));
             } else if(anim.key==='walk_left'||anim.key==='dash'){
                 // looping

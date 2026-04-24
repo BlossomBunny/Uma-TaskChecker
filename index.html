@@ -379,204 +379,66 @@
     this.anims.create({ key: 'wave',        frames: [{ key: 'agnes', frame: 'agtc540_00' }, { key: 'agnes', frame: 'agtc540_01' }], frameRate: 4, repeat: 3 });
     this.anims.create({ key: 'cheer',       frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
     this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
-        // ── Movement state (read by update()) ────────────────────────────────
-        // We never tween agnes.x/y — instead we set a velocity and let update()
-        // move her each frame. This means Phaser's animation system is never
-        // competing with a tween for control of the sprite.
-        let agnesVX = 0;   // pixels per second, x
-        let agnesVY = 0;   // pixels per second, y
-        let moveMode = 'none'; // 'none' | 'walk' | 'dash' | 'superdash' | 'float'
-        let floatAngle = 0;    // for the gentle float bob
 
-        const scene = this;
-        const HOME_X = 100;
-        const HOME_Y = 100;
+        const movementAnims = ['walk_left', 'dash', 'super_dash', 'float'];
 
-        const idleQuotes = [
-            "Life is an experiment, and we its guinea pigs. You, me, the other Umamusume—everyone!",
-            "Don't worry about it... The worst that could happen is that both of your legs would start glowing green for a while. Isn't that a cute side effect?",
-            "Witness me. Watch me run. Burn the sight into your eyes."
-        ];
-        let lastQuoteIndex = -1;
-        const maybeQuote = () => {
-            if (Math.random() < 0.2) {
-                let idx;
-                do { idx = Math.floor(Math.random() * idleQuotes.length); } while (idx === lastQuoteIndex);
-                lastQuoteIndex = idx;
-                setStatus(idleQuotes[idx], 5000); // show in status box, no say anim
-            }
-        };
+const playRandomIdle = () => {
+    // 1. Pick a random animation
+    const key = weightedPool[Math.floor(Math.random() * weightedPool.length)];
 
-        // Weighted pool — idle1 x6 so she's calm most of the time
-        const weightedPool = [
-            'idle1','idle1','idle1','idle1','idle1','idle1',
-            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave', 'cheer'
-        ];
+    // 2. Clear previous state
+    agnes.anims.stop();
+    stopMoving();
 
-        let idleTimer = null;
-        const scheduleNext = (delayMs) => {
-            if (idleTimer) idleTimer.remove(false);
-            idleTimer = scene.time.delayedCall(delayMs, playRandomIdle);
-        };
-
-        // Quotes fire independently, every 25–45 seconds, not tied to animation cycles
-        const scheduleNextQuote = () => {
-            scene.time.delayedCall(Phaser.Math.Between(25000, 45000), () => {
-                maybeQuote();
-                scheduleNextQuote();
+    // 3. Handle Movement (Walk, Dash, Float)
+    if (movementAnims.includes(key)) {
+        if (key === 'float') {
+            floatAngle = 0;
+            moveMode = 'float';
+            agnes.play('float');
+            // Float moves on its own for 3 seconds then stops
+            scene.time.delayedCall(3000, () => {
+                if (moveMode === 'float') {
+                    stopMoving();
+                    resetHome();
+                    scheduleNext(Phaser.Math.Between(3000, 6000));
+                }
             });
-        };
-        scheduleNextQuote();
-
-        const stopMoving = () => {
-            agnesVX = 0;
-            agnesVY = 0;
-            moveMode = 'none';
-            // Don't snap position here — let callers reset position explicitly if needed
-        };
-
-        const resetHome = () => {
-            agnes.setPosition(HOME_X, HOME_Y);
-            agnes.setFlipX(false);
-        };
-
-        const playRandomIdle = () => {
-            const key = weightedPool[Math.floor(Math.random() * weightedPool.length)];
-
-            stopMoving();
-
-            if (key === 'walk_left') {
-                const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);
-                agnesVX = goRight ? 50 : -50;
-                moveMode = 'walk';
-                agnes.play('walk_left');
-
-            } else if (key === 'dash') {
-                const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);
-                agnesVX = goRight ? 160 : -160;
-                moveMode = 'dash';
-                agnes.play('dash');
-
-            } else if (key === 'super_dash') {
-                const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);
-                agnesVX = goRight ? 220 : -220;
-                moveMode = 'superdash';
-                agnes.play('super_dash');
-
-            } else if (key === 'float') {
-                floatAngle = 0;
-                moveMode = 'float';
-                agnes.play('float');
-                scene.time.delayedCall(3000, () => {
-                    if (moveMode === 'float') {
-                        agnes.anims.stop();
-                        stopMoving();
-                        // float leaves her drifted — gently return her to home
-                        agnes.setPosition(HOME_X, HOME_Y);
-                        scheduleNext(Phaser.Math.Between(3000, 6000));
-                    }
-                });
-
-            } else if (key === 'idle1') {
-                // idle1 always plays from home so she doesn't drift off-centre permanently
-                resetHome();
-                agnes.play('idle1');
-                scheduleNext(Phaser.Math.Between(4000, 8000));
-
-            } else {
-                // giggle, wave, cheer — play at current position, no snap
-                agnes.setFlipX(false);
-                agnes.play(key);
-                // animationcomplete handles scheduling
-            }
-        };
-
-       // ── animationcomplete ────────────────────────────────────────────────
-agnes.on('animationcomplete', (anim) => {
-    // 1. First, always return to idle immediately
-    if (anim.key !== 'walk_left' && anim.key !== 'dash') {
-        agnes.play('idle1');
-    }
-
-    // 2. Then, handle the specific logic for the next move
-    if (anim.key === 'super_dash') {
-        stopMoving();
-        agnes.setFlipX(false);
-        scheduleNext(Phaser.Math.Between(3000, 6000));
-    } else if (anim.key === 'sudden_stop') {
-        agnes.setFlipX(false);
-        scheduleNext(Phaser.Math.Between(3000, 6000));
-    } else if (anim.key === 'say' || anim.key === 'victory') {
-        scheduleNext(500);
-    } else if (anim.key === 'walk_left' || anim.key === 'dash') {
-        // These are loops; they don't trigger this unless manually stopped.
-    } else {
-        // For general animations (eating, giggle, etc.)
-        scheduleNext(Phaser.Math.Between(3000, 6000));
-    }
-});
+        } else {
+            // Walk or Dash
+            const goRight = Math.random() > 0.5;
+            agnes.setFlipX(goRight);
+            agnesVX = (key === 'walk_left') ? (goRight ? 50 : -50) : (goRight ? 160 : -160);
+            moveMode = key === 'walk_left' ? 'walk' : 'dash';
+            agnes.play(key);
+            // These are loops; we don't need 'animationcomplete' here.
+        }
+    } 
+  // 4. Handle Stationary (Idle, Sit, Giggle, etc.)
+    else {
+        resetHome();
+        agnes.play(key);
         
-        // Tap to greet
-        agnes.on('pointerdown', () => {
-            if (idleTimer) idleTimer.remove(false);
-            agnes.anims.stop();
-            stopMoving();
-            resetHome();
-            say('Hi! Don\'t forget your tasks today! 🌸');
-        });
-
-        // Kick off
-        scheduleNext(1000);
-
-        // ── update() — runs every frame, moves agnes via velocity ─────────────
-        scene.events.on('update', (time, delta) => {
-            if (!agnes || agnesVX === 0 && agnesVY === 0 && moveMode !== 'float') return;
-
-            const dt = delta / 1000; // seconds
-
-            if (moveMode === 'float') {
-                // Gentle figure-eight drift
-                floatAngle += delta * 0.001;
-                agnes.x = HOME_X + Math.sin(floatAngle * 1.5) * 25;
-                agnes.y = HOME_Y + Math.sin(floatAngle) * 12;
-                return;
-            }
-
-            agnes.x += agnesVX * dt;
-            agnes.y += agnesVY * dt;
-
-            // Boundary checks — when she hits an edge, decide what to do
-            const hitLeft  = agnes.x < 15;
-            const hitRight = agnes.x > 185;
-
-            if (moveMode === 'walk' && (hitLeft || hitRight)) {
-                agnesVX *= -1;
-                agnes.setFlipX(agnesVX > 0);
-                // After one bounce, stop walking and do something in place
-                scene.time.delayedCall(800, () => {
-                    if (moveMode === 'walk') {
-                        agnes.anims.stop();
-                        stopMoving();
-                        agnes.setFlipX(false);
-                        scheduleNext(Phaser.Math.Between(3000, 6000));
-                    }
-                });
-            } else if (moveMode === 'dash' && (hitLeft || hitRight)) {
-                agnes.anims.stop();
-                stopMoving();
-                agnes.setFlipX(false);
-                scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (moveMode === 'superdash' && (agnes.x < 10 || agnes.x > 190)) {
-                agnesVX = 0;
-                agnesVY = 0;
-                moveMode = 'none';
-                // animation keeps playing its wind-down frames in place
-            }
-        });
+        // SPECIAL CASE: idle1 loops forever, so it won't trigger animationcomplete
+        if (key === 'idle1') {
+            // Just schedule the next one after a random time delay
+            scene.time.delayedCall(Phaser.Math.Between(4000, 8000), () => {
+                scheduleNext(0); // Trigger next selection immediately
+            });
+        } 
+        // OTHER STATIONARY: Use animationcomplete for animations that actually finish
+        else {
+            agnes.once('animationcomplete', (anim) => {
+                if (anim.key === key) {
+                    scheduleNext(Phaser.Math.Between(2000, 4000));
+                }
+            });
+        }
     }
+    
+// Kick off the loop
+scheduleNext(1000);
+        
 </script>
 </body>
 </html>

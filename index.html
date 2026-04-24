@@ -362,7 +362,7 @@
     }
 
     function create() {
-        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5).setInteractive();
+        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00').setScale(1.5).setInteractive();
 
         // ── Emotion bubble sprite (floats above Agnes) ────────────────────────
         // Rows: 0=exclaim, 1=question, 2=music, 3=heart, 4=sweat,
@@ -401,20 +401,20 @@
         });
 
         // ── Animations ───────────────────────────────────────────────────────
-        this.anims.create({ key: 'idle1',       frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc100_00.png' }, { key: 'agnes', frame: 'agtc100_01.png' }, { key: 'agnes', frame: 'agtc100_02.png' }, { key: 'agnes', frame: 'agtc100_03.png' }], frameRate: 2, repeat: -1 });
-        this.anims.create({ key: 'eating',      frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
-        this.anims.create({ key: 'walk_left',   frames: [{ key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_01.png' }, { key: 'agnes', frame: 'agtc101_02.png' }, { key: 'agnes', frame: 'agtc101_03.png' }, { key: 'agnes', frame: 'agtc101_04.png' }, { key: 'agnes', frame: 'agtc101_05.png' }], frameRate: 6, repeat: -1 });
-        this.anims.create({ key: 'sit_down',    frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_04.png' }], frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'victory',     frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 4, repeat: 2 });
-        this.anims.create({ key: 'dash',        frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 10, repeat: -1 });
-        this.anims.create({ key: 'super_dash',  frames: ['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 12, repeat: 0 });
-        this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00.png' }, { key: 'agnes', frame: 'agtc120_01.png' }], frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00.png' }, { key: 'agnes', frame: 'agtc362_01.png' }], frameRate: 4, repeat: -1 });
-        this.anims.create({ key: 'giggle',      frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'snack',       frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
-        this.anims.create({ key: 'wave',        frames: [{ key: 'agnes', frame: 'agtc540_00.png' }, { key: 'agnes', frame: 'agtc540_01.png' }], frameRate: 4, repeat: 3 });
-        this.anims.create({ key: 'cheer',       frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
-        this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'idle1',       frames: [{ key: 'agnes', frame: 'agtc001A_00' }, { key: 'agnes', frame: 'agtc001A_01' }, { key: 'agnes', frame: 'agtc100_00' }, { key: 'agnes', frame: 'agtc100_01' }, { key: 'agnes', frame: 'agtc100_02' }, { key: 'agnes', frame: 'agtc100_03' }], frameRate: 2, repeat: -1 });
+        this.anims.create({ key: 'eating',      frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'walk_left',   frames: [{ key: 'agnes', frame: 'agtc101_00' }, { key: 'agnes', frame: 'agtc101_01' }, { key: 'agnes', frame: 'agtc101_02' }, { key: 'agnes', frame: 'agtc101_03' }, { key: 'agnes', frame: 'agtc101_04' }, { key: 'agnes', frame: 'agtc101_05' }], frameRate: 6, repeat: -1 });
+        this.anims.create({ key: 'sit_down',    frames: [{ key: 'agnes', frame: 'agtc320_00' }, { key: 'agnes', frame: 'agtc320_04' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'victory',     frames: [{ key: 'agnes', frame: 'agtc940_00' }, { key: 'agnes', frame: 'agtc940_03' }], frameRate: 4, repeat: 2 });
+        this.anims.create({ key: 'dash',        frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f})), frameRate: 10, repeat: -1 });
+        this.anims.create({ key: 'super_dash',  frames: ['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f})), frameRate: 12, repeat: 0 });
+        this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00' }, { key: 'agnes', frame: 'agtc120_01' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00' }, { key: 'agnes', frame: 'agtc362_01' }], frameRate: 4, repeat: -1 });
+        this.anims.create({ key: 'giggle',      frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f})), frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'snack',       frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'wave',        frames: [{ key: 'agnes', frame: 'agtc540_00' }, { key: 'agnes', frame: 'agtc540_01' }], frameRate: 4, repeat: 3 });
+        this.anims.create({ key: 'cheer',       frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
 
         // ── Movement state (read by update()) ────────────────────────────────
         // We never tween agnes.x/y — instead we set a velocity and let update()

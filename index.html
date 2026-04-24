@@ -488,25 +488,31 @@
             }
         };
 
-        // ── animationcomplete ────────────────────────────────────────────────
-        agnes.on('animationcomplete', (anim) => {
-            if (anim.key === 'super_dash') {
-                stopMoving();
-                // She could be anywhere — don't snap, just schedule next from here
-                agnes.setFlipX(false);
-                scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (anim.key === 'sudden_stop') {
-                agnes.setFlipX(false);
-                scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (anim.key === 'say' || anim.key === 'victory') {
-                scheduleNext(500);
-            } else if (anim.key === 'walk_left' || anim.key === 'dash') {
-                // looping — only fires if externally stopped, ignore
-            } else {
-                scheduleNext(Phaser.Math.Between(3000, 6000));
-            }
-        });
+       // ── animationcomplete ────────────────────────────────────────────────
+agnes.on('animationcomplete', (anim) => {
+    // 1. First, always return to idle immediately
+    if (anim.key !== 'walk_left' && anim.key !== 'dash') {
+        agnes.play('idle1');
+    }
 
+    // 2. Then, handle the specific logic for the next move
+    if (anim.key === 'super_dash') {
+        stopMoving();
+        agnes.setFlipX(false);
+        scheduleNext(Phaser.Math.Between(3000, 6000));
+    } else if (anim.key === 'sudden_stop') {
+        agnes.setFlipX(false);
+        scheduleNext(Phaser.Math.Between(3000, 6000));
+    } else if (anim.key === 'say' || anim.key === 'victory') {
+        scheduleNext(500);
+    } else if (anim.key === 'walk_left' || anim.key === 'dash') {
+        // These are loops; they don't trigger this unless manually stopped.
+    } else {
+        // For general animations (eating, giggle, etc.)
+        scheduleNext(Phaser.Math.Between(3000, 6000));
+    }
+});
+        
         // Tap to greet
         agnes.on('pointerdown', () => {
             if (idleTimer) idleTimer.remove(false);

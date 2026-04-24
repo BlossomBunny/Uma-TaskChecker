@@ -261,6 +261,8 @@
 
         renderCustomTasks();
         updateUI();
+        if (window.showEmotion) window.showEmotion('bulb', 2000);
+        setStatus('New task added! 💡', 3000);
     }
 
     function deleteCustomTask(id) {
@@ -290,6 +292,9 @@
         }).join('');
     }
 
+    // Track which tasks were visible last tick to detect expiry
+    let _lastVisibleTasks = new Set();
+
     // ── UI ───────────────────────────────────────────────────────────────────
     function updateUI() {
         ['power', 'stamina', 'guts', 'wit'].forEach(s => {
@@ -307,15 +312,27 @@
         container.innerHTML = '';
         const allTasks  = [...coreTasks, ...customTasks];
         let visibleCount = 0;
+        const nowVisible = new Set();
 
         allTasks.forEach(task => {
             const taskDays = task.days || [0,1,2,3,4,5,6];
-            if (taskDays.includes(currentDay) && task.check(h) && history[task.id] !== today && dismissed[task.id] !== today) {
+            const eligible = taskDays.includes(currentDay) && task.check(h);
+            const done     = history[task.id] === today;
+            const skipped  = dismissed[task.id] === today;
+
+            // Expiry: was visible last tick, window just closed, not completed or dismissed
+            if (_lastVisibleTasks.has(task.id) && !eligible && !done && !skipped) {
+                if (window.showEmotion) window.showEmotion('dizzy', 2500);
+                say("You missed a task! Better try again next time!");
+            }
+
+            if (eligible && !done && !skipped) {
+                nowVisible.add(task.id);
                 visibleCount++;
                 const dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
                 container.innerHTML += `
                     <div class="task-item">
-                        <div class="task-info" onclick="if(window.showEmotion)window.showEmotion('question',1500); say('Don\'t forget to ${task.name.toLowerCase()}! ${task.timeLabel}')">
+                        <div class="task-info" onclick="say('Don\\'t forget to ${task.name.toLowerCase()}! ${task.timeLabel}')">
                             <span class="task-name" style="text-decoration: underline; cursor: pointer;">${task.name}</span>
                             <div class="task-meta">
                                 <span class="task-stat">${task.type.toUpperCase()}</span>
@@ -329,6 +346,8 @@
                     </div>`;
             }
         });
+
+        _lastVisibleTasks = nowVisible;
 
         if (visibleCount === 0) {
             container.innerHTML = `<div class="all-done">🌸 All done for today! Great job!</div>`;
@@ -344,12 +363,14 @@
         localStorage.setItem('agnesStats',   JSON.stringify(stats));
         if (window.cancelCurrent) window.cancelCurrent();
         if (agnes) { agnes.setFlipX(false); agnes.play(anim); }
+        // Always show heart on completion — bulb shows additionally on rank up
+        if (window.showEmotion) window.showEmotion('heart', 2000);
         if (rankAfter > rankBefore) {
-            setStatus(rankUpMessages[type] || '✨ RANK UP!', 5000);
-            if (window.showEmotion) window.showEmotion('bulb', 2500);
+            setStatus(rankUpMessages[type] || '✨ Level up!', 5000);
+            // Small delay so heart shows first, then bulb
+            setTimeout(() => { if (window.showEmotion) window.showEmotion('bulb', 2500); }, 2200);
         } else {
             setStatus('Good work! 🌸', 3000);
-            if (window.showEmotion) window.showEmotion('heart', 1800);
         }
         updateUI();
     }
@@ -357,6 +378,8 @@
     function dismiss(id) {
         dismissed[id] = new Date().toDateString();
         localStorage.setItem('agnesDismissed', JSON.stringify(dismissed));
+        if (window.showEmotion) window.showEmotion('exclaim', 1500);
+        setStatus("Okay, skipping that one... 😤", 3000);
         updateUI();
     }
 
@@ -403,14 +426,11 @@
         lastActivity = Date.now();
         if (boredTimeout) clearTimeout(boredTimeout);
         boredTimeout = setTimeout(() => {
-            const h = new Date().getHours();
             const msg = boredMessages[Math.floor(Math.random() * boredMessages.length)];
             setStatus(msg, 0);
-            if (window.showEmotion) window.showEmotion(h >= 22 || h < 6 ? 'zzz' : 'dizzy', 2500);
             boredTimeout = setInterval(() => {
                 const m = boredMessages[Math.floor(Math.random() * boredMessages.length)];
                 setStatus(m, 0);
-                if (window.showEmotion) window.showEmotion('zzz', 2000);
             }, 120000);
         }, 300000);
     }
@@ -531,7 +551,7 @@
                 do { idx = Math.floor(Math.random() * idleQuotes.length); } while (idx === lastQuoteIndex);
                 lastQuoteIndex = idx;
                 setStatus(idleQuotes[idx], 5000);
-                showEmotion('ellipsis', 2000);
+                showEmotion('music', 2000); // music only during idle
             }
         };
 
@@ -601,6 +621,7 @@
                 agnesVX = goRight ? 160 : -160;
                 moveMode = 'dash';
                 agnes.play('dash');
+                showEmotion('exclaim', 1200);
                 scene.time.delayedCall(Phaser.Math.Between(1000, 2000), () => {
                     if (isInterrupted || moveMode !== 'dash') return;
                     stopMoving();
@@ -616,10 +637,12 @@
                 agnesVX = goRight ? 220 : -220;
                 moveMode = 'superdash';
                 agnes.play('super_dash');
+                showEmotion('exclaim', 1200);
             } else if (key === 'float') {
                 floatAngle = Math.random() * Math.PI * 2;
                 moveMode = 'float';
                 agnes.play('float');
+                showEmotion('music', 1500);
                 scene.time.delayedCall(Phaser.Math.Between(5000, 9000), () => {
                     if (isInterrupted || moveMode !== 'float') return;
                     stopMoving();
@@ -629,8 +652,9 @@
                 agnes.setPosition(HOME_X, HOME_Y); agnes.setFlipX(false); agnes.play('idle1');
                 scheduleNext(Phaser.Math.Between(4000, 8000));
             } else {
+                // giggle, wave, cheer — music note for all happy idle animations
                 agnes.setFlipX(false); agnes.play(key);
-                if (key === 'cheer' || key === 'wave') showEmotion('music', 1500);
+                showEmotion('music', 1500);
             }
         };
 
@@ -643,6 +667,9 @@
                 parkIdle(); scheduleNext(Phaser.Math.Between(3000, 6000));
             } else if (anim.key === 'say') {
                 parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000));
+            } else if (anim.key === 'sit_down') {
+                showEmotion('zzz', 2000);
+                parkIdle(); scheduleNext(Phaser.Math.Between(3000, 6000));
             } else if (anim.key === 'walk_left' || anim.key === 'dash') {
                 // looping
             } else if (anim.key === 'idle1') {
@@ -657,7 +684,6 @@
             scene._walkHomeCallback = null;
             stopMoving(); parkIdle();
             agnes.setPosition(HOME_X, HOME_Y);
-            showEmotion('question', 1800);
             say('Hi! Don\'t forget your tasks today! 🌸');
             scheduleNext(3000);
         });

@@ -20,7 +20,7 @@
             margin-bottom: 15px;
         }
         #status-box {
-            width: 204px; /* matches game-container's 200px + 2px border each side */
+            width: 364px; /* matches game-container's 360px + 2px border each side */
             background: white;
             border: 2px solid var(--accent);
             border-bottom: none;
@@ -40,7 +40,7 @@
             border-top: none;
             box-shadow: 0 8px 20px rgba(248,165,194,0.15);
             background: #fff;
-            width: 200px; height: 200px;
+            width: 360px; height: 180px;
             overflow: hidden; cursor: pointer;
         }
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
@@ -228,7 +228,7 @@
                         </div>
                         <div class="btn-group">
                             ${dismissBtn}
-                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'cheer'}', '${task.type}')">Done</button>
+                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button>
                         </div>
                     </div>`;
             }
@@ -348,10 +348,10 @@
     // ── Phaser ───────────────────────────────────────────────────────────────
     const phaserConfig = {
         type: Phaser.AUTO,
-        width: 200,
-        height: 200,
+        width: 360,
+        height: 180,
         transparent: true,
-        parent: 'game-container',   // mounts the canvas into the existing div
+        parent: 'game-container',
         scene: { preload, create }
     };
 
@@ -366,14 +366,14 @@
     }
 
     function create() {
-        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00').setScale(1.5).setInteractive();
+        agnes = this.add.sprite(180, 90, 'agnes', 'agtc001A_00').setScale(1.5).setInteractive();
 
         // ── Emotion bubble sprite (floats above Agnes) ────────────────────────
         // emotions.png: 8 cols x 10 rows, 32x48px per cell
         // We only use col 0 (first frame) through col 7 (last frame) per row
         // Row order: 0=exclaim, 1=question, 2=music, 3=heart, 4=sweat,
         //            5=sweat2, 6=dizzy, 7=ellipsis, 8=bulb, 9=zzz
-        const emo = this.add.sprite(100, 45, 'emotions', 0).setScale(1.2).setAlpha(0).setDepth(10);
+        const emo = this.add.sprite(180, 40, 'emotions', 0).setScale(1.2).setAlpha(0).setDepth(10);
 
         const EMO_ROWS = { exclaim:0, question:1, music:2, heart:3, sweat:4, sweat2:5, dizzy:6, ellipsis:7, bulb:8, zzz:9 };
         Object.entries(EMO_ROWS).forEach(([key, row]) => {
@@ -406,12 +406,13 @@
         // ── Animations ───────────────────────────────────────────────────────
         this.anims.create({ key: 'idle1',       frames: [{ key: 'agnes', frame: 'agtc001A_00' }, { key: 'agnes', frame: 'agtc001A_01' }, { key: 'agnes', frame: 'agtc100_00' }, { key: 'agnes', frame: 'agtc100_01' }, { key: 'agnes', frame: 'agtc100_02' }, { key: 'agnes', frame: 'agtc100_03' }], frameRate: 2, repeat: -1 });
         this.anims.create({ key: 'eating',      frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
-        this.anims.create({ key: 'walk_left',   frames: [{ key: 'agnes', frame: 'agtc101_01' }, { key: 'agnes', frame: 'agtc101_02' }, { key: 'agnes', frame: 'agtc101_03' }, { key: 'agnes', frame: 'agtc101_04' }, { key: 'agnes', frame: 'agtc101_05' }], frameRate: 6, repeat: -1 });
+        this.anims.create({ key: 'walk_left',   frames: [{ key: 'agnes', frame: 'agtc101_00' }, { key: 'agnes', frame: 'agtc101_01' }, { key: 'agnes', frame: 'agtc101_02' }, { key: 'agnes', frame: 'agtc101_03' }, { key: 'agnes', frame: 'agtc101_04' }, { key: 'agnes', frame: 'agtc101_05' }], frameRate: 6, repeat: -1 });
         this.anims.create({ key: 'sit_down',    frames: [{ key: 'agnes', frame: 'agtc320_00' }, { key: 'agnes', frame: 'agtc320_04' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'victory',     frames: [{ key: 'agnes', frame: 'agtc940_00' }, { key: 'agnes', frame: 'agtc940_03' }], frameRate: 4, repeat: 2 });
         this.anims.create({ key: 'dash',        frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f})), frameRate: 10, repeat: -1 });
         this.anims.create({ key: 'super_dash',  frames: ['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f})), frameRate: 12, repeat: 0 });
         this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00' }, { key: 'agnes', frame: 'agtc120_01' }], frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00' }, { key: 'agnes', frame: 'agtc362_01' }, { key: 'agnes', frame: 'agtc362_00' }, { key: 'agnes', frame: 'agtc362_01' }, { key: 'agnes', frame: 'agtc362_00' }, { key: 'agnes', frame: 'agtc362_01' }], frameRate: 4, repeat: -1 });
+        this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00' }, { key: 'agnes', frame: 'agtc362_01' }], frameRate: 4, repeat: -1 });
         this.anims.create({ key: 'giggle',      frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f})), frameRate: 6, repeat: 0 });
         this.anims.create({ key: 'snack',       frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
         this.anims.create({ key: 'wave',        frames: [{ key: 'agnes', frame: 'agtc540_00' }, { key: 'agnes', frame: 'agtc540_01' }], frameRate: 4, repeat: 3 });
@@ -429,18 +430,13 @@
         let wallBouncing = false; // guard against firing multiple bounce timers
 
         const scene = this;
-        const HOME_X = 100;
-        const HOME_Y = 100;
+        const HOME_X = 180;
+        const HOME_Y = 90;
 
         const idleQuotes = [
-            "Life is an experiment, and we its guinea pigs.",
-            "Don't worry about it~",
-            "The worst that could happen is your legs would start glowing green for a while!",
-            "Isn't that a cute side effect?",
-            "Witness me. Watch me run. Burn the sight into your eyes.",
-            "Time for science!",
-            "Want to be my test subject next?",
-            "lets run together next time!",
+            "Life is an experiment, and we its guinea pigs. You, me, the other Umamusume—everyone!",
+            "Don't worry about it... The worst that could happen is that both of your legs would start glowing green for a while. Isn't that a cute side effect?",
+            "Witness me. Watch me run. Burn the sight into your eyes."
         ];
         let lastQuoteIndex = -1;
         const maybeQuote = () => {
@@ -456,7 +452,7 @@
         // Weighted pool — idle1 x6 so she's calm most of the time
         const weightedPool = [
             'idle1','idle1','idle1','idle1','idle1','idle1',
-            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave'
+            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave', 'cheer'
         ];
 
         let idleTimer = null;
@@ -554,7 +550,7 @@
             } else if (anim.key === 'sudden_stop') {
                 parkIdle();
                 scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (anim.key === 'say' || anim.key === 'cheer') {
+            } else if (anim.key === 'say' || anim.key === 'victory') {
                 parkIdle();
                 scheduleNext(500);
             } else if (anim.key === 'walk_left' || anim.key === 'dash') {
@@ -589,8 +585,8 @@
             if (moveMode === 'float') {
                 // Gentle figure-eight drift
                 floatAngle += delta * 0.001;
-                agnes.x = HOME_X + Math.sin(floatAngle * 1.5) * 25;
-                agnes.y = HOME_Y + Math.sin(floatAngle) * 12;
+                agnes.x = HOME_X + Math.sin(floatAngle * 1.5) * 60;
+                agnes.y = HOME_Y + Math.sin(floatAngle) * 15;
                 return;
             }
 
@@ -598,8 +594,8 @@
             agnes.y += agnesVY * dt;
 
             // Boundary checks — when she hits an edge, decide what to do
-            const hitLeft  = agnes.x < 15;
-            const hitRight = agnes.x > 185;
+            const hitLeft  = agnes.x < 20;
+            const hitRight = agnes.x > 340;
 
             if (moveMode === 'walk' && (hitLeft || hitRight) && !wallBouncing) {
                 wallBouncing = true;
@@ -615,7 +611,7 @@
                 wallBouncing = true;
                 parkIdle();
                 scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (moveMode === 'superdash' && (agnes.x < 10 || agnes.x > 190)) {
+            } else if (moveMode === 'superdash' && (agnes.x < 10 || agnes.x > 350)) {
                 // velocity off, let wind-down frames finish, parkIdle on animationcomplete
                 agnesVX = 0;
                 agnesVY = 0;

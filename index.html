@@ -118,13 +118,17 @@ summary { cursor: pointer; font-weight: bold; color: var(--accent); list-style: 
 
 <script>
     // ── State ────────────────────────────────────────────────────────────────
-    let agnes = null;
-    let stats    = JSON.parse(localStorage.getItem('agnesStats'))    || { power: 0, stamina: 0, guts: 0, wit: 0 };
-    let history  = JSON.parse(localStorage.getItem('agnesHistory'))  || {};
-    let dismissed= JSON.parse(localStorage.getItem('agnesDismissed'))|| {};
+  // ── State ────────────────────────────────────────────────────────────────
+let agnes = null;
+let stats = JSON.parse(localStorage.getItem('agnesStats')) || { power: 0, stamina: 0, guts: 0, wit: 0 };
+let history = JSON.parse(localStorage.getItem('agnesHistory')) || {};
+let dismissed = JSON.parse(localStorage.getItem('agnesDismissed')) || {};
 
-    let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
-  function hydrateCustomTasks(raw) {
+// 1. Load the raw data
+let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
+
+// 2. Define the helper function
+function hydrateCustomTasks(raw) {
     return raw.map(t => {
         return Object.assign({}, t, { 
             check: h => {
@@ -134,6 +138,12 @@ summary { cursor: pointer; font-weight: bold; color: var(--accent); list-style: 
         });
     });
 }
+
+// 3. CRITICAL: Initialize the global variable here!
+let customTasks = hydrateCustomTasks(customTasksRaw); 
+
+// Now updateUI() can see the 'customTasks' variable
+updateUI();
 
     // ── Core Tasks ───────────────────────────────────────────────────────────
     const coreTasks = [

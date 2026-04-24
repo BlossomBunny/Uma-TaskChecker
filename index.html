@@ -55,6 +55,14 @@
         .ct-info { flex: 1; min-width: 0; }
         .ct-name { font-size: 0.82em; font-weight: 600; color: #596275; }
         .ct-meta { font-size: 0.68em; color: #a5b1c2; margin-top: 1px; }
+        .ct-btns { display: flex; gap: 4px; flex-shrink: 0; }
+        .btn-edit { background: #f0f0f0; color: #596275; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8em; }
+        .btn-dupe { background: #e8f4fd; color: #5dade2; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8em; }
+        .ct-edit-form { padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .ct-edit-form:last-child { border-bottom: none; }
+        .ct-edit-row { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+        .btn-save { background: var(--accent); color: white; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8em; font-weight: bold; font-family: inherit; }
+        .btn-cancel { background: #f0f0f0; color: #596275; border: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8em; font-family: inherit; }
         /* ─────────────────────────────────────────────────────────────────── */
 
         #hud, #checklist { width: 95%; max-width: 400px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
@@ -180,11 +188,11 @@
     let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
     function hydrateCustomTasks(raw) {
         return raw.map(t => Object.assign({}, t, {
+            anim: t.anim || 'cheer', // preserved from storage; pickAnim sets it on create/edit
             check: (h) => {
-                // If task has a time window, only show within it
                 if (t.fromH !== undefined && t.toH !== undefined) {
                     if (t.fromH <= t.toH) return h >= t.fromH && h < t.toH;
-                    return h >= t.fromH || h < t.toH; // overnight wrap
+                    return h >= t.fromH || h < t.toH;
                 }
                 return true;
             }
@@ -217,43 +225,51 @@
         if (!isOpen) renderCustomTasks();
     }
 
-    function addCustomTask() {
-        const name = document.getElementById('new-task-name').value.trim();
-        const type = document.getElementById('new-task-type').value;
-        const fromVal = document.getElementById('new-task-from').value; // "HH:MM"
-        const toVal   = document.getElementById('new-task-to').value;
+    // ── Animation pool by stat type ──────────────────────────────────────────
+    const STAT_ANIMS = {
+        power:   ['super_dash', 'dash', 'cheer'],
+        stamina: ['eating', 'snack', 'wave'],
+        guts:    ['giggle', 'cheer', 'sudden_stop'],
+        wit:     ['sit_down', 'say', 'giggle'],
+    };
+    function pickAnim(type) {
+        const pool = STAT_ANIMS[type] || ['cheer'];
+        return pool[Math.floor(Math.random() * pool.length)];
+    }
 
-        const days = Array.from(document.querySelectorAll('#new-task-days .tp-day.on'))
-                          .map(el => parseInt(el.dataset.day));
-
-        if (!name || days.length === 0) {
-            alert('Please enter a name and select at least one day.');
-            return;
-        }
-
-        // Build time label + hour numbers for the check function
-        let timeLabel = 'Anytime';
-        let fromH, toH;
+    // ── Shared helper: build a raw task object from form-like values ──────────
+    function buildRaw(id, name, type, days, fromVal, toVal) {
+        const fmt = t => { const [h,m] = t.split(':'); const hr = parseInt(h); return `${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`; };
+        let timeLabel = 'Anytime', fromH, toH;
         if (fromVal && toVal) {
             fromH = parseInt(fromVal.split(':')[0]);
             toH   = parseInt(toVal.split(':')[0]);
-            const fmt = t => { const [h,m] = t.split(':'); const hr = parseInt(h); return `${hr % 12 || 12}${m !== '00' ? ':'+m : ''}${hr < 12 ? 'AM' : 'PM'}`; };
             timeLabel = `${fmt(fromVal)} – ${fmt(toVal)}`;
         } else if (fromVal) {
             fromH = parseInt(fromVal.split(':')[0]);
-            const fmt = t => { const [h,m] = t.split(':'); const hr = parseInt(h); return `${hr % 12 || 12}${m !== '00' ? ':'+m : ''}${hr < 12 ? 'AM' : 'PM'}`; };
             timeLabel = `From ${fmt(fromVal)}`;
         }
-
-        const raw = { id: 'custom_' + Date.now(), name, type, days, timeLabel, isEssential: false };
+        const raw = { id, name, type, days, timeLabel, isEssential: false, anim: pickAnim(type) };
         if (fromH !== undefined) raw.fromH = fromH;
         if (toH   !== undefined) raw.toH   = toH;
+        return raw;
+    }
 
+    function addCustomTask() {
+        const name    = document.getElementById('new-task-name').value.trim();
+        const type    = document.getElementById('new-task-type').value;
+        const fromVal = document.getElementById('new-task-from').value;
+        const toVal   = document.getElementById('new-task-to').value;
+        const days    = Array.from(document.querySelectorAll('#new-task-days .tp-day.on'))
+                             .map(el => parseInt(el.dataset.day));
+
+        if (!name || days.length === 0) { alert('Please enter a name and select at least one day.'); return; }
+
+        const raw = buildRaw('custom_' + Date.now(), name, type, days, fromVal, toVal);
         customTasksRaw.push(raw);
         customTasks = hydrateCustomTasks(customTasksRaw);
         localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
 
-        // Reset form
         document.getElementById('new-task-name').value = '';
         document.getElementById('new-task-from').value = '';
         document.getElementById('new-task-to').value   = '';
@@ -273,6 +289,77 @@
         updateUI();
     }
 
+    function duplicateCustomTask(id) {
+        const orig = customTasksRaw.find(t => t.id === id);
+        if (!orig) return;
+        const copy = Object.assign({}, orig, { id: 'custom_' + Date.now(), name: orig.name + ' (copy)' });
+        customTasksRaw.push(copy);
+        customTasks = hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
+        renderCustomTasks();
+        updateUI();
+        setStatus('Task duplicated! ✌️', 2000);
+    }
+
+    function editCustomTask(id) {
+        // Swap the ct-item row for an inline edit form
+        const t = customTasksRaw.find(t => t.id === id);
+        if (!t) return;
+        const list = document.getElementById('custom-task-list');
+        const item = list.querySelector(`[data-id="${id}"]`);
+        if (!item) return;
+
+        const fromStr = t.fromH !== undefined ? String(t.fromH).padStart(2,'0') + ':00' : '';
+        const toStr   = t.toH   !== undefined ? String(t.toH).padStart(2,'0')   + ':00' : '';
+        const daysHtml = ['Su','Mo','Tu','We','Th','Fr','Sa'].map((d,i) =>
+            `<div class="tp-day${t.days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`
+        ).join('');
+
+        item.outerHTML = `<div class="ct-edit-form" data-id="${id}">
+            <div class="ct-edit-row">
+                <input class="tp-input" id="edit-name-${id}" value="${t.name}" style="flex:2">
+                <select class="tp-input" id="edit-type-${id}" style="flex:1">
+                    <option value="power"${t.type==='power'?' selected':''}>💪 Power</option>
+                    <option value="stamina"${t.type==='stamina'?' selected':''}>✨ Stamina</option>
+                    <option value="guts"${t.type==='guts'?' selected':''}>🔥 Guts</option>
+                    <option value="wit"${t.type==='wit'?' selected':''}>📚 Wit</option>
+                </select>
+            </div>
+            <div class="ct-edit-row">
+                <input class="tp-input" id="edit-from-${id}" type="time" value="${fromStr}" style="flex:1">
+                <span style="font-size:0.8em;color:#b2bec3">–</span>
+                <input class="tp-input" id="edit-to-${id}" type="time" value="${toStr}" style="flex:1">
+            </div>
+            <div class="ct-edit-row">
+                <div class="tp-days" id="edit-days-${id}">${daysHtml}</div>
+            </div>
+            <div class="ct-edit-row">
+                <button class="btn-save" onclick="saveCustomTask('${id}')">Save</button>
+                <button class="btn-cancel" onclick="renderCustomTasks()">Cancel</button>
+            </div>
+        </div>`;
+    }
+
+    function saveCustomTask(id) {
+        const name    = document.getElementById(`edit-name-${id}`).value.trim();
+        const type    = document.getElementById(`edit-type-${id}`).value;
+        const fromVal = document.getElementById(`edit-from-${id}`).value;
+        const toVal   = document.getElementById(`edit-to-${id}`).value;
+        const days    = Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`))
+                             .map(el => parseInt(el.dataset.day));
+
+        if (!name || days.length === 0) { alert('Please enter a name and select at least one day.'); return; }
+
+        const idx = customTasksRaw.findIndex(t => t.id === id);
+        if (idx === -1) return;
+        customTasksRaw[idx] = buildRaw(id, name, type, days, fromVal, toVal);
+        customTasks = hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
+        renderCustomTasks();
+        updateUI();
+        setStatus('Task updated! ✨', 2000);
+    }
+
     const DAY_NAMES = ['Su','Mo','Tu','We','Th','Fr','Sa'];
 
     function renderCustomTasks() {
@@ -282,12 +369,16 @@
         const statIcons = { power:'💪', stamina:'✨', guts:'🔥', wit:'📚' };
         list.innerHTML = '<hr class="tp-divider">' + customTasksRaw.map(t => {
             const dayStr = t.days.map(d => DAY_NAMES[d]).join(' · ');
-            return `<div class="ct-item">
+            return `<div class="ct-item" data-id="${t.id}">
                 <div class="ct-info">
                     <div class="ct-name">${t.name}</div>
-                    <div class="ct-meta">${statIcons[t.type] || ''} ${t.type} &nbsp;·&nbsp; ${dayStr} &nbsp;·&nbsp; ${t.timeLabel}</div>
+                    <div class="ct-meta">${statIcons[t.type]||''} ${t.type} &nbsp;·&nbsp; ${dayStr} &nbsp;·&nbsp; ${t.timeLabel}</div>
                 </div>
-                <button class="btn-del" onclick="deleteCustomTask('${t.id}')">✕</button>
+                <div class="ct-btns">
+                    <button class="btn-dupe" onclick="duplicateCustomTask('${t.id}')" title="Duplicate">⧉</button>
+                    <button class="btn-edit" onclick="editCustomTask('${t.id}')" title="Edit">✎</button>
+                    <button class="btn-del"  onclick="deleteCustomTask('${t.id}')" title="Delete">✕</button>
+                </div>
             </div>`;
         }).join('');
     }

@@ -8,49 +8,21 @@
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 10px; box-sizing: border-box; }
         header { width: 95%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
         #menu-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
-
-        /* ── Inline custom task panel ───────────────────────────────────────── */
-        #task-panel {
-            display: none; width: 95%; max-width: 400px;
-            background: white; border-radius: 20px; margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.07);
-            overflow: hidden;
-        }
-        #task-panel-header {
-            background: var(--accent); color: white;
-            padding: 12px 16px; font-weight: bold; font-size: 0.88em;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        #task-panel { display: none; width: 95%; max-width: 400px; background: white; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.07); overflow: hidden; }
+        #task-panel-header { background: var(--accent); color: white; padding: 12px 16px; font-weight: bold; font-size: 0.88em; display: flex; justify-content: space-between; align-items: center; }
         #task-panel-header button { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; }
         .tp-body { padding: 14px 16px 16px; }
         .tp-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
         .tp-label { font-size: 0.68em; font-weight: bold; color: #a5b1c2; letter-spacing: 0.05em; width: 100%; margin-bottom: 2px; }
-        .tp-input {
-            flex: 1; min-width: 0; border: 1.5px solid #eee; border-radius: 8px;
-            padding: 7px 10px; font-size: 0.8em; color: #596275;
-            font-family: inherit; outline: none; background: #fafafa; box-sizing: border-box;
-        }
+        .tp-input { flex: 1; min-width: 0; border: 1.5px solid #eee; border-radius: 8px; padding: 7px 10px; font-size: 0.8em; color: #596275; font-family: inherit; outline: none; background: #fafafa; box-sizing: border-box; }
         .tp-input:focus { border-color: var(--accent); background: white; }
         select.tp-input { cursor: pointer; }
         .tp-days { display: flex; gap: 5px; flex-wrap: wrap; }
-        .tp-day {
-            width: 36px; height: 36px; border-radius: 50%;
-            border: 1.5px solid #eee; background: #fafafa;
-            font-size: 0.68em; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            color: #a5b1c2; user-select: none; transition: all 0.12s;
-        }
+        .tp-day { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #eee; background: #fafafa; font-size: 0.68em; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #a5b1c2; user-select: none; transition: all 0.12s; }
         .tp-day.on { background: var(--accent); border-color: var(--accent); color: white; }
-        .tp-add {
-            width: 100%; padding: 10px; background: var(--accent); color: white;
-            border: none; border-radius: 10px; font-weight: bold;
-            font-size: 0.85em; cursor: pointer; margin-top: 2px; font-family: inherit;
-        }
+        .tp-add { width: 100%; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 0.85em; cursor: pointer; margin-top: 2px; font-family: inherit; }
         .tp-divider { border: none; border-top: 1px solid #f0f0f0; margin: 10px 0; }
-        .ct-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 0; border-bottom: 1px solid #f5f5f5; gap: 8px;
-        }
+        .ct-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; gap: 8px; }
         .ct-item:last-child { border-bottom: none; }
         .ct-info { flex: 1; min-width: 0; }
         .ct-name { font-size: 0.82em; font-weight: 600; color: #596275; }
@@ -63,8 +35,6 @@
         .ct-edit-row { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
         .btn-save { background: var(--accent); color: white; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8em; font-weight: bold; font-family: inherit; }
         .btn-cancel { background: #f0f0f0; color: #596275; border: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8em; font-family: inherit; }
-        /* ─────────────────────────────────────────────────────────────────── */
-
         #hud, #checklist { width: 95%; max-width: 400px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .stat-label { width: 40px; font-weight: bold; font-size: 0.8em; }
@@ -72,24 +42,9 @@
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
         #agnes-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
-        #status-box {
-            width: min(364px, 95vw); background: white;
-            border: 2px solid var(--accent); border-bottom: none;
-            border-radius: 16px 16px 0 0;
-            padding: 8px 12px; box-sizing: border-box;
-            font-size: 0.72em; color: #596275; line-height: 1.4;
-            text-align: center; min-height: 44px;
-            display: flex; align-items: center; justify-content: center;
-        }
+        #status-box { width: min(364px, 95vw); background: white; border: 2px solid var(--accent); border-bottom: none; border-radius: 16px 16px 0 0; padding: 8px 12px; box-sizing: border-box; font-size: 0.72em; color: #596275; line-height: 1.4; text-align: center; min-height: 44px; display: flex; align-items: center; justify-content: center; }
         #status-text { transition: opacity 0.4s ease; opacity: 1; }
-        #game-container {
-            border: 2px solid var(--accent); border-radius: 0 0 24px 24px; border-top: none;
-            box-shadow: 0 8px 20px rgba(248,165,194,0.15);
-            background: #fff;
-            /* Responsive: fill viewport on small screens, cap at 360px on larger */
-            width: min(360px, calc(95vw - 4px)); height: 180px;
-            overflow: hidden; cursor: pointer;
-        }
+        #game-container { border: 2px solid var(--accent); border-radius: 0 0 24px 24px; border-top: none; box-shadow: 0 8px 20px rgba(248,165,194,0.15); background: #fff; width: min(360px, calc(95vw - 4px)); height: 180px; overflow: hidden; cursor: pointer; }
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; gap: 6px; }
         .task-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
         .task-name { font-weight: 600; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -102,7 +57,6 @@
         .btn-del { background: #ff7675; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; }
         #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
         .all-done { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; font-size: 0.9em; }
-        /* iOS input resets */
         input.tp-input, select.tp-input { -webkit-appearance: none; appearance: none; }
         input[type="time"].tp-input { min-width: 0; }
     </style>
@@ -115,15 +69,12 @@
 </header>
 <div id="clock">Loading time...</div>
 
-<!-- ── Inline custom task panel ─────────────────────────────────────────── -->
 <div id="task-panel">
     <div id="task-panel-header">
         <span>✏️ Custom Tasks</span>
         <button onclick="toggleMenu()">✕</button>
     </div>
     <div class="tp-body">
-
-        <!-- Add form -->
         <div class="tp-row">
             <input class="tp-input" id="new-task-name" placeholder="Task name…" style="flex:2">
             <select class="tp-input" id="new-task-type" style="flex:1">
@@ -133,14 +84,12 @@
                 <option value="wit">📚 Wit</option>
             </select>
         </div>
-
         <div class="tp-row">
             <span class="tp-label">TIME WINDOW (optional)</span>
             <input class="tp-input" id="new-task-from" type="time" style="flex:1">
             <span style="font-size:0.8em;color:#b2bec3;padding:0 2px">–</span>
             <input class="tp-input" id="new-task-to" type="time" style="flex:1">
         </div>
-
         <div class="tp-row" style="flex-direction:column;align-items:flex-start;">
             <span class="tp-label">REPEAT ON</span>
             <div class="tp-days" id="new-task-days">
@@ -153,10 +102,7 @@
                 <div class="tp-day" data-day="6" onclick="this.classList.toggle('on')">Sa</div>
             </div>
         </div>
-
         <button class="tp-add" onclick="addCustomTask()">+ Add Task</button>
-
-        <!-- Existing tasks -->
         <div id="custom-task-list"></div>
     </div>
 </div>
@@ -179,16 +125,15 @@
 </div>
 
 <script>
-    // ── State ────────────────────────────────────────────────────────────────
     let agnes = null;
-    let stats    = JSON.parse(localStorage.getItem('agnesStats'))    || { power: 0, stamina: 0, guts: 0, wit: 0 };
-    let history  = JSON.parse(localStorage.getItem('agnesHistory'))  || {};
-    let dismissed= JSON.parse(localStorage.getItem('agnesDismissed'))|| {};
+    let stats     = JSON.parse(localStorage.getItem('agnesStats'))     || { power:0, stamina:0, guts:0, wit:0 };
+    let history   = JSON.parse(localStorage.getItem('agnesHistory'))   || {};
+    let dismissed = JSON.parse(localStorage.getItem('agnesDismissed')) || {};
 
     let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
     function hydrateCustomTasks(raw) {
         return raw.map(t => Object.assign({}, t, {
-            anim: t.anim || 'cheer', // preserved from storage; pickAnim sets it on create/edit
+            anim: t.anim || 'cheer',
             check: (h) => {
                 if (t.fromH !== undefined && t.toH !== undefined) {
                     if (t.fromH <= t.toH) return h >= t.fromH && h < t.toH;
@@ -200,21 +145,20 @@
     }
     let customTasks = hydrateCustomTasks(customTasksRaw);
 
-    // ── Core Tasks ───────────────────────────────────────────────────────────
     const coreTasks = [
-        { id: 'Stretch',   name: 'Morning Stretch',            type: 'power',   anim: 'cheer',      timeLabel: 'Until 10AM',  isEssential: true,  check: h => h < 10 },
-        { id: 'Breakfast', name: 'Have Breakfast',             type: 'stamina', anim: 'eating',     timeLabel: 'Until 12PM',  isEssential: true,  check: h => h < 12 },
-        { id: 'Water',     name: 'Drink Glass Of Water',       type: 'stamina', anim: 'snack',      timeLabel: 'Every 2hrs',  isEssential: true,  check: h => h >= 8 && h < 24 && h % 2 === 0 },
-        { id: 'Lunch',     name: 'Eat Lunch',                  type: 'stamina', anim: 'eating',     timeLabel: '12PM - 3PM',  isEssential: true,  check: h => h >= 12 && h < 15 },
-        { id: 'Snack',     name: 'Share A Snack With Agnes',   type: 'stamina', anim: 'snack',      timeLabel: '3PM - 5PM',   isEssential: false, check: h => h >= 15 && h < 17 },
-        { id: 'Walk',      name: 'Go For A Walk with Agnes',   type: 'power',   anim: 'super_dash', timeLabel: 'After 3PM',   isEssential: false, check: h => h >= 15 && h < 19 },
-        { id: 'Read',      name: 'Read/Study',                 type: 'wit',     anim: 'sit_down',   timeLabel: 'From 5PM',    isEssential: false, check: h => h >= 17 },
-        { id: 'Dinner',    name: 'Have Dinner With Agnes',     type: 'stamina', anim: 'eating',     timeLabel: '6PM - 10PM',  isEssential: true,  check: h => h >= 18 && h < 22 },
-        { id: 'Teeth',     name: 'Brush Your Teeth',           type: 'guts',    anim: 'giggle',     timeLabel: 'AM/PM',       isEssential: true,  check: h => (h >= 7 && h < 9) || (h >= 17 && h < 24) },
-        { id: 'Tidy',      name: 'Tidy Up Room',               type: 'power',   anim: 'float',      timeLabel: 'Wed & Sun',   isEssential: false, days: [0, 3], check: h => h < 18 },
-        { id: 'Tidy2',     name: 'Scrub The Bathroom',         type: 'power',   anim: 'dash',       timeLabel: 'Sun & Wed',   isEssential: false, days: [0, 3], check: h => h < 18 },
-        { id: 'Shop',      name: 'Go Food Shopping With Agnes',type: 'power',   anim: 'dash',       timeLabel: 'Saturdays',   isEssential: false, days: [6],    check: h => h < 20 },
-        { id: 'Laundry',   name: 'Do Laundry With Agnes',      type: 'guts',    anim: 'dash',       timeLabel: 'Sundays',     isEssential: false, days: [0],    check: h => h < 18 }
+        { id:'Stretch',   name:'Morning Stretch',             type:'power',   anim:'cheer',      timeLabel:'Until 10AM',  isEssential:true,  check:h=>h<10 },
+        { id:'Breakfast', name:'Have Breakfast',              type:'stamina', anim:'eating',     timeLabel:'Until 12PM',  isEssential:true,  check:h=>h<12 },
+        { id:'Water',     name:'Drink Glass Of Water',        type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',  isEssential:true,  check:h=>h>=8&&h<24&&h%2===0 },
+        { id:'Lunch',     name:'Eat Lunch',                   type:'stamina', anim:'eating',     timeLabel:'12PM - 3PM',  isEssential:true,  check:h=>h>=12&&h<15 },
+        { id:'Snack',     name:'Share A Snack With Agnes',    type:'stamina', anim:'snack',      timeLabel:'3PM - 5PM',   isEssential:false, check:h=>h>=15&&h<17 },
+        { id:'Walk',      name:'Go For A Walk with Agnes',    type:'power',   anim:'super_dash', timeLabel:'After 3PM',   isEssential:false, check:h=>h>=15&&h<19 },
+        { id:'Read',      name:'Read/Study',                  type:'wit',     anim:'sit_down',   timeLabel:'From 5PM',    isEssential:false, check:h=>h>=17 },
+        { id:'Dinner',    name:'Have Dinner With Agnes',      type:'stamina', anim:'eating',     timeLabel:'6PM - 10PM',  isEssential:true,  check:h=>h>=18&&h<22 },
+        { id:'Teeth',     name:'Brush Your Teeth',            type:'guts',    anim:'giggle',     timeLabel:'AM/PM',       isEssential:true,  check:h=>(h>=7&&h<9)||(h>=17&&h<24) },
+        { id:'Tidy',      name:'Tidy Up Room',                type:'power',   anim:'float',      timeLabel:'Wed & Sun',   isEssential:false, days:[0,3], check:h=>h<18 },
+        { id:'Tidy2',     name:'Scrub The Bathroom',          type:'power',   anim:'dash',       timeLabel:'Sun & Wed',   isEssential:false, days:[0,3], check:h=>h<18 },
+        { id:'Shop',      name:'Go Food Shopping With Agnes', type:'power',   anim:'dash',       timeLabel:'Saturdays',   isEssential:false, days:[6],   check:h=>h<20 },
+        { id:'Laundry',   name:'Do Laundry With Agnes',       type:'guts',    anim:'dash',       timeLabel:'Sundays',     isEssential:false, days:[0],   check:h=>h<18 }
     ];
 
     // ── Menu ─────────────────────────────────────────────────────────────────
@@ -225,97 +169,79 @@
         if (!isOpen) renderCustomTasks();
     }
 
-    // ── Animation pool by stat type ──────────────────────────────────────────
+    // ── Task helpers ─────────────────────────────────────────────────────────
     const STAT_ANIMS = {
-        power:   ['super_dash', 'dash', 'cheer'],
-        stamina: ['eating', 'snack', 'wave'],
-        guts:    ['giggle', 'cheer', 'sudden_stop'],
-        wit:     ['sit_down', 'say', 'giggle'],
+        power:   ['super_dash','dash','cheer'],
+        stamina: ['eating','snack','wave'],
+        guts:    ['giggle','cheer','sudden_stop'],
+        wit:     ['sit_down','say','giggle'],
     };
     function pickAnim(type) {
         const pool = STAT_ANIMS[type] || ['cheer'];
         return pool[Math.floor(Math.random() * pool.length)];
     }
 
-    // ── Shared helper: build a raw task object from form-like values ──────────
     function buildRaw(id, name, type, days, fromVal, toVal) {
-        const fmt = t => { const [h,m] = t.split(':'); const hr = parseInt(h); return `${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`; };
-        let timeLabel = 'Anytime', fromH, toH;
+        const fmt = t => { const [h,m]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`; };
+        let timeLabel='Anytime', fromH, toH;
         if (fromVal && toVal) {
-            fromH = parseInt(fromVal.split(':')[0]);
-            toH   = parseInt(toVal.split(':')[0]);
-            timeLabel = `${fmt(fromVal)} – ${fmt(toVal)}`;
+            fromH=parseInt(fromVal.split(':')[0]); toH=parseInt(toVal.split(':')[0]);
+            timeLabel=`${fmt(fromVal)} – ${fmt(toVal)}`;
         } else if (fromVal) {
-            fromH = parseInt(fromVal.split(':')[0]);
-            timeLabel = `From ${fmt(fromVal)}`;
+            fromH=parseInt(fromVal.split(':')[0]);
+            timeLabel=`From ${fmt(fromVal)}`;
         }
-        const raw = { id, name, type, days, timeLabel, isEssential: false, anim: pickAnim(type) };
-        if (fromH !== undefined) raw.fromH = fromH;
-        if (toH   !== undefined) raw.toH   = toH;
+        const raw = { id, name, type, days, timeLabel, isEssential:false, anim:pickAnim(type) };
+        if (fromH!==undefined) raw.fromH=fromH;
+        if (toH!==undefined)   raw.toH=toH;
         return raw;
     }
 
     function addCustomTask() {
-        const name    = document.getElementById('new-task-name').value.trim();
-        const type    = document.getElementById('new-task-type').value;
-        const fromVal = document.getElementById('new-task-from').value;
-        const toVal   = document.getElementById('new-task-to').value;
-        const days    = Array.from(document.querySelectorAll('#new-task-days .tp-day.on'))
-                             .map(el => parseInt(el.dataset.day));
-
-        if (!name || days.length === 0) { alert('Please enter a name and select at least one day.'); return; }
-
-        const raw = buildRaw('custom_' + Date.now(), name, type, days, fromVal, toVal);
-        customTasksRaw.push(raw);
-        customTasks = hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
-
-        document.getElementById('new-task-name').value = '';
-        document.getElementById('new-task-from').value = '';
-        document.getElementById('new-task-to').value   = '';
-        document.querySelectorAll('#new-task-days .tp-day').forEach(el => el.classList.remove('on'));
-
-        renderCustomTasks();
-        updateUI();
-        if (window.showEmotion) window.showEmotion('bulb', 2000);
-        setStatus('New task added! 💡', 3000);
+        const name=document.getElementById('new-task-name').value.trim();
+        const type=document.getElementById('new-task-type').value;
+        const fromVal=document.getElementById('new-task-from').value;
+        const toVal=document.getElementById('new-task-to').value;
+        const days=Array.from(document.querySelectorAll('#new-task-days .tp-day.on')).map(el=>parseInt(el.dataset.day));
+        if (!name||days.length===0){alert('Please enter a name and select at least one day.');return;}
+        customTasksRaw.push(buildRaw('custom_'+Date.now(),name,type,days,fromVal,toVal));
+        customTasks=hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks',JSON.stringify(customTasksRaw));
+        document.getElementById('new-task-name').value='';
+        document.getElementById('new-task-from').value='';
+        document.getElementById('new-task-to').value='';
+        document.querySelectorAll('#new-task-days .tp-day').forEach(el=>el.classList.remove('on'));
+        renderCustomTasks(); updateUI();
+        // bulb only — no second emotion
+        if (window.showEmotion) window.showEmotion('bulb',2000);
+        setStatus('New task added! 💡',3000);
     }
 
     function deleteCustomTask(id) {
-        customTasksRaw = customTasksRaw.filter(t => t.id !== id);
-        customTasks    = hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
-        renderCustomTasks();
-        updateUI();
+        customTasksRaw=customTasksRaw.filter(t=>t.id!==id);
+        customTasks=hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks',JSON.stringify(customTasksRaw));
+        renderCustomTasks(); updateUI();
     }
 
     function duplicateCustomTask(id) {
-        const orig = customTasksRaw.find(t => t.id === id);
-        if (!orig) return;
-        const copy = Object.assign({}, orig, { id: 'custom_' + Date.now(), name: orig.name + ' (copy)' });
-        customTasksRaw.push(copy);
-        customTasks = hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
-        renderCustomTasks();
-        updateUI();
-        setStatus('Task duplicated! ✌️', 2000);
+        const orig=customTasksRaw.find(t=>t.id===id); if(!orig)return;
+        customTasksRaw.push(Object.assign({},orig,{id:'custom_'+Date.now(),name:orig.name+' (copy)'}));
+        customTasks=hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks',JSON.stringify(customTasksRaw));
+        renderCustomTasks(); updateUI();
+        setStatus('Task duplicated! ✌️',2000);
     }
 
     function editCustomTask(id) {
-        // Swap the ct-item row for an inline edit form
-        const t = customTasksRaw.find(t => t.id === id);
-        if (!t) return;
-        const list = document.getElementById('custom-task-list');
-        const item = list.querySelector(`[data-id="${id}"]`);
-        if (!item) return;
-
-        const fromStr = t.fromH !== undefined ? String(t.fromH).padStart(2,'0') + ':00' : '';
-        const toStr   = t.toH   !== undefined ? String(t.toH).padStart(2,'0')   + ':00' : '';
-        const daysHtml = ['Su','Mo','Tu','We','Th','Fr','Sa'].map((d,i) =>
+        const t=customTasksRaw.find(t=>t.id===id); if(!t)return;
+        const item=document.querySelector(`[data-id="${id}"]`); if(!item)return;
+        const fromStr=t.fromH!==undefined?String(t.fromH).padStart(2,'0')+':00':'';
+        const toStr=t.toH!==undefined?String(t.toH).padStart(2,'0')+':00':'';
+        const daysHtml=['Su','Mo','Tu','We','Th','Fr','Sa'].map((d,i)=>
             `<div class="tp-day${t.days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`
         ).join('');
-
-        item.outerHTML = `<div class="ct-edit-form" data-id="${id}">
+        item.outerHTML=`<div class="ct-edit-form" data-id="${id}">
             <div class="ct-edit-row">
                 <input class="tp-input" id="edit-name-${id}" value="${t.name}" style="flex:2">
                 <select class="tp-input" id="edit-type-${id}" style="flex:1">
@@ -330,9 +256,7 @@
                 <span style="font-size:0.8em;color:#b2bec3">–</span>
                 <input class="tp-input" id="edit-to-${id}" type="time" value="${toStr}" style="flex:1">
             </div>
-            <div class="ct-edit-row">
-                <div class="tp-days" id="edit-days-${id}">${daysHtml}</div>
-            </div>
+            <div class="ct-edit-row"><div class="tp-days" id="edit-days-${id}">${daysHtml}</div></div>
             <div class="ct-edit-row">
                 <button class="btn-save" onclick="saveCustomTask('${id}')">Save</button>
                 <button class="btn-cancel" onclick="renderCustomTasks()">Cancel</button>
@@ -341,38 +265,31 @@
     }
 
     function saveCustomTask(id) {
-        const name    = document.getElementById(`edit-name-${id}`).value.trim();
-        const type    = document.getElementById(`edit-type-${id}`).value;
-        const fromVal = document.getElementById(`edit-from-${id}`).value;
-        const toVal   = document.getElementById(`edit-to-${id}`).value;
-        const days    = Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`))
-                             .map(el => parseInt(el.dataset.day));
-
-        if (!name || days.length === 0) { alert('Please enter a name and select at least one day.'); return; }
-
-        const idx = customTasksRaw.findIndex(t => t.id === id);
-        if (idx === -1) return;
-        customTasksRaw[idx] = buildRaw(id, name, type, days, fromVal, toVal);
-        customTasks = hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
-        renderCustomTasks();
-        updateUI();
-        setStatus('Task updated! ✨', 2000);
+        const name=document.getElementById(`edit-name-${id}`).value.trim();
+        const type=document.getElementById(`edit-type-${id}`).value;
+        const fromVal=document.getElementById(`edit-from-${id}`).value;
+        const toVal=document.getElementById(`edit-to-${id}`).value;
+        const days=Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));
+        if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}
+        const idx=customTasksRaw.findIndex(t=>t.id===id); if(idx===-1)return;
+        customTasksRaw[idx]=buildRaw(id,name,type,days,fromVal,toVal);
+        customTasks=hydrateCustomTasks(customTasksRaw);
+        localStorage.setItem('agnesCustomTasks',JSON.stringify(customTasksRaw));
+        renderCustomTasks(); updateUI();
+        setStatus('Task updated! ✨',2000);
     }
 
-    const DAY_NAMES = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-
+    const DAY_NAMES=['Su','Mo','Tu','We','Th','Fr','Sa'];
     function renderCustomTasks() {
-        const list = document.getElementById('custom-task-list');
-        if (!customTasksRaw.length) { list.innerHTML = ''; return; }
-
-        const statIcons = { power:'💪', stamina:'✨', guts:'🔥', wit:'📚' };
-        list.innerHTML = '<hr class="tp-divider">' + customTasksRaw.map(t => {
-            const dayStr = t.days.map(d => DAY_NAMES[d]).join(' · ');
+        const list=document.getElementById('custom-task-list');
+        if(!customTasksRaw.length){list.innerHTML='';return;}
+        const icons={power:'💪',stamina:'✨',guts:'🔥',wit:'📚'};
+        list.innerHTML='<hr class="tp-divider">'+customTasksRaw.map(t=>{
+            const dayStr=t.days.map(d=>DAY_NAMES[d]).join(' · ');
             return `<div class="ct-item" data-id="${t.id}">
                 <div class="ct-info">
                     <div class="ct-name">${t.name}</div>
-                    <div class="ct-meta">${statIcons[t.type]||''} ${t.type} &nbsp;·&nbsp; ${dayStr} &nbsp;·&nbsp; ${t.timeLabel}</div>
+                    <div class="ct-meta">${icons[t.type]||''} ${t.type} · ${dayStr} · ${t.timeLabel}</div>
                 </div>
                 <div class="ct-btns">
                     <button class="btn-dupe" onclick="duplicateCustomTask('${t.id}')" title="Duplicate">⧉</button>
@@ -383,249 +300,179 @@
         }).join('');
     }
 
-    // Track which tasks were visible last tick to detect expiry
+    // ── Expiry tracking ───────────────────────────────────────────────────────
     let _lastVisibleTasks = new Set();
 
     // ── UI ───────────────────────────────────────────────────────────────────
     function updateUI() {
-        ['power', 'stamina', 'guts', 'wit'].forEach(s => {
-            const val = stats[s];
-            const bar  = document.getElementById(`bar-${s}`);
-            if (bar) bar.style.width = Math.min(val / 5, 100) + '%';
-            const rank = document.getElementById(`rank-${s}`);
-            if (rank) rank.innerText = ['F','E','D','C','B','A','S'][Math.floor(Math.min(val / 100, 6))];
+        ['power','stamina','guts','wit'].forEach(s=>{
+            const val=stats[s];
+            const bar=document.getElementById(`bar-${s}`); if(bar)bar.style.width=Math.min(val/5,100)+'%';
+            const rank=document.getElementById(`rank-${s}`); if(rank)rank.innerText=['F','E','D','C','B','A','S'][Math.floor(Math.min(val/100,6))];
         });
+        const h=new Date().getHours(), today=new Date().toDateString(), currentDay=new Date().getDay();
+        const container=document.getElementById('task-list');
+        container.innerHTML='';
+        const allTasks=[...coreTasks,...customTasks];
+        let visibleCount=0;
+        const nowVisible=new Set();
 
-        const h          = new Date().getHours();
-        const today      = new Date().toDateString();
-        const currentDay = new Date().getDay();
-        const container  = document.getElementById('task-list');
-        container.innerHTML = '';
-        const allTasks  = [...coreTasks, ...customTasks];
-        let visibleCount = 0;
-        const nowVisible = new Set();
-
-        allTasks.forEach(task => {
-            const taskDays = task.days || [0,1,2,3,4,5,6];
-            const eligible = taskDays.includes(currentDay) && task.check(h);
-            const done     = history[task.id] === today;
-            const skipped  = dismissed[task.id] === today;
-
-            // Expiry: was visible last tick, window just closed, not completed or dismissed
-            if (_lastVisibleTasks.has(task.id) && !eligible && !done && !skipped) {
-                if (window.showEmotion) window.showEmotion('dizzy', 2500);
-                say("You missed a task! Better try again next time!");
+        allTasks.forEach(task=>{
+            const taskDays=task.days||[0,1,2,3,4,5,6];
+            const eligible=taskDays.includes(currentDay)&&task.check(h);
+            const done=history[task.id]===today;
+            const skipped=dismissed[task.id]===today;
+            // Expiry: was visible, now window closed, not done or skipped
+            if(_lastVisibleTasks.has(task.id)&&!eligible&&!done&&!skipped){
+                // Only show emotion — status update is done separately without playing 'say'
+                if(window.showEmotion) window.showEmotion('dizzy',2500);
+                setStatus("You missed a task! Better try again next time!",4000);
             }
-
-            if (eligible && !done && !skipped) {
-                nowVisible.add(task.id);
-                visibleCount++;
-                const dismissBtn = task.isEssential ? '' : `<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
-                container.innerHTML += `
+            if(eligible&&!done&&!skipped){
+                nowVisible.add(task.id); visibleCount++;
+                const dismissBtn=task.isEssential?'':`<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
+                container.innerHTML+=`
                     <div class="task-item">
                         <div class="task-info" onclick="say('Don\\'t forget to ${task.name.toLowerCase()}! ${task.timeLabel}')">
-                            <span class="task-name" style="text-decoration: underline; cursor: pointer;">${task.name}</span>
+                            <span class="task-name" style="text-decoration:underline;cursor:pointer">${task.name}</span>
                             <div class="task-meta">
                                 <span class="task-stat">${task.type.toUpperCase()}</span>
-                                <span class="task-time">${task.timeLabel || 'Anytime'}</span>
+                                <span class="task-time">${task.timeLabel||'Anytime'}</span>
                             </div>
                         </div>
                         <div class="btn-group">
                             ${dismissBtn}
-                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'cheer'}', '${task.type}')">Done</button>
+                            <button class="btn-check" onclick="complete('${task.id}','${task.anim||'cheer'}','${task.type}')">Done</button>
                         </div>
                     </div>`;
             }
         });
-
-        _lastVisibleTasks = nowVisible;
-
-        if (visibleCount === 0) {
-            container.innerHTML = `<div class="all-done">🌸 All done for today! Great job!</div>`;
-        }
+        _lastVisibleTasks=nowVisible;
+        if(visibleCount===0) container.innerHTML=`<div class="all-done">🌸 All done for today! Great job!</div>`;
     }
 
     function complete(id, anim, type) {
-        const rankBefore = Math.floor(Math.min((stats[type] || 0) / 100, 6));
-        history[id] = new Date().toDateString();
-        stats[type] = (stats[type] || 0) + 10;
-        const rankAfter = Math.floor(Math.min(stats[type] / 100, 6));
-        localStorage.setItem('agnesHistory', JSON.stringify(history));
-        localStorage.setItem('agnesStats',   JSON.stringify(stats));
-        if (window.cancelCurrent) window.cancelCurrent();
-        if (agnes) { agnes.setFlipX(false); agnes.play(anim); }
-        // Always show heart on completion — bulb shows additionally on rank up
-        if (window.showEmotion) window.showEmotion('heart', 2000);
-        if (rankAfter > rankBefore) {
-            setStatus(rankUpMessages[type] || '✨ Level up!', 5000);
-            // Small delay so heart shows first, then bulb
-            setTimeout(() => { if (window.showEmotion) window.showEmotion('bulb', 2500); }, 2200);
+        const rankBefore=Math.floor(Math.min((stats[type]||0)/100,6));
+        history[id]=new Date().toDateString();
+        stats[type]=(stats[type]||0)+10;
+        const rankAfter=Math.floor(Math.min(stats[type]/100,6));
+        localStorage.setItem('agnesHistory',JSON.stringify(history));
+        localStorage.setItem('agnesStats',JSON.stringify(stats));
+        if(window.cancelCurrent) window.cancelCurrent();
+        if(agnes){agnes.setFlipX(false);agnes.play(anim);}
+        if(rankAfter>rankBefore){
+            // Rank up: show bulb only (clear enough signal)
+            setStatus(rankUpMessages[type]||'✨ Level up!',5000);
+            if(window.showEmotion) window.showEmotion('bulb',3000);
         } else {
-            setStatus('Good work! 🌸', 3000);
+            // Normal complete: heart only
+            setStatus('Good work! 🌸',3000);
+            if(window.showEmotion) window.showEmotion('heart',2500);
         }
         updateUI();
     }
 
     function dismiss(id) {
-        dismissed[id] = new Date().toDateString();
-        localStorage.setItem('agnesDismissed', JSON.stringify(dismissed));
-        if (window.showEmotion) window.showEmotion('exclaim', 1500);
-        setStatus("Okay, skipping that one... 😤", 3000);
+        dismissed[id]=new Date().toDateString();
+        localStorage.setItem('agnesDismissed',JSON.stringify(dismissed));
+        // exclaim only — no status message needed, Agnes's expression says it
+        if(window.showEmotion) window.showEmotion('exclaim',1800);
+        setStatus("Okay, skipping that one... 😤",3000);
         updateUI();
     }
 
-    // ── Status box ───────────────────────────────────────────────────────────
-    let statusTimeout = null;
-    let boredTimeout  = null;
-    let lastActivity  = Date.now();
-
-    const defaultMessages = [
-        "Agnes is here! 🌸",
-        "Ready for today?",
-        "What's on the schedule?",
-    ];
-
-    const boredMessages = [
-        "Agnes is bored... 😴",
-        "Hmm... nothing to do?",
-        "Agnes is waiting patiently...",
-        "Is anyone there...? 🌸",
-    ];
-
-    const rankUpMessages = {
-        power:   "Agnes feels Stronger! 💪",
-        stamina: "Agnes has more energy! ✨",
-        guts:    "Agnes is tougher now! 🔥",
-        wit:     "Agnes feels Smarter! 📚",
-    };
+    // ── Status ───────────────────────────────────────────────────────────────
+    let statusTimeout=null, boredTimeout=null, lastActivity=Date.now();
+    const defaultMessages=["Agnes is here! 🌸","Ready for today?","What's on the schedule?"];
+    const boredMessages=["Agnes is bored... 😴","Hmm... nothing to do?","Agnes is waiting patiently...","Is anyone there...? 🌸"];
+    const rankUpMessages={power:"Agnes feels Stronger! 💪",stamina:"Agnes has more energy! ✨",guts:"Agnes is tougher now! 🔥",wit:"Agnes feels Smarter! 📚"};
 
     function setStatus(text, duration) {
-        const el = document.getElementById('status-text');
-        if (!el) return;
-        el.style.opacity = '0';
-        if (statusTimeout) clearTimeout(statusTimeout);
-        setTimeout(() => { el.textContent = text; el.style.opacity = '1'; }, 300);
-        if (duration) {
-            statusTimeout = setTimeout(() => {
-                setStatus(defaultMessages[Math.floor(Math.random() * defaultMessages.length)], 0);
-            }, duration);
-        }
+        const el=document.getElementById('status-text'); if(!el)return;
+        el.style.opacity='0';
+        if(statusTimeout) clearTimeout(statusTimeout);
+        setTimeout(()=>{el.textContent=text;el.style.opacity='1';},300);
+        if(duration) statusTimeout=setTimeout(()=>setStatus(defaultMessages[Math.floor(Math.random()*defaultMessages.length)],0),duration);
         resetBoredTimer();
     }
-
     function resetBoredTimer() {
-        lastActivity = Date.now();
-        if (boredTimeout) clearTimeout(boredTimeout);
-        boredTimeout = setTimeout(() => {
-            const msg = boredMessages[Math.floor(Math.random() * boredMessages.length)];
-            setStatus(msg, 0);
-            boredTimeout = setInterval(() => {
-                const m = boredMessages[Math.floor(Math.random() * boredMessages.length)];
-                setStatus(m, 0);
-            }, 120000);
-        }, 300000);
+        lastActivity=Date.now();
+        if(boredTimeout) clearTimeout(boredTimeout);
+        boredTimeout=setTimeout(()=>{
+            setStatus(boredMessages[Math.floor(Math.random()*boredMessages.length)],0);
+            boredTimeout=setInterval(()=>setStatus(boredMessages[Math.floor(Math.random()*boredMessages.length)],0),120000);
+        },300000);
     }
-
     function say(text) {
-        setStatus(text, 4000);
-        if (agnes) agnes.play('say');
+        setStatus(text,4000);
+        if(agnes) agnes.play('say');
+        // No emotion here — callers add their own if needed
     }
-
     resetBoredTimer();
 
-    // ── Clock ────────────────────────────────────────────────────────────────
-    function updateClock() {
-        const now = new Date();
-        const el = document.getElementById('clock');
-        if (el) el.innerText = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    }
+    // ── Clock ─────────────────────────────────────────────────────────────────
+    function updateClock(){const el=document.getElementById('clock');if(el)el.innerText=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
     updateClock();
-    setInterval(updateClock, 1000);
-    setInterval(() => { updateClock(); updateUI(); }, 60000);
-
-    // All state defined — safe to render
+    setInterval(updateClock,1000);
+    setInterval(()=>{updateClock();updateUI();},60000);
     updateUI();
 
     // ── Phaser ───────────────────────────────────────────────────────────────
-    // Calculate canvas width to match the responsive game-container
-    const canvasWidth = Math.min(360, Math.round(window.innerWidth * 0.95) - 4);
+    const canvasWidth=Math.min(360,Math.round(window.innerWidth*0.95)-4);
+    const phaserConfig={type:Phaser.AUTO,width:canvasWidth,height:180,transparent:true,parent:'game-container',scene:{preload,create}};
+    const game=new Phaser.Game(phaserConfig);
 
-    const phaserConfig = {
-        type: Phaser.AUTO,
-        width: canvasWidth,
-        height: 180,
-        transparent: true,
-        parent: 'game-container',
-        scene: { preload, create }
-    };
-
-    const game = new Phaser.Game(phaserConfig);
-
-    function preload() {
-        this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
-        this.load.spritesheet('emotions', 'emotions.png', { frameWidth: 32, frameHeight: 48 });
+    function preload(){
+        this.load.atlas('agnes','agnes-sprites.png','agnes-sprites-json.json');
+        this.load.spritesheet('emotions','emotions.png',{frameWidth:32,frameHeight:48});
     }
 
-    function create() {
-        agnes = this.add.sprite(Math.round(canvasWidth / 2), 90, 'agnes', 'agtc001A_00').setScale(1.5).setInteractive();
-        const emo = this.add.sprite(Math.round(canvasWidth / 2), 40, 'emotions', 0).setScale(1.2).setAlpha(0).setDepth(10);
-        const EMO_ROWS = { exclaim:0, question:1, music:2, heart:3, sweat:4, sweat2:5, dizzy:6, ellipsis:7, bulb:8, zzz:9 };
-        Object.entries(EMO_ROWS).forEach(([key, row]) => {
-            this.anims.create({
-                key: 'emo_' + key,
-                frames: this.anims.generateFrameNumbers('emotions', { start: row * 8, end: row * 8 + 7 }),
-                frameRate: 8, repeat: 0
-            });
-        });
+    function create(){
+        agnes=this.add.sprite(Math.round(canvasWidth/2),90,'agnes','agtc001A_00').setScale(1.5).setInteractive();
+        const emo=this.add.sprite(Math.round(canvasWidth/2),40,'emotions',0).setScale(1.2).setAlpha(0).setDepth(10);
 
-        let emoTimer = null;
-        const showEmotion = (key, durationMs = 1500) => {
-            if (emoTimer) { emoTimer.remove(false); emoTimer = null; }
-            emo.setPosition(agnes.x, agnes.y - 50);
+        // ── Emotion system ────────────────────────────────────────────────────
+        // One active emotion at a time. A new call replaces the current one.
+        const EMO_ROWS={exclaim:0,question:1,music:2,heart:3,sweat:4,sweat2:5,dizzy:6,ellipsis:7,bulb:8,zzz:9};
+        Object.entries(EMO_ROWS).forEach(([key,row])=>{
+            this.anims.create({key:'emo_'+key,frames:this.anims.generateFrameNumbers('emotions',{start:row*8,end:row*8+7}),frameRate:8,repeat:0});
+        });
+        let emoTimer=null;
+        const showEmotion=(key,durationMs=1500)=>{
+            if(emoTimer){emoTimer.remove(false);emoTimer=null;}
+            this.tweens.killTweensOf(emo); // stop any fade-out in progress
+            emo.setPosition(agnes.x,agnes.y-50);
             emo.setAlpha(1);
-            emo.play('emo_' + key);
-            emoTimer = this.time.delayedCall(durationMs, () => {
-                this.tweens.add({ targets: emo, alpha: 0, duration: 400 });
+            emo.play('emo_'+key);
+            emoTimer=this.time.delayedCall(durationMs,()=>{
+                this.tweens.add({targets:emo,alpha:0,duration:500});
             });
         };
-
-        window.showEmotion = showEmotion;
-        this.events.on('update', () => {
-            if (emo.alpha > 0) emo.setPosition(agnes.x, agnes.y - 50);
-        });
+        window.showEmotion=showEmotion;
+        this.events.on('update',()=>{if(emo.alpha>0)emo.setPosition(agnes.x,agnes.y-50);});
 
         // ── Animations ───────────────────────────────────────────────────────
-        this.anims.create({ key: 'idle1',       frames: [{ key: 'agnes', frame: 'agtc001A_00' }, { key: 'agnes', frame: 'agtc001A_01' }, { key: 'agnes', frame: 'agtc001A_02' }, { key: 'agnes', frame: 'agtc100_00' }, { key: 'agnes', frame: 'agtc100_01' }, { key: 'agnes', frame: 'agtc100_02' }, { key: 'agnes', frame: 'agtc100_03' }], frameRate: 2, repeat: -1 });
-        this.anims.create({ key: 'eating',      frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
-        this.anims.create({ key: 'walk_left',   frames: [{ key: 'agnes', frame: 'agtc101_00' }, { key: 'agnes', frame: 'agtc101_01' }, { key: 'agnes', frame: 'agtc101_02' }, { key: 'agnes', frame: 'agtc101_03' }, { key: 'agnes', frame: 'agtc101_04' }, { key: 'agnes', frame: 'agtc101_05' }], frameRate: 6, repeat: -1 });
-        this.anims.create({ key: 'sit_down',    frames: [{ key: 'agnes', frame: 'agtc320_00' }, { key: 'agnes', frame: 'agtc320_01' }, { key: 'agnes', frame: 'agtc320_02' }, { key: 'agnes', frame: 'agtc320_03' }, { key: 'agnes', frame: 'agtc320_04' }, { key: 'agnes', frame: 'agtc320_06' }, { key: 'agnes', frame: 'agtc320_04' }, { key: 'agnes', frame: 'agtc320_06' }, { key: 'agnes', frame: 'agtc320_04' }, { key: 'agnes', frame: 'agtc320_06' }], frameRate: 2, repeat: 0 });
-        this.anims.create({ key: 'dash',        frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f})), frameRate: 10, repeat: -1 });
-        this.anims.create({ key: 'super_dash',  frames: ['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f})), frameRate: 12, repeat: 0 });
-        this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00' }, { key: 'agnes', frame: 'agtc120_01' }], frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00' }, { key: 'agnes', frame: 'agtc362_01' }], frameRate: 4, repeat: -1 });
-        this.anims.create({ key: 'giggle',      frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f})), frameRate: 6, repeat: 0 });
-        this.anims.create({ key: 'snack',       frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
-        this.anims.create({ key: 'wave',        frames: [{ key: 'agnes', frame: 'agtc540_00' }, { key: 'agnes', frame: 'agtc540_01' }], frameRate: 4, repeat: 5 });
-        this.anims.create({ key: 'cheer',       frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 3 });
-        this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
+        this.anims.create({key:'idle1',frames:[{key:'agnes',frame:'agtc001A_00'},{key:'agnes',frame:'agtc001A_01'},{key:'agnes',frame:'agtc001A_02'},{key:'agnes',frame:'agtc100_00'},{key:'agnes',frame:'agtc100_01'},{key:'agnes',frame:'agtc100_02'},{key:'agnes',frame:'agtc100_03'}],frameRate:2,repeat:-1});
+        this.anims.create({key:'eating',frames:['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f})),frameRate:4,repeat:0});
+        this.anims.create({key:'walk_left',frames:[{key:'agnes',frame:'agtc101_00'},{key:'agnes',frame:'agtc101_01'},{key:'agnes',frame:'agtc101_02'},{key:'agnes',frame:'agtc101_03'},{key:'agnes',frame:'agtc101_04'},{key:'agnes',frame:'agtc101_05'}],frameRate:6,repeat:-1});
+        this.anims.create({key:'sit_down',frames:[{key:'agnes',frame:'agtc320_00'},{key:'agnes',frame:'agtc320_01'},{key:'agnes',frame:'agtc320_02'},{key:'agnes',frame:'agtc320_03'},{key:'agnes',frame:'agtc320_04'},{key:'agnes',frame:'agtc320_06'},{key:'agnes',frame:'agtc320_04'},{key:'agnes',frame:'agtc320_06'},{key:'agnes',frame:'agtc320_04'},{key:'agnes',frame:'agtc320_06'}],frameRate:2,repeat:0});
+        this.anims.create({key:'dash',frames:['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f})),frameRate:10,repeat:-1});
+        this.anims.create({key:'super_dash',frames:['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f})),frameRate:12,repeat:0});
+        this.anims.create({key:'sudden_stop',frames:[{key:'agnes',frame:'agtc120_00'},{key:'agnes',frame:'agtc120_01'}],frameRate:6,repeat:0});
+        this.anims.create({key:'float',frames:[{key:'agnes',frame:'agtc362_00'},{key:'agnes',frame:'agtc362_01'}],frameRate:4,repeat:-1});
+        this.anims.create({key:'giggle',frames:['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f})),frameRate:6,repeat:0});
+        this.anims.create({key:'snack',frames:['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f})),frameRate:4,repeat:0});
+        this.anims.create({key:'wave',frames:[{key:'agnes',frame:'agtc540_00'},{key:'agnes',frame:'agtc540_01'}],frameRate:4,repeat:5});
+        this.anims.create({key:'cheer',frames:['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f})),frameRate:4,repeat:3});
+        this.anims.create({key:'say',frames:['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f})),frameRate:4,repeat:0});
 
-        // ── Movement state ────────────────────────────────────────────────────
-        let agnesVX = 0;
-        let agnesVY = 0;
-        let moveMode = 'none';
-        let floatAngle = 0;
-        let wallBouncing = false;
-        let isInterrupted = false;
+        // ── Movement ─────────────────────────────────────────────────────────
+        let agnesVX=0,agnesVY=0,moveMode='none',floatAngle=0,wallBouncing=false,isInterrupted=false;
+        const scene=this;
+        const HOME_X=Math.round(canvasWidth/2), HOME_Y=90;
+        const WALL_L=20, WALL_R=canvasWidth-20, SDASH_L=10, SDASH_R=canvasWidth-10;
 
-        const scene = this;
-        const HOME_X = Math.round(canvasWidth / 2);
-        const HOME_Y = 90;
-        const WALL_L = 20;
-        const WALL_R = canvasWidth - 20;
-        const SDASH_L = 10;
-        const SDASH_R = canvasWidth - 10;
-
-        const idleQuotes = [
+        const idleQuotes=[
             "Life is an experiment, and we its guinea pigs.",
             "Don't worry about it~",
             "The worst that could happen is your legs would start glowing green for a while!",
@@ -635,194 +482,139 @@
             "Want to be my test subject next?",
             "lets run together next time!",
         ];
-        let lastQuoteIndex = -1;
-        const maybeQuote = () => {
-            if (Math.random() < 0.2) {
-                let idx;
-                do { idx = Math.floor(Math.random() * idleQuotes.length); } while (idx === lastQuoteIndex);
-                lastQuoteIndex = idx;
-                setStatus(idleQuotes[idx], 5000);
-                showEmotion('music', 2000); // music only during idle
+        let lastQuoteIndex=-1;
+        const maybeQuote=()=>{
+            if(Math.random()<0.2){
+                let idx; do{idx=Math.floor(Math.random()*idleQuotes.length);}while(idx===lastQuoteIndex);
+                lastQuoteIndex=idx;
+                setStatus(idleQuotes[idx],5000);
+                // Music note only — one emotion, no stacking
+                showEmotion('music',2000);
             }
         };
 
-        const weightedPool = [
-            'idle1','idle1','idle1','idle1','idle1','idle1',
-            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave', 'cheer'
-        ];
-
-        let idleTimer = null;
-        const scheduleNext = (delayMs) => {
-            if (idleTimer) idleTimer.remove(false);
-            isInterrupted = false;
-            idleTimer = scene.time.delayedCall(delayMs, playRandomIdle);
+        const weightedPool=['idle1','idle1','idle1','idle1','idle1','idle1','walk_left','dash','super_dash','float','giggle','wave','cheer'];
+        let idleTimer=null;
+        const scheduleNext=(delayMs)=>{
+            if(idleTimer)idleTimer.remove(false);
+            isInterrupted=false;
+            idleTimer=scene.time.delayedCall(delayMs,playRandomIdle);
         };
-
-        const cancelCurrent = () => {
-            isInterrupted = true;
-            if (idleTimer) { idleTimer.remove(false); idleTimer = null; }
+        const cancelCurrent=()=>{
+            isInterrupted=true;
+            if(idleTimer){idleTimer.remove(false);idleTimer=null;}
         };
-        window.cancelCurrent = cancelCurrent;
+        window.cancelCurrent=cancelCurrent;
 
-        const scheduleNextQuote = () => {
-            scene.time.delayedCall(Phaser.Math.Between(25000, 45000), () => {
-                maybeQuote();
-                scheduleNextQuote();
-            });
+        const scheduleNextQuote=()=>{
+            scene.time.delayedCall(Phaser.Math.Between(25000,45000),()=>{maybeQuote();scheduleNextQuote();});
         };
         scheduleNextQuote();
 
-        const stopMoving = () => {
-            agnesVX = 0; agnesVY = 0; moveMode = 'none'; wallBouncing = false;
-        };
-        const parkIdle = () => {
-            stopMoving(); agnes.setFlipX(false); agnes.play('idle1');
-        };
-        const walkHome = (onArrival) => {
-            if (Math.abs(agnes.x - HOME_X) < 10) {
-                agnes.x = HOME_X; agnes.y = HOME_Y; onArrival(); return;
-            }
-            const goRight = agnes.x < HOME_X;
-            agnes.setFlipX(goRight);
-            agnesVX = goRight ? 60 : -60;
-            moveMode = 'returning';
-            agnes.play('walk_left');
-            scene._walkHomeCallback = onArrival;
+        const stopMoving=()=>{agnesVX=0;agnesVY=0;moveMode='none';wallBouncing=false;};
+        const parkIdle=()=>{stopMoving();agnes.setFlipX(false);agnes.play('idle1');};
+        const walkHome=(onArrival)=>{
+            if(Math.abs(agnes.x-HOME_X)<10){agnes.x=HOME_X;agnes.y=HOME_Y;onArrival();return;}
+            const goRight=agnes.x<HOME_X;
+            agnes.setFlipX(goRight);agnesVX=goRight?60:-60;moveMode='returning';
+            agnes.play('walk_left');scene._walkHomeCallback=onArrival;
         };
 
-        const playRandomIdle = () => {
-            isInterrupted = false;
-            const key = weightedPool[Math.floor(Math.random() * weightedPool.length)];
+        const playRandomIdle=()=>{
+            isInterrupted=false;
+            const key=weightedPool[Math.floor(Math.random()*weightedPool.length)];
             stopMoving();
 
-            if (key === 'walk_left') {
-                const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);
-                agnesVX = goRight ? 50 : -50;
-                moveMode = 'walk';
-                agnes.play('walk_left');
-                scene.time.delayedCall(Phaser.Math.Between(2000, 4000), () => {
-                    if (isInterrupted || moveMode !== 'walk') return;
-                    stopMoving();
-                    walkHome(() => { if (isInterrupted) return; parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000)); });
+            if(key==='walk_left'){
+                const goRight=Math.random()>0.5;
+                agnes.setFlipX(goRight);agnesVX=goRight?50:-50;moveMode='walk';agnes.play('walk_left');
+                scene.time.delayedCall(Phaser.Math.Between(2000,4000),()=>{
+                    if(isInterrupted||moveMode!=='walk')return;
+                    stopMoving();walkHome(()=>{if(isInterrupted)return;parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));});
                 });
-            } else if (key === 'dash') {
-                const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);
-                agnesVX = goRight ? 160 : -160;
-                moveMode = 'dash';
-                agnes.play('dash');
-                showEmotion('exclaim', 1200);
-                scene.time.delayedCall(Phaser.Math.Between(1000, 2000), () => {
-                    if (isInterrupted || moveMode !== 'dash') return;
-                    stopMoving();
-                    const backRight = agnes.x < HOME_X;
-                    agnes.setFlipX(backRight);
-                    agnesVX = backRight ? 140 : -140;
-                    moveMode = 'dash_return';
-                    agnes.play('dash');
+            } else if(key==='dash'){
+                const goRight=Math.random()>0.5;
+                agnes.setFlipX(goRight);agnesVX=goRight?160:-160;moveMode='dash';agnes.play('dash');
+                showEmotion('exclaim',1200); // ← exclaim for dash
+                scene.time.delayedCall(Phaser.Math.Between(1000,2000),()=>{
+                    if(isInterrupted||moveMode!=='dash')return;
+                    stopMoving();const backRight=agnes.x<HOME_X;
+                    agnes.setFlipX(backRight);agnesVX=backRight?140:-140;moveMode='dash_return';agnes.play('dash');
                 });
-            } else if (key === 'super_dash') {
-                const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);
-                agnesVX = goRight ? 220 : -220;
-                moveMode = 'superdash';
-                agnes.play('super_dash');
-                showEmotion('exclaim', 1200);
-            } else if (key === 'float') {
-                floatAngle = Math.random() * Math.PI * 2;
-                moveMode = 'float';
-                agnes.play('float');
-                showEmotion('music', 1500);
-                scene.time.delayedCall(Phaser.Math.Between(5000, 9000), () => {
-                    if (isInterrupted || moveMode !== 'float') return;
-                    stopMoving();
-                    walkHome(() => { if (isInterrupted) return; parkIdle(); scheduleNext(Phaser.Math.Between(3000, 6000)); });
+            } else if(key==='super_dash'){
+                const goRight=Math.random()>0.5;
+                agnes.setFlipX(goRight);agnesVX=goRight?220:-220;moveMode='superdash';agnes.play('super_dash');
+                showEmotion('exclaim',1200); // ← exclaim for super dash
+            } else if(key==='float'){
+                floatAngle=Math.random()*Math.PI*2;moveMode='float';agnes.play('float');
+                showEmotion('music',1500); // ← music for float
+                scene.time.delayedCall(Phaser.Math.Between(5000,9000),()=>{
+                    if(isInterrupted||moveMode!=='float')return;
+                    stopMoving();walkHome(()=>{if(isInterrupted)return;parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));});
                 });
-            } else if (key === 'idle1') {
-                agnes.setPosition(HOME_X, HOME_Y); agnes.setFlipX(false); agnes.play('idle1');
-                scheduleNext(Phaser.Math.Between(4000, 8000));
+            } else if(key==='idle1'){
+                agnes.setPosition(HOME_X,HOME_Y);agnes.setFlipX(false);agnes.play('idle1');
+                scheduleNext(Phaser.Math.Between(4000,8000));
             } else {
-                // giggle, wave, cheer — music note for all happy idle animations
-                agnes.setFlipX(false); agnes.play(key);
-                showEmotion('music', 1500);
+                // giggle, wave, cheer — music only, no quote chance here
+                agnes.setFlipX(false);agnes.play(key);
+                showEmotion('music',1500); // ← music for happy idle
             }
         };
 
-        agnes.on('animationcomplete', (anim) => {
-            if (isInterrupted) return;
-            if (anim.key === 'super_dash') {
-                stopMoving();
-                walkHome(() => { if (isInterrupted) return; parkIdle(); scheduleNext(Phaser.Math.Between(3000, 6000)); });
-            } else if (anim.key === 'sudden_stop') {
-                parkIdle(); scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (anim.key === 'say') {
-                parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000));
-            } else if (anim.key === 'sit_down') {
-                showEmotion('zzz', 2000);
-                parkIdle(); scheduleNext(Phaser.Math.Between(3000, 6000));
-            } else if (anim.key === 'walk_left' || anim.key === 'dash') {
+        agnes.on('animationcomplete',(anim)=>{
+            if(isInterrupted)return;
+            if(anim.key==='super_dash'){
+                stopMoving();walkHome(()=>{if(isInterrupted)return;parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));});
+            } else if(anim.key==='sudden_stop'){
+                parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));
+            } else if(anim.key==='say'){
+                parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));
+            } else if(anim.key==='sit_down'){
+                showEmotion('zzz',2000); // ← zzz after sitting down
+                parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));
+            } else if(anim.key==='walk_left'||anim.key==='dash'){
                 // looping
-            } else if (anim.key === 'idle1') {
+            } else if(anim.key==='idle1'){
                 // looping
             } else {
-                parkIdle(); scheduleNext(Phaser.Math.Between(3000, 6000));
+                parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));
             }
         });
 
-        agnes.on('pointerdown', () => {
-            cancelCurrent();
-            scene._walkHomeCallback = null;
-            stopMoving(); parkIdle();
-            agnes.setPosition(HOME_X, HOME_Y);
+        agnes.on('pointerdown',()=>{
+            cancelCurrent();scene._walkHomeCallback=null;
+            stopMoving();parkIdle();agnes.setPosition(HOME_X,HOME_Y);
             say('Hi! Don\'t forget your tasks today! 🌸');
             scheduleNext(3000);
         });
 
         scheduleNext(1000);
 
-        // ── update() ─────────────────────────────────────────────────────────
-        scene.events.on('update', (time, delta) => {
-            if (!agnes) return;
-            const dt = delta / 1000;
-
-            if (moveMode === 'float') {
-                floatAngle += delta * 0.0008;
-                agnes.x = HOME_X + Math.sin(floatAngle * 1.3) * 70 + Math.sin(floatAngle * 2.7) * 20;
-                agnes.y = HOME_Y + Math.sin(floatAngle * 0.9) * 18 + Math.sin(floatAngle * 2.1) * 8;
+        scene.events.on('update',(time,delta)=>{
+            if(!agnes)return;
+            const dt=delta/1000;
+            if(moveMode==='float'){
+                floatAngle+=delta*0.0008;
+                agnes.x=HOME_X+Math.sin(floatAngle*1.3)*70+Math.sin(floatAngle*2.7)*20;
+                agnes.y=HOME_Y+Math.sin(floatAngle*0.9)*18+Math.sin(floatAngle*2.1)*8;
                 return;
             }
-            if (agnesVX === 0 && agnesVY === 0) return;
-
-            agnes.x += agnesVX * dt;
-            agnes.y += agnesVY * dt;
-
-            if (moveMode === 'returning' && scene._walkHomeCallback) {
-                const arrived = (agnesVX > 0 && agnes.x >= HOME_X) || (agnesVX < 0 && agnes.x <= HOME_X);
-                if (arrived) {
-                    agnes.x = HOME_X; agnes.y = HOME_Y;
-                    const cb = scene._walkHomeCallback;
-                    scene._walkHomeCallback = null;
-                    stopMoving(); cb(); return;
-                }
+            if(agnesVX===0&&agnesVY===0)return;
+            agnes.x+=agnesVX*dt; agnes.y+=agnesVY*dt;
+            if(moveMode==='returning'&&scene._walkHomeCallback){
+                const arrived=(agnesVX>0&&agnes.x>=HOME_X)||(agnesVX<0&&agnes.x<=HOME_X);
+                if(arrived){agnes.x=HOME_X;agnes.y=HOME_Y;const cb=scene._walkHomeCallback;scene._walkHomeCallback=null;stopMoving();cb();return;}
             }
-            if (moveMode === 'dash_return') {
-                const arrived = (agnesVX > 0 && agnes.x >= HOME_X) || (agnesVX < 0 && agnes.x <= HOME_X);
-                if (arrived) { agnes.x = HOME_X; parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000)); return; }
+            if(moveMode==='dash_return'){
+                const arrived=(agnesVX>0&&agnes.x>=HOME_X)||(agnesVX<0&&agnes.x<=HOME_X);
+                if(arrived){agnes.x=HOME_X;parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));return;}
             }
-
-            const hitLeft  = agnes.x < WALL_L;
-            const hitRight = agnes.x > WALL_R;
-
-            if (moveMode === 'walk' && (hitLeft || hitRight) && !wallBouncing) {
-                wallBouncing = true; agnesVX *= -1; agnes.setFlipX(agnesVX > 0);
-            } else if (moveMode === 'dash' && (hitLeft || hitRight) && !wallBouncing) {
-                wallBouncing = true; parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000));
-            } else if (moveMode === 'dash_return' && (hitLeft || hitRight)) {
-                parkIdle(); scheduleNext(Phaser.Math.Between(2000, 4000));
-            } else if (moveMode === 'superdash' && (agnes.x < SDASH_L || agnes.x > SDASH_R)) {
-                agnesVX = 0; agnesVY = 0; moveMode = 'none';
-            }
+            const hitLeft=agnes.x<WALL_L, hitRight=agnes.x>WALL_R;
+            if(moveMode==='walk'&&(hitLeft||hitRight)&&!wallBouncing){wallBouncing=true;agnesVX*=-1;agnes.setFlipX(agnesVX>0);}
+            else if(moveMode==='dash'&&(hitLeft||hitRight)&&!wallBouncing){wallBouncing=true;parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));}
+            else if(moveMode==='dash_return'&&(hitLeft||hitRight)){parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));}
+            else if(moveMode==='superdash'&&(agnes.x<SDASH_L||agnes.x>SDASH_R)){agnesVX=0;agnesVY=0;moveMode='none';}
         });
     }
 </script>

@@ -49,6 +49,12 @@
         .btn-del { background: #ff7675; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; }
         #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
         .all-done { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; font-size: 0.9em; }
+
+      
+details { width: 100%; margin-bottom: 10px; background: #fff5f7; border-radius: 8px; padding: 10px; }
+summary { cursor: pointer; font-weight: bold; color: var(--accent); list-style: none; }
+.form-group { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+.form-group input, .form-group select { padding: 5px; border-radius: 5px; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -60,28 +66,37 @@
 <div id="clock">Loading time...</div>
 
 <div id="settings-menu">
-    <h3>Custom Tasks</h3>
-    <input type="text" id="new-task-name" placeholder="Task Name">
-    <select id="new-task-type">
-        <option value="power">Power</option>
-        <option value="stamina">Stamina</option>
-        <option value="guts">Guts</option>
-        <option value="wit">Wit</option>
-    </select>
-    <p>Repeat on days:</p>
-    <div id="new-task-days" style="display: flex; gap: 5px; flex-wrap: wrap;">
-        <label><input type="checkbox" value="0"> Sun</label>
-        <label><input type="checkbox" value="1"> Mon</label>
-        <label><input type="checkbox" value="2"> Tue</label>
-        <label><input type="checkbox" value="3"> Wed</label>
-        <label><input type="checkbox" value="4"> Thu</label>
-        <label><input type="checkbox" value="5"> Fri</label>
-        <label><input type="checkbox" value="6"> Sat</label>
-    </div>
-    <button onclick="addCustomTask()">Add Task</button>
+    <h3>⚙️ Settings</h3>
+    
+    <details>
+        <summary>+ Add New Custom Task</summary>
+        <div class="form-group">
+            <input type="text" id="new-task-name" placeholder="Task Name">
+            <select id="new-task-type">
+                <option value="power">Power</option>
+                <option value="stamina">Stamina</option>
+                <option value="guts">Guts</option>
+                <option value="wit">Wit</option>
+            </select>
+            <label>Target Hour (0-23):</label>
+            <input type="number" id="new-task-hour" min="0" max="23" value="9">
+            <label>Repeat on:</label>
+            <div id="new-task-days" style="display: flex; gap: 5px; flex-wrap: wrap;">
+                <label><input type="checkbox" value="0" checked> Sun</label>
+                <label><input type="checkbox" value="1" checked> Mon</label>
+                <label><input type="checkbox" value="2" checked> Tue</label>
+                <label><input type="checkbox" value="3" checked> Wed</label>
+                <label><input type="checkbox" value="4" checked> Thu</label>
+                <label><input type="checkbox" value="5" checked> Fri</label>
+                <label><input type="checkbox" value="6" checked> Sat</label>
+            </div>
+            <button onclick="addCustomTask()" style="background: var(--accent); color: white; border: none; padding: 8px; border-radius: 5px;">Save Task</button>
+        </div>
+    </details>
+
     <hr>
     <div id="custom-task-list"></div>
-    <button onclick="toggleMenu()">Close</button>
+    <button onclick="toggleMenu()">Close Menu</button>
 </div>
 
 <div id="hud">
@@ -109,10 +124,16 @@
     let dismissed= JSON.parse(localStorage.getItem('agnesDismissed'))|| {};
 
     let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
-    function hydrateCustomTasks(raw) {
-        return raw.map(t => Object.assign({}, t, { check: () => true }));
-    }
-    let customTasks = hydrateCustomTasks(customTasksRaw);
+  function hydrateCustomTasks(raw) {
+    return raw.map(t => {
+        return Object.assign({}, t, { 
+            check: h => {
+                if (!t.targetHour || t.targetHour === '') return true; 
+                return h === parseInt(t.targetHour);
+            }
+        });
+    });
+}
 
     // ── Core Tasks ───────────────────────────────────────────────────────────
     const coreTasks = [
@@ -138,22 +159,38 @@
         renderCustomTasks();
     }
 
-    function addCustomTask() {
-        const name = document.getElementById('new-task-name').value.trim();
-        const type = document.getElementById('new-task-type').value;
-        const dayCheckboxes = document.querySelectorAll('#new-task-days input:checked');
-        const days = Array.from(dayCheckboxes).map(cb => parseInt(cb.value));
-        if (!name || days.length === 0) { alert("Please provide a name and select at least one day."); return; }
-        const raw = { id: 'custom_' + Date.now(), name, type, days, timeLabel: 'Anytime', isEssential: false };
-        customTasksRaw.push(raw);
-        customTasks = hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
-        document.getElementById('new-task-name').value = '';
-        dayCheckboxes.forEach(cb => cb.checked = false);
-        renderCustomTasks();
-        updateUI();
+
+function addCustomTask() {
+    const name = document.getElementById('new-task-name').value.trim();
+    const type = document.getElementById('new-task-type').value;
+    const hour = document.getElementById('new-task-hour').value;
+    const dayCheckboxes = document.querySelectorAll('#new-task-days input:checked');
+    const days = Array.from(dayCheckboxes).map(cb => parseInt(cb.value));
+
+    if (!name || days.length === 0) { 
+        alert("Please provide a name and select at least one day."); 
+        return; 
     }
 
+    const raw = { 
+        id: 'custom_' + Date.now(), 
+        name, 
+        type, 
+        days, 
+        targetHour: hour, // Added property
+        timeLabel: `${hour}:00`, 
+        isEssential: false 
+    };
+
+    customTasksRaw.push(raw);
+    customTasks = hydrateCustomTasks(customTasksRaw);
+    localStorage.setItem('agnesCustomTasks', JSON.stringify(customTasksRaw));
+    
+    // Clear form
+    document.getElementById('new-task-name').value = '';
+    renderCustomTasks();
+    updateUI();
+}
     function deleteCustomTask(id) {
         customTasksRaw = customTasksRaw.filter(t => t.id !== id);
         customTasks    = hydrateCustomTasks(customTasksRaw);

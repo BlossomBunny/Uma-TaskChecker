@@ -15,30 +15,44 @@
         .bar-container { flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
-        #agnes-wrap {
-            display: flex; flex-direction: column; align-items: center;
-            margin-bottom: 15px;
-        }
-        #status-box {
-            width: 200px; background: white;
-            border: 2px solid var(--accent); border-radius: 16px 16px 0 0;
-            border-bottom: none;
-            padding: 8px 12px; box-sizing: border-box;
-            font-size: 0.72em; color: #596275; line-height: 1.4;
-            text-align: center; min-height: 44px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        #status-text {
-            transition: opacity 0.4s ease;
-            opacity: 1;
-        }
-        #game-container {
-            border: 2px solid var(--accent); border-radius: 0 0 24px 24px;
-            border-top: none;
-            box-shadow: 0 8px 20px rgba(248,165,194,0.15);
-            background: #fff; width: 200px; height: 200px;
-            overflow: hidden; cursor: pointer;
-        }
+        #widget-wrapper {
+    width: 220px; /* Unified width */
+    border: 2px solid var(--accent);
+    border-radius: 24px;
+    overflow: hidden; /* This clips the children to the rounded corners */
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(248,165,194,0.15);
+    margin-bottom: 15px;
+}
+
+#status-box {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 0.72em;
+    color: #596275;
+    line-height: 1.4;
+    text-align: center;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 2px solid var(--accent); /* Separator line */
+    background: #fff;
+}
+
+#game-container {
+    width: 100%;
+    height: 200px;
+    cursor: pointer;
+    background: #fff;
+    /* Borders are removed here, the wrapper handles them */
+}
+
+#status-text {
+    transition: opacity 0.4s ease;
+    opacity: 1;
+}
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
         .task-info { display: flex; flex-direction: column; }
         .task-name { font-weight: 600; font-size: 0.85em; }
@@ -93,11 +107,13 @@
     <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
 </div>
 
-<div id="agnes-wrap">
-    <div id="status-box"><span id="status-text">Agnes is here! 🌸</span></div>
+<div id="widget-wrapper">
+    <div id="status-box">
+        <span id="status-text">Agnes is here! 🌸</span>
+    </div>
     <div id="game-container"></div>
 </div>
-
+    
 <div id="checklist">
     <h3>Today's Schedule</h3>
     <div id="task-list"></div>

@@ -240,7 +240,7 @@
                         </div>
                         <div class="btn-group">
                             ${dismissBtn}
-                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button>
+                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'cheer'}', '${task.type}')">Done</button>
                         </div>
                     </div>`;
             }
@@ -260,7 +260,7 @@
         localStorage.setItem('agnesStats',   JSON.stringify(stats));
         if (agnes) agnes.play(anim);
         if (rankAfter > rankBefore) {
-            setStatus(rankUpMessages[type] || '✨ Level up!', 5000);
+            setStatus(rankUpMessages[type] || '✨ RANK UP!', 5000);
         } else {
             setStatus('Good work! 🌸', 3000);
         }
@@ -401,7 +401,6 @@
     this.anims.create({ key: 'eating', frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
     this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00' }, { key: 'agnes', frame: 'agtc101_01' }, { key: 'agnes', frame: 'agtc101_02' }, { key: 'agnes', frame: 'agtc101_03' }, { key: 'agnes', frame: 'agtc101_04' }, { key: 'agnes', frame: 'agtc101_05' }], frameRate: 6, repeat: -1 });
     this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00' }, { key: 'agnes', frame: 'agtc320_04' }], frameRate: 6, repeat: 0 });
-    this.anims.create({ key: 'victory', frames: [{ key: 'agnes', frame: 'agtc940_00' }, { key: 'agnes', frame: 'agtc940_03' }], frameRate: 4, repeat: 2 });
     this.anims.create({ key: 'dash', frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f})), frameRate: 10, repeat: -1 });
     this.anims.create({ key: 'super_dash', frames: ['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f})), frameRate: 12, repeat: 0 });
     this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00' }, { key: 'agnes', frame: 'agtc120_01' }], frameRate: 6, repeat: 0 });

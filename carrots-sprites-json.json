@@ -1,0 +1,75 @@
+{
+  "frames": {
+    "spr_ui_item_carrot": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 18,
+        "h": 18
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 18,
+        "h": 18
+      },
+      "sourceSize": {
+        "w": 18,
+        "h": 18
+      }
+    },
+    "spr_ui_item_bagseed_carrot_icon": {
+      "frame": {
+        "x": 20,
+        "y": 0,
+        "w": 18,
+        "h": 18
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 18,
+        "h": 18
+      },
+      "sourceSize": {
+        "w": 18,
+        "h": 18
+      }
+    },
+    "spr_crop_carrot_stage4": {
+      "frame": {
+        "x": 40,
+        "y": 0,
+        "w": 14,
+        "h": 18
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 14,
+        "h": 18
+      },
+      "sourceSize": {
+        "w": 14,
+        "h": 18
+      }
+    }
+  },
+  "meta": {
+    "app": "EazyStudio Texture Packer",
+    "version": "2.0",
+    "image": "sprites.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 64,
+      "h": 32
+    },
+    "scale": "1"
+  }
+}

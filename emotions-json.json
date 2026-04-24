@@ -1,0 +1,35 @@
+{
+  "frames": {
+    "PC _ Computer - RPG Maker VX Ace - Miscellaneous - Emotions": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 320
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 320
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 320
+      }
+    }
+  },
+  "meta": {
+    "app": "EazyStudio Texture Packer",
+    "version": "2.0",
+    "image": "sprites.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 256,
+      "h": 512
+    },
+    "scale": "1"
+  }
+}

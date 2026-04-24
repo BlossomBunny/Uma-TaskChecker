@@ -15,44 +15,30 @@
         .bar-container { flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
-        #widget-wrapper {
-    width: 220px; /* Unified width */
-    border: 2px solid var(--accent);
-    border-radius: 24px;
-    overflow: hidden; /* This clips the children to the rounded corners */
-    background: #fff;
-    box-shadow: 0 8px 20px rgba(248,165,194,0.15);
-    margin-bottom: 15px;
-}
-
-#status-box {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    font-size: 0.72em;
-    color: #596275;
-    line-height: 1.4;
-    text-align: center;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 2px solid var(--accent); /* Separator line */
-    background: #fff;
-}
-
-#game-container {
-    width: 100%;
-    height: 200px;
-    cursor: pointer;
-    background: #fff;
-    /* Borders are removed here, the wrapper handles them */
-}
-
-#status-text {
-    transition: opacity 0.4s ease;
-    opacity: 1;
-}
+        #agnes-wrap {
+            display: flex; flex-direction: column; align-items: center;
+            margin-bottom: 15px;
+        }
+        #status-box {
+            width: 200px; background: white;
+            border: 2px solid var(--accent); border-radius: 16px 16px 0 0;
+            border-bottom: none;
+            padding: 8px 12px; box-sizing: border-box;
+            font-size: 0.72em; color: #596275; line-height: 1.4;
+            text-align: center; min-height: 44px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #status-text {
+            transition: opacity 0.4s ease;
+            opacity: 1;
+        }
+        #game-container {
+            border: 2px solid var(--accent); border-radius: 0 0 24px 24px;
+            border-top: none;
+            box-shadow: 0 8px 20px rgba(248,165,194,0.15);
+            background: #fff; width: 200px; height: 200px;
+            overflow: hidden; cursor: pointer;
+        }
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
         .task-info { display: flex; flex-direction: column; }
         .task-name { font-weight: 600; font-size: 0.85em; }
@@ -70,7 +56,7 @@
 <body>
 
 <header>
-    <h3>Daily Life With Agnes</h3>
+    <h3>Daily Life With Uma</h3>
     <button id="menu-btn" onclick="toggleMenu()">⚙️</button>
 </header>
 <div id="clock">Loading time...</div>
@@ -107,13 +93,11 @@
     <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
 </div>
 
-<div id="widget-wrapper">
-    <div id="status-box">
-        <span id="status-text">Agnes is here! 🌸</span>
-    </div>
+<div id="agnes-wrap">
+    <div id="status-box"><span id="status-text">Agnes is here! 🌸</span></div>
     <div id="game-container"></div>
 </div>
-    
+
 <div id="checklist">
     <h3>Today's Schedule</h3>
     <div id="task-list"></div>
@@ -240,7 +224,7 @@
                         </div>
                         <div class="btn-group">
                             ${dismissBtn}
-                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'cheer'}', '${task.type}')">Done</button>
+                            <button class="btn-check" onclick="complete('${task.id}', '${task.anim || 'victory'}', '${task.type}')">Done</button>
                         </div>
                     </div>`;
             }
@@ -260,9 +244,11 @@
         localStorage.setItem('agnesStats',   JSON.stringify(stats));
         if (agnes) agnes.play(anim);
         if (rankAfter > rankBefore) {
-            setStatus(rankUpMessages[type] || '✨ RANK UP!', 5000);
+            setStatus(rankUpMessages[type] || '✨ Level up!', 5000);
+            if (window.showEmotion) window.showEmotion('bulb', 2500);
         } else {
             setStatus('Good work! 🌸', 3000);
+            if (window.showEmotion) window.showEmotion('heart', 1800);
         }
         updateUI();
     }
@@ -299,7 +285,6 @@
     };
 
     function setStatus(text, duration) {
-        // duration = ms to show before reverting to default, or 0 to set permanently
         const el = document.getElementById('status-text');
         if (!el) return;
         el.style.opacity = '0';
@@ -307,7 +292,7 @@
         setTimeout(() => {
             el.textContent = text;
             el.style.opacity = '1';
-        }, 300); // wait for fade-out then swap text
+        }, 300);
         if (duration) {
             statusTimeout = setTimeout(() => {
                 setStatus(defaultMessages[Math.floor(Math.random() * defaultMessages.length)], 0);
@@ -320,19 +305,23 @@
         lastActivity = Date.now();
         if (boredTimeout) clearTimeout(boredTimeout);
         boredTimeout = setTimeout(() => {
+            const h = new Date().getHours();
             const msg = boredMessages[Math.floor(Math.random() * boredMessages.length)];
             setStatus(msg, 0);
-            // Keep cycling bored messages every 2 min
+            // Show zzz late at night, dizzy otherwise
+            if (window.showEmotion) window.showEmotion(h >= 22 || h < 6 ? 'zzz' : 'dizzy', 2500);
             boredTimeout = setInterval(() => {
                 const m = boredMessages[Math.floor(Math.random() * boredMessages.length)];
                 setStatus(m, 0);
+                if (window.showEmotion) window.showEmotion('zzz', 2000);
             }, 120000);
-        }, 300000); // 5 min of inactivity
+        }, 300000);
     }
 
     function say(text) {
         setStatus(text, 4000);
         if (agnes) agnes.play('say');
+        if (window.showEmotion) window.showEmotion('question', 1500);
     }
 
     resetBoredTimer(); // start the inactivity clock on load
@@ -354,13 +343,13 @@
 
     // ── Phaser ───────────────────────────────────────────────────────────────
     const phaserConfig = {
-    type: Phaser.AUTO,
-    width: 200,
-    height: 200,
-    transparent: true,
-    parent: 'game-container',
-    scene: { preload, create, update } // <--- Added update here
-};
+        type: Phaser.AUTO,
+        width: 200,
+        height: 200,
+        transparent: true,
+        parent: 'game-container',   // mounts the canvas into the existing div
+        scene: { preload, create }
+    };
 
     // Only boot Phaser once the DOM is ready (it already is at this point,
     // but wrapping in a short defer keeps things safe if the script is moved).
@@ -368,109 +357,260 @@
 
     function preload() {
         this.load.atlas('agnes', 'agnes-sprites.png', 'agnes-sprites-json.json');
+        // emotions.png: 8 cols x 10 rows, each cell 32x48px
+        this.load.spritesheet('emotions', 'emotions.png', { frameWidth: 32, frameHeight: 48 });
     }
 
     function create() {
-    const scene = this; // Capture reference
-   agnes = this.physics.add.sprite(100, 100, 'agnes', 'agtc001A_00').setScale(1.5).setInteractive();
+        agnes = this.add.sprite(100, 100, 'agnes', 'agtc001A_00.png').setScale(1.5).setInteractive();
 
-    // ── Helper Variables ─────────────────────────────────────────────────
-    let floatAngle = 0;
-    let moveMode = 'idle'; // 'idle', 'walk', 'dash', 'float'
-    let agnesVX = 0;
-    const weightedPool = ['idle1', 'idle1', 'idle1', 'walk_left', 'dash', 'float', 'sit_down', 'cheer'];
+        // ── Emotion bubble sprite (floats above Agnes) ────────────────────────
+        // Rows: 0=exclaim, 1=question, 2=music, 3=heart, 4=sweat,
+        //       5=sweat2,  6=dizzy,    7=ellipsis, 8=bulb, 9=zzz
+        const emo = this.add.sprite(100, 55, 'emotions', 0).setScale(1.8).setAlpha(0).setDepth(10);
 
-    // ── Helper Functions ─────────────────────────────────────────────────
-    const stopMoving = () => {
-        agnesVX = 0;
-        moveMode = 'idle';
-        agnes.setVelocityX(0); // If using physics
-    };
+        const EMO = { exclaim:0, question:8, music:16, heart:24, sweat:32, sweat2:40, dizzy:48, ellipsis:56, bulb:64, zzz:72 };
+        // Each row has 8 frames; row N starts at frame N*8
+        Object.entries(EMO).forEach(([key, start]) => {
+            this.anims.create({
+                key: 'emo_' + key,
+                frames: this.anims.generateFrameNumbers('emotions', { start, end: start + 7 }),
+                frameRate: 8,
+                repeat: 0
+            });
+        });
 
-    const resetHome = () => {
-        agnes.x = 100;
-        agnes.y = 100;
-    };
+        let emoTimer = null;
+        const showEmotion = (key, durationMs = 1500) => {
+            if (emoTimer) { emoTimer.remove(false); emoTimer = null; }
+            // Position above Agnes's head
+            emo.setPosition(agnes.x, agnes.y - 55);
+            emo.setAlpha(1);
+            emo.play('emo_' + key);
+            emoTimer = this.time.delayedCall(durationMs, () => {
+                this.tweens.add({ targets: emo, alpha: 0, duration: 400 });
+            });
+        };
 
-    const scheduleNext = (ms) => {
-        scene.time.delayedCall(ms, playRandomIdle);
-    };
+        // Expose so JS outside Phaser can call it
+        window.showEmotion = showEmotion;
 
-    // ── Animations (Your existing definitions) ───────────────────────────
-    this.anims.create({ key: 'idle1', frames: [{ key: 'agnes', frame: 'agtc001A_00' }, { key: 'agnes', frame: 'agtc001A_01' }, { key: 'agnes', frame: 'agtc100_00' }, { key: 'agnes', frame: 'agtc100_01' }, { key: 'agnes', frame: 'agtc100_02' }, { key: 'agnes', frame: 'agtc100_03' }], frameRate: 2, repeat: -1 });
-    this.anims.create({ key: 'eating', frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
-    this.anims.create({ key: 'walk_left', frames: [{ key: 'agnes', frame: 'agtc101_00' }, { key: 'agnes', frame: 'agtc101_01' }, { key: 'agnes', frame: 'agtc101_02' }, { key: 'agnes', frame: 'agtc101_03' }, { key: 'agnes', frame: 'agtc101_04' }, { key: 'agnes', frame: 'agtc101_05' }], frameRate: 6, repeat: -1 });
-    this.anims.create({ key: 'sit_down', frames: [{ key: 'agnes', frame: 'agtc320_00' }, { key: 'agnes', frame: 'agtc320_04' }], frameRate: 6, repeat: 0 });
-    this.anims.create({ key: 'dash', frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f})), frameRate: 10, repeat: -1 });
-    this.anims.create({ key: 'super_dash', frames: ['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f})), frameRate: 12, repeat: 0 });
-    this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00' }, { key: 'agnes', frame: 'agtc120_01' }], frameRate: 6, repeat: 0 });
-    this.anims.create({ key: 'float', frames: [{ key: 'agnes', frame: 'agtc362_00' }, { key: 'agnes', frame: 'agtc362_01' }], frameRate: 4, repeat: -1 });
-    this.anims.create({ key: 'giggle', frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f})), frameRate: 6, repeat: 0 });
-    this.anims.create({ key: 'snack', frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
-    this.anims.create({ key: 'wave', frames: [{ key: 'agnes', frame: 'agtc540_00' }, { key: 'agnes', frame: 'agtc540_01' }], frameRate: 4, repeat: 3 });
-    this.anims.create({ key: 'cheer', frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
-    this.anims.create({ key: 'say', frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f})), frameRate: 4, repeat: 0 });
+        // Keep emotion bubble tracking Agnes's position
+        this.events.on('update', () => {
+            if (emo.alpha > 0) emo.setPosition(agnes.x, agnes.y - 55);
+        });
 
-    // ── Logic ────────────────────────────────────────────────────────────
-    const playRandomIdle = () => {
-        const key = weightedPool[Math.floor(Math.random() * weightedPool.length)];
-        agnes.anims.stop();
-        stopMoving();
+        // ── Animations ───────────────────────────────────────────────────────
+        this.anims.create({ key: 'idle1',       frames: [{ key: 'agnes', frame: 'agtc001A_00.png' }, { key: 'agnes', frame: 'agtc001A_01.png' }, { key: 'agnes', frame: 'agtc100_00.png' }, { key: 'agnes', frame: 'agtc100_01.png' }, { key: 'agnes', frame: 'agtc100_02.png' }, { key: 'agnes', frame: 'agtc100_03.png' }], frameRate: 2, repeat: -1 });
+        this.anims.create({ key: 'eating',      frames: ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'walk_left',   frames: [{ key: 'agnes', frame: 'agtc101_00.png' }, { key: 'agnes', frame: 'agtc101_01.png' }, { key: 'agnes', frame: 'agtc101_02.png' }, { key: 'agnes', frame: 'agtc101_03.png' }, { key: 'agnes', frame: 'agtc101_04.png' }, { key: 'agnes', frame: 'agtc101_05.png' }], frameRate: 6, repeat: -1 });
+        this.anims.create({ key: 'sit_down',    frames: [{ key: 'agnes', frame: 'agtc320_00.png' }, { key: 'agnes', frame: 'agtc320_04.png' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'victory',     frames: [{ key: 'agnes', frame: 'agtc940_00.png' }, { key: 'agnes', frame: 'agtc940_03.png' }], frameRate: 4, repeat: 2 });
+        this.anims.create({ key: 'dash',        frames: ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 10, repeat: -1 });
+        this.anims.create({ key: 'super_dash',  frames: ['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 12, repeat: 0 });
+        this.anims.create({ key: 'sudden_stop', frames: [{ key: 'agnes', frame: 'agtc120_00.png' }, { key: 'agnes', frame: 'agtc120_01.png' }], frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'float',       frames: [{ key: 'agnes', frame: 'agtc362_00.png' }, { key: 'agnes', frame: 'agtc362_01.png' }], frameRate: 4, repeat: -1 });
+        this.anims.create({ key: 'giggle',      frames: ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 6, repeat: 0 });
+        this.anims.create({ key: 'snack',       frames: ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'wave',        frames: [{ key: 'agnes', frame: 'agtc540_00.png' }, { key: 'agnes', frame: 'agtc540_01.png' }], frameRate: 4, repeat: 3 });
+        this.anims.create({ key: 'cheer',       frames: ['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
+        this.anims.create({ key: 'say',         frames: ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f+'.png'})), frameRate: 4, repeat: 0 });
 
-        if (['walk_left', 'dash', 'super_dash', 'float'].includes(key)) {
-            if (key === 'float') {
+        // ── Movement state (read by update()) ────────────────────────────────
+        // We never tween agnes.x/y — instead we set a velocity and let update()
+        // move her each frame. This means Phaser's animation system is never
+        // competing with a tween for control of the sprite.
+        let agnesVX = 0;   // pixels per second, x
+        let agnesVY = 0;   // pixels per second, y
+        let moveMode = 'none'; // 'none' | 'walk' | 'dash' | 'superdash' | 'float'
+        let floatAngle = 0;    // for the gentle float bob
+
+        const scene = this;
+        const HOME_X = 100;
+        const HOME_Y = 100;
+
+        const idleQuotes = [
+            "Life is an experiment, and we its guinea pigs. You, me, the other Umamusume—everyone!",
+            "Don't worry about it... The worst that could happen is that both of your legs would start glowing green for a while. Isn't that a cute side effect?",
+            "Witness me. Watch me run. Burn the sight into your eyes."
+        ];
+        let lastQuoteIndex = -1;
+        const maybeQuote = () => {
+            if (Math.random() < 0.2) {
+                let idx;
+                do { idx = Math.floor(Math.random() * idleQuotes.length); } while (idx === lastQuoteIndex);
+                lastQuoteIndex = idx;
+                setStatus(idleQuotes[idx], 5000);
+                showEmotion('ellipsis', 2000);
+            }
+        };
+
+        // Weighted pool — idle1 x6 so she's calm most of the time
+        const weightedPool = [
+            'idle1','idle1','idle1','idle1','idle1','idle1',
+            'walk_left', 'dash', 'super_dash', 'float', 'giggle', 'wave', 'cheer'
+        ];
+
+        let idleTimer = null;
+        const scheduleNext = (delayMs) => {
+            if (idleTimer) idleTimer.remove(false);
+            idleTimer = scene.time.delayedCall(delayMs, playRandomIdle);
+        };
+
+        // Quotes fire independently, every 25–45 seconds, not tied to animation cycles
+        const scheduleNextQuote = () => {
+            scene.time.delayedCall(Phaser.Math.Between(25000, 45000), () => {
+                maybeQuote();
+                scheduleNextQuote();
+            });
+        };
+        scheduleNextQuote();
+
+        const stopMoving = () => {
+            agnesVX = 0;
+            agnesVY = 0;
+            moveMode = 'none';
+            // Don't snap position here — let callers reset position explicitly if needed
+        };
+
+        const resetHome = () => {
+            agnes.setPosition(HOME_X, HOME_Y);
+            agnes.setFlipX(false);
+        };
+
+        const playRandomIdle = () => {
+            const key = weightedPool[Math.floor(Math.random() * weightedPool.length)];
+
+            stopMoving();
+
+            if (key === 'walk_left') {
+                const goRight = Math.random() > 0.5;
+                agnes.setFlipX(goRight);
+                agnesVX = goRight ? 50 : -50;
+                moveMode = 'walk';
+                agnes.play('walk_left');
+
+            } else if (key === 'dash') {
+                const goRight = Math.random() > 0.5;
+                agnes.setFlipX(goRight);
+                agnesVX = goRight ? 160 : -160;
+                moveMode = 'dash';
+                agnes.play('dash');
+
+            } else if (key === 'super_dash') {
+                const goRight = Math.random() > 0.5;
+                agnes.setFlipX(goRight);
+                agnesVX = goRight ? 220 : -220;
+                moveMode = 'superdash';
+                agnes.play('super_dash');
+
+            } else if (key === 'float') {
+                floatAngle = 0;
                 moveMode = 'float';
                 agnes.play('float');
                 scene.time.delayedCall(3000, () => {
-                    stopMoving();
-                    resetHome();
-                    scheduleNext(Phaser.Math.Between(3000, 6000));
+                    if (moveMode === 'float') {
+                        agnes.anims.stop();
+                        stopMoving();
+                        // float leaves her drifted — gently return her to home
+                        agnes.setPosition(HOME_X, HOME_Y);
+                        scheduleNext(Phaser.Math.Between(3000, 6000));
+                    }
                 });
-            } else {
-                const goRight = Math.random() > 0.5;
-                agnes.setFlipX(goRight);
-                agnesVX = (key === 'walk_left') ? (goRight ? 1 : -1) : (goRight ? 3 : -3);
-                moveMode = 'walk'; 
-                agnes.play(key);
-            }
-        } else {
-            resetHome();
-            agnes.play(key);
-            if (key === 'idle1') {
-                scene.time.delayedCall(Phaser.Math.Between(4000, 8000), () => scheduleNext(0));
-            } else {
-                agnes.once('animationcomplete', (anim) => {
-                    if (anim.key === key) scheduleNext(Phaser.Math.Between(2000, 4000));
-                });
-            }
-        }
-    };
 
-    scheduleNext(1000);
-    
-    // Assign these to the scene so update() can access them
-    scene.agnesVX = () => agnesVX;
-    scene.moveMode = () => moveMode;
-    scene.agnes = agnes;
-}
-    function update() {
-    if (!agnes) return;
-    
-    // Apply horizontal movement
-    if (agnesVX !== 0) {
-        agnes.x += agnesVX;
+            } else if (key === 'idle1') {
+                // idle1 always plays from home so she doesn't drift off-centre permanently
+                resetHome();
+                agnes.play('idle1');
+                scheduleNext(Phaser.Math.Between(4000, 8000));
+
+            } else {
+                // giggle, wave, cheer — play at current position, no snap
+                agnes.setFlipX(false);
+                agnes.play(key);
+                if (key === 'cheer' || key === 'wave') showEmotion('music', 1500);
+                // animationcomplete handles scheduling
+            }
+        };
+
+        // ── animationcomplete ────────────────────────────────────────────────
+        agnes.on('animationcomplete', (anim) => {
+            if (anim.key === 'super_dash') {
+                stopMoving();
+                // She could be anywhere — don't snap, just schedule next from here
+                agnes.setFlipX(false);
+                scheduleNext(Phaser.Math.Between(3000, 6000));
+            } else if (anim.key === 'sudden_stop') {
+                agnes.setFlipX(false);
+                scheduleNext(Phaser.Math.Between(3000, 6000));
+            } else if (anim.key === 'say' || anim.key === 'victory') {
+                scheduleNext(500);
+            } else if (anim.key === 'walk_left' || anim.key === 'dash') {
+                // looping — only fires if externally stopped, ignore
+            } else {
+                scheduleNext(Phaser.Math.Between(3000, 6000));
+            }
+        });
+
+        // Tap to greet
+        agnes.on('pointerdown', () => {
+            if (idleTimer) idleTimer.remove(false);
+            agnes.anims.stop();
+            stopMoving();
+            resetHome();
+            showEmotion('question', 1800);
+            say('Hi! Don\'t forget your tasks today! 🌸');
+        });
+
+        // Kick off
+        scheduleNext(1000);
+
+        // ── update() — runs every frame, moves agnes via velocity ─────────────
+        scene.events.on('update', (time, delta) => {
+            if (!agnes || agnesVX === 0 && agnesVY === 0 && moveMode !== 'float') return;
+
+            const dt = delta / 1000; // seconds
+
+            if (moveMode === 'float') {
+                // Gentle figure-eight drift
+                floatAngle += delta * 0.001;
+                agnes.x = HOME_X + Math.sin(floatAngle * 1.5) * 25;
+                agnes.y = HOME_Y + Math.sin(floatAngle) * 12;
+                return;
+            }
+
+            agnes.x += agnesVX * dt;
+            agnes.y += agnesVY * dt;
+
+            // Boundary checks — when she hits an edge, decide what to do
+            const hitLeft  = agnes.x < 15;
+            const hitRight = agnes.x > 185;
+
+            if (moveMode === 'walk' && (hitLeft || hitRight)) {
+                agnesVX *= -1;
+                agnes.setFlipX(agnesVX > 0);
+                // After one bounce, stop walking and do something in place
+                scene.time.delayedCall(800, () => {
+                    if (moveMode === 'walk') {
+                        agnes.anims.stop();
+                        stopMoving();
+                        agnes.setFlipX(false);
+                        scheduleNext(Phaser.Math.Between(3000, 6000));
+                    }
+                });
+            } else if (moveMode === 'dash' && (hitLeft || hitRight)) {
+                agnes.anims.stop();
+                stopMoving();
+                agnes.setFlipX(false);
+                scheduleNext(Phaser.Math.Between(3000, 6000));
+            } else if (moveMode === 'superdash' && (agnes.x < 10 || agnes.x > 190)) {
+                agnesVX = 0;
+                agnesVY = 0;
+                moveMode = 'none';
+                // animation keeps playing its wind-down frames in place
+            }
+        });
     }
-    
-    // Apply floating effect
-    if (moveMode === 'float') {
-        agnes.y += Math.sin(Date.now() / 200) * 0.5;
-    }
-    
-    // Keep within bounds
-    if (agnes.x < 20) agnes.x = 20;
-    if (agnes.x > 180) agnes.x = 180;
-}
-        
 </script>
 </body>
 </html>

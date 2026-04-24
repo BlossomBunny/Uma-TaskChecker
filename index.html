@@ -354,13 +354,13 @@
 
     // ── Phaser ───────────────────────────────────────────────────────────────
     const phaserConfig = {
-        type: Phaser.AUTO,
-        width: 200,
-        height: 200,
-        transparent: true,
-        parent: 'game-container',   // mounts the canvas into the existing div
-        scene: { preload, create }
-    };
+    type: Phaser.AUTO,
+    width: 200,
+    height: 200,
+    transparent: true,
+    parent: 'game-container',
+    scene: { preload, create, update } // <--- Added update here
+};
 
     // Only boot Phaser once the DOM is ready (it already is at this point,
     // but wrapping in a short defer keeps things safe if the script is moved).
@@ -453,6 +453,23 @@
     scene.agnesVX = () => agnesVX;
     scene.moveMode = () => moveMode;
     scene.agnes = agnes;
+}
+    function update() {
+    if (!agnes) return;
+    
+    // Apply horizontal movement
+    if (agnesVX !== 0) {
+        agnes.x += agnesVX;
+    }
+    
+    // Apply floating effect
+    if (moveMode === 'float') {
+        agnes.y += Math.sin(Date.now() / 200) * 0.5;
+    }
+    
+    // Keep within bounds
+    if (agnes.x < 20) agnes.x = 20;
+    if (agnes.x > 180) agnes.x = 180;
 }
         
 </script>

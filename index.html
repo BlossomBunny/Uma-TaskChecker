@@ -8,582 +8,1139 @@
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 10px; box-sizing: border-box; }
         header { width: 95%; max-width: 400px; display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
         #menu-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        /* ── Login ── */
+        #login-screen { display: flex; flex-direction: column; align-items: center; width: 95%; max-width: 400px; background: white; border-radius: 24px; padding: 30px 24px; box-shadow: 0 5px 20px rgba(248,165,194,0.18); margin-top: 20px; }
+        #login-screen h2 { color: var(--accent); margin: 0 0 6px; font-size: 1.3em; }
+        #login-screen p { font-size: 0.78em; color: #a5b1c2; margin: 0 0 20px; text-align: center; }
+        .login-input { width: 100%; box-sizing: border-box; border: 1.5px solid #eee; border-radius: 10px; padding: 10px 14px; font-size: 0.9em; font-family: inherit; color: #596275; background: #fafafa; outline: none; margin-bottom: 10px; }
+        .login-input:focus { border-color: var(--accent); background: white; }
+        .login-btn { width: 100%; padding: 11px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 0.9em; cursor: pointer; font-family: inherit; margin-top: 4px; }
+        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        #login-toggle { margin-top: 12px; font-size: 0.75em; color: #a5b1c2; cursor: pointer; text-decoration: underline; }
+        #login-error { font-size: 0.75em; color: #ff7675; margin-top: 6px; min-height: 16px; text-align: center; }
+        #login-mode-label { font-weight: bold; font-size: 1em; color: #596275; margin-bottom: 16px; }
+        #login-migrate-notice { font-size: 0.72em; background: #f0fff4; border: 1px solid #a8e6cf; border-radius: 8px; padding: 8px 10px; color: #27ae60; margin-bottom: 12px; display: none; text-align: center; width: 100%; box-sizing: border-box; }
+        /* ── App ── */
+        #app { display: none; width: 100%; flex-direction: column; align-items: center; }
+        #logout-btn { font-size: 0.7em; color: #a5b1c2; background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; font-family: inherit; }
+        #sync-status { font-size: 0.65em; color: #a5b1c2; text-align: center; margin-bottom: 4px; min-height: 14px; }
+        #sync-status.syncing { color: #f8a5c2; } #sync-status.error { color: #ff7675; }
+        #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
+        /* ── Streak ── */
+        #streak-bar { width: 95%; max-width: 400px; background: white; border-radius: 20px; padding: 12px 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: center; gap: 12px; box-sizing: border-box; }
+        #streak-flame { font-size: 1.6em; }
+        #streak-info { flex: 1; }
+        #streak-count { font-weight: bold; font-size: 0.9em; color: var(--accent); }
+        #streak-sub { font-size: 0.68em; color: #a5b1c2; }
+        /* ── Task panel ── */
         #task-panel { display: none; width: 95%; max-width: 400px; background: white; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.07); overflow: hidden; }
         #task-panel-header { background: var(--accent); color: white; padding: 12px 16px; font-weight: bold; font-size: 0.88em; display: flex; justify-content: space-between; align-items: center; }
         #task-panel-header button { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; }
         .tp-body { padding: 14px 16px 16px; }
+        .tp-tabs { display: flex; gap: 0; margin-bottom: 14px; border-radius: 10px; overflow: hidden; border: 1.5px solid #eee; }
+        .tp-tab { flex: 1; padding: 8px 4px; font-size: 0.68em; font-weight: bold; text-align: center; cursor: pointer; background: #fafafa; color: #a5b1c2; border: none; font-family: inherit; }
+        .tp-tab.active { background: var(--accent); color: white; }
+        .tp-section { display: none; } .tp-section.active { display: block; }
         .tp-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; flex-wrap: wrap; }
         .tp-label { font-size: 0.68em; font-weight: bold; color: #a5b1c2; letter-spacing: 0.05em; width: 100%; margin-bottom: 2px; }
         .tp-input { flex: 1; min-width: 0; border: 1.5px solid #eee; border-radius: 8px; padding: 7px 10px; font-size: 0.8em; color: #596275; font-family: inherit; outline: none; background: #fafafa; box-sizing: border-box; }
         .tp-input:focus { border-color: var(--accent); background: white; }
         select.tp-input { cursor: pointer; }
         .tp-days { display: flex; gap: 5px; flex-wrap: wrap; }
-        .tp-day { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #eee; background: #fafafa; font-size: 0.68em; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #a5b1c2; user-select: none; transition: all 0.12s; }
+        .tp-day { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid #eee; background: #fafafa; font-size: 0.66em; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #a5b1c2; user-select: none; transition: all 0.12s; }
         .tp-day.on { background: var(--accent); border-color: var(--accent); color: white; }
         .tp-add { width: 100%; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 0.85em; cursor: pointer; margin-top: 2px; font-family: inherit; }
         .tp-divider { border: none; border-top: 1px solid #f0f0f0; margin: 10px 0; }
         .ct-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; gap: 8px; }
         .ct-item:last-child { border-bottom: none; }
+        .ct-item.essential { opacity: 0.75; }
         .ct-info { flex: 1; min-width: 0; }
         .ct-name { font-size: 0.82em; font-weight: 600; color: #596275; }
-        .ct-meta { font-size: 0.68em; color: #a5b1c2; margin-top: 1px; }
+        .ct-meta { font-size: 0.67em; color: #a5b1c2; margin-top: 1px; }
         .ct-btns { display: flex; gap: 4px; flex-shrink: 0; }
-        .btn-edit { background: #f0f0f0; color: #596275; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8em; }
-        .btn-dupe { background: #e8f4fd; color: #5dade2; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8em; }
+        .btn-edit { background: #f0f0f0; color: #596275; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.78em; }
+        .btn-dupe { background: #e8f4fd; color: #5dade2; border: none; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 0.78em; }
         .ct-edit-form { padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
         .ct-edit-form:last-child { border-bottom: none; }
         .ct-edit-row { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
         .btn-save { background: var(--accent); color: white; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8em; font-weight: bold; font-family: inherit; }
         .btn-cancel { background: #f0f0f0; color: #596275; border: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8em; font-family: inherit; }
-        #hud, #checklist { width: 95%; max-width: 400px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .btn-del { background: #ff7675; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; }
+        .btn-reset { background: #fdcb6e; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; font-family: inherit; }
+        .essential-badge { font-size: 0.6em; background: #ffe0eb; color: var(--accent); border-radius: 4px; padding: 1px 5px; font-weight: bold; margin-left: 4px; vertical-align: middle; }
+        .section-label { font-size: 0.68em; font-weight: bold; color: #a5b1c2; letter-spacing: 0.06em; margin: 12px 0 6px; text-transform: uppercase; }
+        /* ── HUD / checklist ── */
+        #hud, #checklist { width: 95%; max-width: 400px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
         .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .stat-label { width: 40px; font-weight: bold; font-size: 0.8em; }
         .bar-container { flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
-        #agnes-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
+        /* ── Tachyon widget ── */
+        #tachyon-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
         #status-box { width: min(364px, 95vw); background: white; border: 2px solid var(--accent); border-bottom: none; border-radius: 16px 16px 0 0; padding: 8px 12px; box-sizing: border-box; font-size: 0.72em; color: #596275; line-height: 1.4; text-align: center; min-height: 44px; display: flex; align-items: center; justify-content: center; }
         #status-text { transition: opacity 0.4s ease; opacity: 1; }
         #game-container { border: 2px solid var(--accent); border-radius: 0 0 24px 24px; border-top: none; box-shadow: 0 8px 20px rgba(248,165,194,0.15); background: #fff; width: min(360px, calc(95vw - 4px)); height: 180px; overflow: hidden; cursor: pointer; }
+        /* ── Checklist items ── */
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; gap: 6px; }
+        .task-item.task-late { background: #fff8f8; border-radius: 8px; padding: 10px 8px; border-left: 3px solid #ff7675; margin-bottom: 2px; }
         .task-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
         .task-name { font-weight: 600; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .task-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+        .task-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
         .task-stat { font-size: 0.7em; color: #a5b1c2; font-weight: bold; }
         .task-time { font-size: 0.7em; color: var(--accent); font-weight: bold; }
+        .task-time.late { color: #ff7675; }
         .btn-group { display: flex; gap: 5px; flex-shrink: 0; }
         .btn-check { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.85em; }
         .btn-dismiss { background: var(--dismiss); color: white; border: none; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 0.7em; }
-        .btn-del { background: #ff7675; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; }
-        #clock { font-size: 0.9em; font-weight: bold; color: #f8a5c2; margin-bottom: 5px; text-align: center; }
         .all-done { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; font-size: 0.9em; }
         input.tp-input, select.tp-input { -webkit-appearance: none; appearance: none; }
         input[type="time"].tp-input { min-width: 0; }
+        /* ── Achievement toast ── */
+        #ach-toast { position: fixed; top: 14px; left: 50%; transform: translateX(-50%) translateY(-140px); background: white; border: 2px solid var(--accent); border-radius: 16px; padding: 12px 18px; box-shadow: 0 8px 24px rgba(248,165,194,0.3); z-index: 9999; text-align: center; transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1); max-width: 320px; width: 88%; box-sizing: border-box; }
+        #ach-toast.show { transform: translateX(-50%) translateY(0); }
+        #ach-toast .t-icon { font-size: 1.8em; display: block; margin-bottom: 3px; }
+        #ach-toast .t-title { font-weight: bold; font-size: 0.88em; color: var(--accent); }
+        #ach-toast .t-desc { font-size: 0.7em; color: #a5b1c2; margin-top: 2px; }
+        /* ── Achievements grid ── */
+        .ach-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .ach-card { background: #fafafa; border-radius: 10px; padding: 10px 8px; border: 1.5px solid #eee; text-align: center; }
+        .ach-card.unlocked { border-color: var(--accent); background: #fff0f5; }
+        .ach-card.locked .ach-icon-lg { filter: grayscale(1); opacity: 0.35; }
+        .ach-card.locked .ach-cname { color: #b2bec3; }
+        .ach-icon-lg { font-size: 1.4em; display: block; margin-bottom: 3px; }
+        .ach-cname { font-size: 0.72em; font-weight: bold; color: #596275; }
+        .ach-prog { font-size: 0.62em; color: #a5b1c2; margin-top: 2px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h3>Daily Life With Agnes</h3>
-    <button id="menu-btn" onclick="toggleMenu()">⚙️</button>
-</header>
-<div id="clock">Loading time...</div>
+<div id="ach-toast">
+    <span class="t-icon" id="t-icon">🏆</span>
+    <div class="t-title" id="t-title">Achievement Unlocked!</div>
+    <div class="t-desc" id="t-desc"></div>
+</div>
 
-<div id="task-panel">
-    <div id="task-panel-header">
-        <span>✏️ Custom Tasks</span>
-        <button onclick="toggleMenu()">✕</button>
+<!-- LOGIN -->
+<div id="login-screen">
+    <h2>🌸 Daily Life With Tachyon</h2>
+    <p>Sign in to keep your progress safe!</p>
+    <div id="login-mode-label">Sign In</div>
+    <div id="login-migrate-notice">🌸 Existing save data found! It will carry over to your new account automatically.</div>
+    <input class="login-input" id="login-username" placeholder="Username" autocomplete="username">
+    <input class="login-input" id="login-pin" placeholder="PIN (4 digits)" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password">
+    <div id="login-error"></div>
+    <button class="login-btn" id="login-submit-btn" onclick="submitLogin()">Let's Go! 🌸</button>
+    <div id="login-toggle" onclick="toggleLoginMode()">Don't have an account? Create one!</div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+    <header>
+        <div style="display:flex;flex-direction:column;">
+            <h3 style="margin:0">Daily Life With Tachyon</h3>
+            <span id="welcome-name" style="font-size:0.72em;color:#a5b1c2;"></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <button id="logout-btn" onclick="logout()">Sign out</button>
+            <button id="menu-btn" onclick="toggleMenu()">⚙️</button>
+        </div>
+    </header>
+    <div id="sync-status"></div>
+    <div id="clock">Loading time...</div>
+
+    <div id="streak-bar">
+        <div id="streak-flame">✨</div>
+        <div id="streak-info">
+            <div id="streak-count">No streak yet</div>
+            <div id="streak-sub">Complete all essential tasks to start your streak!</div>
+        </div>
     </div>
-    <div class="tp-body">
-        <div class="tp-row">
-            <input class="tp-input" id="new-task-name" placeholder="Task name…" style="flex:2">
-            <select class="tp-input" id="new-task-type" style="flex:1">
-                <option value="power">💪 Power</option>
-                <option value="stamina">✨ Stamina</option>
-                <option value="guts">🔥 Guts</option>
-                <option value="wit">📚 Wit</option>
-            </select>
+
+    <div id="task-panel">
+        <div id="task-panel-header">
+            <span>✏️ Manage Tasks</span>
+            <button onclick="toggleMenu()">✕</button>
         </div>
-        <div class="tp-row">
-            <span class="tp-label">TIME WINDOW (optional)</span>
-            <input class="tp-input" id="new-task-from" type="time" style="flex:1">
-            <span style="font-size:0.8em;color:#b2bec3;padding:0 2px">–</span>
-            <input class="tp-input" id="new-task-to" type="time" style="flex:1">
-        </div>
-        <div class="tp-row" style="flex-direction:column;align-items:flex-start;">
-            <span class="tp-label">REPEAT ON</span>
-            <div class="tp-days" id="new-task-days">
-                <div class="tp-day" data-day="0" onclick="this.classList.toggle('on')">Su</div>
-                <div class="tp-day" data-day="1" onclick="this.classList.toggle('on')">Mo</div>
-                <div class="tp-day" data-day="2" onclick="this.classList.toggle('on')">Tu</div>
-                <div class="tp-day" data-day="3" onclick="this.classList.toggle('on')">We</div>
-                <div class="tp-day" data-day="4" onclick="this.classList.toggle('on')">Th</div>
-                <div class="tp-day" data-day="5" onclick="this.classList.toggle('on')">Fr</div>
-                <div class="tp-day" data-day="6" onclick="this.classList.toggle('on')">Sa</div>
+        <div class="tp-body">
+            <div class="tp-tabs">
+                <button class="tp-tab active" onclick="switchTab('custom')">Custom</button>
+                <button class="tp-tab" onclick="switchTab('core')">Core Tasks</button>
+                <button class="tp-tab" onclick="switchTab('achievements')">Achievements</button>
+            </div>
+            <!-- Custom Tasks -->
+            <div class="tp-section active" id="tab-custom">
+                <div class="tp-row">
+                    <input class="tp-input" id="new-task-name" placeholder="Task name…" style="flex:2">
+                    <select class="tp-input" id="new-task-type" style="flex:1">
+                        <option value="power">💪 Power</option>
+                        <option value="stamina">✨ Stamina</option>
+                        <option value="guts">🔥 Guts</option>
+                        <option value="wit">📚 Wit</option>
+                    </select>
+                </div>
+                <div class="tp-row">
+                    <span class="tp-label">TIME WINDOW (optional)</span>
+                    <input class="tp-input" id="new-task-from" type="time" style="flex:1">
+                    <span style="font-size:0.8em;color:#b2bec3;padding:0 2px">–</span>
+                    <input class="tp-input" id="new-task-to" type="time" style="flex:1">
+                </div>
+                <div class="tp-row" style="flex-direction:column;align-items:flex-start;">
+                    <span class="tp-label">REPEAT ON</span>
+                    <div class="tp-days" id="new-task-days">
+                        <div class="tp-day" data-day="0" onclick="this.classList.toggle('on')">Su</div>
+                        <div class="tp-day" data-day="1" onclick="this.classList.toggle('on')">Mo</div>
+                        <div class="tp-day" data-day="2" onclick="this.classList.toggle('on')">Tu</div>
+                        <div class="tp-day" data-day="3" onclick="this.classList.toggle('on')">We</div>
+                        <div class="tp-day" data-day="4" onclick="this.classList.toggle('on')">Th</div>
+                        <div class="tp-day" data-day="5" onclick="this.classList.toggle('on')">Fr</div>
+                        <div class="tp-day" data-day="6" onclick="this.classList.toggle('on')">Sa</div>
+                    </div>
+                </div>
+                <button class="tp-add" onclick="addCustomTask()">+ Add Task</button>
+                <div id="custom-task-list"></div>
+            </div>
+            <!-- Core Tasks -->
+            <div class="tp-section" id="tab-core">
+                <p style="font-size:0.74em;color:#a5b1c2;margin:0 0 10px;">Essential tasks shown for reference. Non-essential tasks can be fully edited.</p>
+                <div id="core-task-edit-list"></div>
+            </div>
+            <!-- Achievements -->
+            <div class="tp-section" id="tab-achievements">
+                <div id="ach-grid" class="ach-grid"></div>
             </div>
         </div>
-        <button class="tp-add" onclick="addCustomTask()">+ Add Task</button>
-        <div id="custom-task-list"></div>
     </div>
-</div>
 
-<div id="hud">
-    <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div></div>
-    <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div></div>
-    <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div></div>
-    <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
-</div>
+    <div id="hud">
+        <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
+    </div>
 
-<div id="agnes-wrap">
-    <div id="status-box"><span id="status-text">Agnes is here! 🌸</span></div>
-    <div id="game-container"></div>
-</div>
+    <div id="tachyon-wrap">
+        <div id="status-box"><span id="status-text">Tachyon is here! 🌸</span></div>
+        <div id="game-container"></div>
+    </div>
 
-<div id="checklist">
-    <h3>Today's Schedule</h3>
-    <div id="task-list"></div>
+    <div id="checklist">
+        <h3>Today's Schedule</h3>
+        <div id="task-list"></div>
+    </div>
 </div>
 
 <script>
-    let agnes = null;
-    let stats     = JSON.parse(localStorage.getItem('agnesStats'))     || { power:0, stamina:0, guts:0, wit:0 };
-    let history   = JSON.parse(localStorage.getItem('agnesHistory'))   || {};
-    let dismissed = JSON.parse(localStorage.getItem('agnesDismissed')) || {};
+// ─────────────────────────────────────────────────────────────────────────────
+// TASK → SPRITE MAPPING
+// Each task maps to: { atlas, frame } for the item that floats beside Tachyon
+// ─────────────────────────────────────────────────────────────────────────────
+const TASK_SPRITES = {
+    Breakfast: { atlas: 'snack',    frame: '80_pancakes_dish' },
+    Water:     { atlas: 'drink',    frame: 'water' },
+    Lunch:     { atlas: 'snack',    frame: '92_sandwich' },
+    Snack:     { atlas: 'snack',    frame: '28_cookies' },
+    Snack2:    { atlas: 'snack',    frame: '50_giantgummybear' },     // fun/energy
+    Snack3:      { atlas: 'snack',    frame: '26_chocolate' },          // cosy treat
+    Dinner:    { atlas: 'snack',    frame: '87_ramen' },
+    Dinner2:   { atlas: 'snack',    frame: '96_steak_dish' },        // energy food
+    Teeth:     { atlas: 'tooth',    frame: 'toothpaste' },
+    Tidy:      { atlas: 'cleaning', frame: 'cleaning_brush' },
+    Tidy2:     { atlas: 'cleaning', frame: 'bathroom_cleaner' },
+    Shop:      { atlas: 'snack',    frame: '15_burger' },             // groceries → food
+    Laundry:   { atlas: 'cleaning', frame: 'detergent' },
+};
 
-    let customTasksRaw = JSON.parse(localStorage.getItem('agnesCustomTasks')) || [];
-    function hydrateCustomTasks(raw) {
-        return raw.map(t => Object.assign({}, t, {
-            anim: t.anim || 'cheer',
-            check: (h) => {
-                if (t.fromH !== undefined && t.toH !== undefined) {
-                    if (t.fromH <= t.toH) return h >= t.fromH && h < t.toH;
-                    return h >= t.fromH || h < t.toH;
-                }
-                return true;
+// Emote frame indices (each frame in emotes atlas is a 3-frame 96×32 animation strip)
+// Picked contextually:
+const EMOTE = {
+    hint:      'pipo-popupemotes010',  // music note  — gentle reminder
+    urgent:    'pipo-popupemotes003',  // ! exclaim   — urgent/late
+    happy:     'pipo-popupemotes012',  // heart        — completion
+    science:   'pipo-popupemotes005',  // sparkle star — injection/tablet
+    bored:     'pipo-popupemotes001',  // zzz          — idle bored
+    anger:     'pipo-popupemotes008',  // anger        — scolding late
+    idea:      'pipo-popupemotes009',  // lightbulb    — new task
+};
+
+// Add this near your TASK_SPRITES definition
+const TASK_REMINDERS = {
+    Stretch:   "Time to wake up and warm up!",
+    Breakfast: "Don't forget to eat something yummy!",
+    Tablet:    "Time for your medicine, I need healthy test subjects!",
+    Water:     "Stay hydrated! Take a sip. 💧",
+    Lunch:     "Lunch time! Feed your brain. ",
+    Snack:     "A small treat for your hard work!",
+    Walk:      "Let's get some fresh air. ",
+    Read:      "Time for some quiet reading. 📚",
+    Cranes:    "Folding paper cranes is so relaxing... 🦢",
+    Dinner:    "What's on the menu tonight?",
+    Teeth:     "Brush those teeth! ✨",
+    Tidy:      "A little tidy-up makes a happy space. 🧹",
+    Tidy2:     "Cleaning time! ✨",
+    Shop:      "Time to go shopping! 🛒",
+    Laundry:   "Don't forget the laundry! 🧺",
+    Injection: "Time for your injection. You've got this! 🧪"
+};
+    
+// ─────────────────────────────────────────────────────────────────────────────
+// SUPABASE
+// ─────────────────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://iusspgrnigizjsvkpiug.supabase.co';
+const SUPA_KEY = 'sb_publishable_Ad0oD2l3laFTst4tG0qw3A_2k7Fwa36';
+async function supaFetch(path, method='GET', body=null) {
+    const opts = { method, headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY, 'Content-Type': 'application/json', 'Prefer': method==='POST'?'return=representation':'' } };
+    if (body) opts.body = JSON.stringify(body);
+    const res = await fetch(SUPA_URL+'/rest/v1/'+path, opts);
+    if (!res.ok) throw new Error(await res.text());
+    return res.status===204 ? null : res.json();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SESSION & MIGRATION
+// ─────────────────────────────────────────────────────────────────────────────
+function hashPin(u,p) { let h=0; const s=u.toLowerCase()+':'+p+':tachyon-salt-2025'; for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0; return 'ph_'+Math.abs(h).toString(36); }
+function saveSession(u,ph) { localStorage.setItem('tachyonSession',JSON.stringify({username:u,pinHash:ph})); }
+function clearSession() { localStorage.removeItem('tachyonSession'); }
+function getSession() { try{return JSON.parse(localStorage.getItem('tachyonSession'));}catch{return null;} }
+function getLegacyData() {
+    const s=JSON.parse(localStorage.getItem('agnesStats')||'null');
+    if(!s||(s.power===0&&s.stamina===0&&s.guts===0&&s.wit===0))return null;
+    return { stats:s, history:JSON.parse(localStorage.getItem('agnesHistory')||'{}'), dismissed:JSON.parse(localStorage.getItem('agnesDismissed')||'{}'), custom_tasks:JSON.parse(localStorage.getItem('agnesCustomTasks')||'[]') };
+}
+function clearLegacy() { ['agnesStats','agnesHistory','agnesDismissed','agnesCustomTasks'].forEach(k=>localStorage.removeItem(k)); }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA STATE
+// ─────────────────────────────────────────────────────────────────────────────
+let stats={power:0,stamina:0,guts:0,wit:0}, history={}, dismissed={}, customTasksRaw=[], coreTaskOverrides={};
+let streakData={current:0,best:0,lastDate:''}, achievements={}, taskCounts={}, customTasks=[];
+let currentUser=null;
+
+function loadSaveData(row) {
+    stats=row.stats||{power:0,stamina:0,guts:0,wit:0};
+    history=row.history||{}; dismissed=row.dismissed||{};
+    customTasksRaw=row.custom_tasks||[]; coreTaskOverrides=row.core_task_overrides||{};
+    streakData=row.streaks||{current:0,best:0,lastDate:''};
+    achievements=row.achievements||{}; taskCounts=row.task_counts||{};
+    customTasks=hydrateCustomTasks(customTasksRaw);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTO LOGIN
+// ─────────────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+    const session=getSession();
+    if (session) {
+        try {
+            const rows=await supaFetch(`agnes_saves?username=eq.${encodeURIComponent(session.username)}&select=*`);
+            if (rows.length>0&&rows[0].pin_hash===session.pinHash) {
+                currentUser={id:rows[0].id,username:session.username};
+                loadSaveData(rows[0]); showApp(); return;
             }
-        }));
+        } catch(e) {}
+        clearSession();
     }
-    let customTasks = hydrateCustomTasks(customTasksRaw);
+    if (getLegacyData()) document.getElementById('login-migrate-notice').style.display='block';
+});
 
-    const coreTasks = [
-        { id:'Stretch',   name:'Morning Stretch',             type:'power',   anim:'cheer',      timeLabel:'Until 10AM',  isEssential:true,  check:h=>h<10 },
-        { id:'Breakfast', name:'Have Breakfast',              type:'stamina', anim:'eating',     timeLabel:'Until 12PM',  isEssential:true,  check:h=>h<12 },
-        { id:'Water',     name:'Drink Glass Of Water',        type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',  isEssential:true,  check:h=>h>=8&&h<24&&h%2===0 },
-        { id:'Lunch',     name:'Eat Lunch',                   type:'stamina', anim:'eating',     timeLabel:'12PM - 3PM',  isEssential:true,  check:h=>h>=12&&h<15 },
-        { id:'Snack',     name:'Share A Snack With Agnes',    type:'stamina', anim:'snack',      timeLabel:'3PM - 5PM',   isEssential:false, check:h=>h>=15&&h<17 },
-        { id:'Walk',      name:'Go For A Walk with Agnes',    type:'power',   anim:'super_dash', timeLabel:'After 3PM',   isEssential:false, check:h=>h>=15&&h<19 },
-        { id:'Read',      name:'Read/Study',                  type:'wit',     anim:'sit_down',   timeLabel:'From 5PM',    isEssential:false, check:h=>h>=17 },
-        { id:'Dinner',    name:'Have Dinner With Agnes',      type:'stamina', anim:'eating',     timeLabel:'6PM - 10PM',  isEssential:true,  check:h=>h>=18&&h<22 },
-        { id:'Teeth',     name:'Brush Your Teeth',            type:'guts',    anim:'giggle',     timeLabel:'AM/PM',       isEssential:true,  check:h=>(h>=7&&h<9)||(h>=17&&h<24) },
-        { id:'Tidy',      name:'Tidy Up Room',                type:'power',   anim:'float',      timeLabel:'Wed & Sun',   isEssential:false, days:[0,3], check:h=>h<18 },
-        { id:'Tidy2',     name:'Scrub The Bathroom',          type:'power',   anim:'dash',       timeLabel:'Sun & Wed',   isEssential:false, days:[0,3], check:h=>h<18 },
-        { id:'Shop',      name:'Go Food Shopping With Agnes', type:'power',   anim:'dash',       timeLabel:'Saturdays',   isEssential:false, days:[6],   check:h=>h<20 },
-        { id:'Laundry',   name:'Do Laundry With Agnes',       type:'guts',    anim:'dash',       timeLabel:'Sundays',     isEssential:false, days:[0],   check:h=>h<18 }
-    ];
+let loginIsRegister=false;
+function toggleLoginMode() {
+    loginIsRegister=!loginIsRegister;
+    document.getElementById('login-mode-label').textContent=loginIsRegister?'Create Account':'Sign In';
+    document.getElementById('login-toggle').textContent=loginIsRegister?'Already have an account? Sign in':"Don't have an account? Create one!";
+    document.getElementById('login-submit-btn').textContent=loginIsRegister?'Create Account 🌸':"Let's Go! 🌸";
+    document.getElementById('login-error').textContent='';
+    document.getElementById('login-migrate-notice').style.display=(loginIsRegister&&getLegacyData())?'block':'none';
+}
 
-    // ── Menu ─────────────────────────────────────────────────────────────────
-    function toggleMenu() {
-        const panel = document.getElementById('task-panel');
-        const isOpen = panel.style.display === 'block';
-        panel.style.display = isOpen ? 'none' : 'block';
-        if (!isOpen) renderCustomTasks();
-    }
-
-    // ── Task helpers ─────────────────────────────────────────────────────────
-    const STAT_ANIMS = {
-        power:   ['super_dash','dash','cheer'],
-        stamina: ['eating','snack','wave'],
-        guts:    ['giggle','cheer','sudden_stop'],
-        wit:     ['sit_down','say','giggle'],
-    };
-    function pickAnim(type) {
-        const pool = STAT_ANIMS[type] || ['cheer'];
-        return pool[Math.floor(Math.random() * pool.length)];
-    }
-
-    function buildRaw(id, name, type, days, fromVal, toVal) {
-        const fmt = t => { const [h,m]=t.split(':'); const hr=parseInt(h); return `${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`; };
-        let timeLabel='Anytime', fromH, toH;
-        if (fromVal && toVal) {
-            fromH=parseInt(fromVal.split(':')[0]); toH=parseInt(toVal.split(':')[0]);
-            timeLabel=`${fmt(fromVal)} – ${fmt(toVal)}`;
-        } else if (fromVal) {
-            fromH=parseInt(fromVal.split(':')[0]);
-            timeLabel=`From ${fmt(fromVal)}`;
+async function submitLogin() {
+    const username=document.getElementById('login-username').value.trim().toLowerCase();
+    const pin=document.getElementById('login-pin').value.trim();
+    const errEl=document.getElementById('login-error');
+    errEl.textContent='';
+    if(!username||pin.length<4){errEl.textContent='Please enter a username and 4-digit PIN.';return;}
+    const btn=document.getElementById('login-submit-btn');
+    btn.disabled=true; btn.textContent='...';
+    const ph=hashPin(username,pin);
+    try {
+        const rows=await supaFetch(`agnes_saves?username=eq.${encodeURIComponent(username)}&select=*`);
+        if (loginIsRegister) {
+            if(rows.length>0){errEl.textContent='That username is already taken!';return;}
+            const legacy=getLegacyData();
+            const payload={username,pin_hash:ph,stats:legacy?.stats||{power:0,stamina:0,guts:0,wit:0},history:legacy?.history||{},dismissed:legacy?.dismissed||{},custom_tasks:legacy?.custom_tasks||[],core_task_overrides:{},streaks:{current:0,best:0,lastDate:''},achievements:{},task_counts:{}};
+            const created=await supaFetch('agnes_saves','POST',payload);
+            currentUser={id:created[0].id,username};
+            loadSaveData(created[0]);
+            if(legacy){clearLegacy();setTimeout(()=>setStatus('Your save data was carried over! 🌸',5000),1800);}
+        } else {
+            if(rows.length===0){errEl.textContent="Hmm, can't find that account!";return;}
+            if(rows[0].pin_hash!==ph){errEl.textContent='Wrong PIN! Try again 🌸';return;}
+            currentUser={id:rows[0].id,username};
+            loadSaveData(rows[0]);
         }
-        const raw = { id, name, type, days, timeLabel, isEssential:false, anim:pickAnim(type) };
-        if (fromH!==undefined) raw.fromH=fromH;
-        if (toH!==undefined)   raw.toH=toH;
-        return raw;
-    }
+        saveSession(username,ph); showApp();
+    } catch(e) { errEl.textContent='Something went wrong: '+e.message; }
+    finally { btn.disabled=false; btn.textContent=loginIsRegister?'Create Account 🌸':"Let's Go! 🌸"; }
+}
 
-    function addCustomTask() {
-        const name=document.getElementById('new-task-name').value.trim();
-        const type=document.getElementById('new-task-type').value;
-        const fromVal=document.getElementById('new-task-from').value;
-        const toVal=document.getElementById('new-task-to').value;
-        const days=Array.from(document.querySelectorAll('#new-task-days .tp-day.on')).map(el=>parseInt(el.dataset.day));
-        if (!name||days.length===0){alert('Please enter a name and select at least one day.');return;}
-        customTasksRaw.push(buildRaw('custom_'+Date.now(),name,type,days,fromVal,toVal));
-        customTasks=hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks',JSON.stringify(customTasksRaw));
-        document.getElementById('new-task-name').value='';
-        document.getElementById('new-task-from').value='';
-        document.getElementById('new-task-to').value='';
-        document.querySelectorAll('#new-task-days .tp-day').forEach(el=>el.classList.remove('on'));
-        renderCustomTasks(); updateUI();
-        // bulb only — no second emotion
-        setStatus('New task added! 💡',3000);
-    }
+function showApp() {
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('welcome-name').textContent='Hi, '+currentUser.username+'! 🌸';
+    renderStreak(); updateUI();
+    if(!gameBooted) bootGame();
+}
+function logout() {
+    clearSession(); currentUser=null; loginIsRegister=false;
+    document.getElementById('app').style.display='none';
+    document.getElementById('login-screen').style.display='flex';
+    document.getElementById('login-username').value='';
+    document.getElementById('login-pin').value='';
+    document.getElementById('login-error').textContent='';
+    document.getElementById('login-mode-label').textContent='Sign In';
+    document.getElementById('login-toggle').textContent="Don't have an account? Create one!";
+    document.getElementById('login-migrate-notice').style.display=getLegacyData()?'block':'none';
+}
 
-    function deleteCustomTask(id) {
-        customTasksRaw=customTasksRaw.filter(t=>t.id!==id);
-        customTasks=hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks',JSON.stringify(customTasksRaw));
-        renderCustomTasks(); updateUI();
-    }
+// ─────────────────────────────────────────────────────────────────────────────
+// CLOUD SAVE
+// ─────────────────────────────────────────────────────────────────────────────
+let saveDebounce=null;
+function scheduleSave() { if(saveDebounce)clearTimeout(saveDebounce); saveDebounce=setTimeout(cloudSave,900); }
+async function cloudSave() {
+    if(!currentUser)return;
+    setSyncStatus('syncing','Saving… 🌸');
+    try {
+        await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,updated_at:new Date().toISOString()});
+        setSyncStatus('ok','');
+    } catch(e) { setSyncStatus('error','Save failed — retrying…'); saveDebounce=setTimeout(cloudSave,6000); }
+}
+function setSyncStatus(state,msg) { const el=document.getElementById('sync-status'); el.className=state; el.textContent=msg; }
 
-    function duplicateCustomTask(id) {
-        const orig=customTasksRaw.find(t=>t.id===id); if(!orig)return;
-        customTasksRaw.push(Object.assign({},orig,{id:'custom_'+Date.now(),name:orig.name+' (copy)'}));
-        customTasks=hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks',JSON.stringify(customTasksRaw));
-        renderCustomTasks(); updateUI();
-        setStatus('Task duplicated! ✌️',2000);
-    }
+// ─────────────────────────────────────────────────────────────────────────────
+// STREAK
+// ─────────────────────────────────────────────────────────────────────────────
+function getTodayEssentials() {
+    const day=new Date().getDay();
+    return coreTasks.filter(t=>{
+        if(!t.isEssential)return false;
+        if(t.isInjection&&!isInjectionFriday())return false;
+        return (t.days||[0,1,2,3,4,5,6]).includes(day);
+    });
+}
+function tryAdvanceStreak() {
+    const today=new Date().toDateString();
+    if(streakData.lastDate===today)return;
+    if(!getTodayEssentials().every(t=>history[t.id]===today))return;
+    const yesterday=new Date(Date.now()-86400000).toDateString();
+    streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:1;
+    streakData.best=Math.max(streakData.best,streakData.current);
+    streakData.lastDate=today;
+    const ms={1:'First full day done! 🌸',3:'3 days in a row! Tachyon is pleased! 🔥',7:'A whole week!! Amazing work! ⭐',14:'Two week streak! Tachyon is proud of you! 💪',30:'30 DAYS! Tachyon is absolutely delighted! 🎉'};
+    if(ms[streakData.current])setTimeout(()=>setStatus(ms[streakData.current],7000),800);
+    scheduleSave(); renderStreak(); checkAchievements();
+}
+function renderStreak() {
+    const n=streakData.current;
+    document.getElementById('streak-flame').textContent=n>=14?'🏆':n>=7?'⭐':n>=3?'🔥':'✨';
+    document.getElementById('streak-count').textContent=n===0?'No streak yet':`${n} day streak!`;
+    document.getElementById('streak-sub').textContent=n===0?'Complete all essential tasks to start your streak!':`Personal best: ${streakData.best} day${streakData.best!==1?'s':''}`;
+}
 
-    function editCustomTask(id) {
-        const t=customTasksRaw.find(t=>t.id===id); if(!t)return;
-        const item=document.querySelector(`[data-id="${id}"]`); if(!item)return;
-        const fromStr=t.fromH!==undefined?String(t.fromH).padStart(2,'0')+':00':'';
-        const toStr=t.toH!==undefined?String(t.toH).padStart(2,'0')+':00':'';
-        const daysHtml=['Su','Mo','Tu','We','Th','Fr','Sa'].map((d,i)=>
-            `<div class="tp-day${t.days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`
-        ).join('');
-        item.outerHTML=`<div class="ct-edit-form" data-id="${id}">
+// ─────────────────────────────────────────────────────────────────────────────
+// ACHIEVEMENTS
+// ─────────────────────────────────────────────────────────────────────────────
+const ACH_DEFS = [
+    {id:'first_task',   icon:'🌱',name:'First Steps',        desc:'Complete your first task',        check:()=>Object.keys(history).length>=1},
+    {id:'streak_3',     icon:'🔥',name:'On a Roll',          desc:'Reach a 3-day streak',            check:()=>streakData.best>=3},
+    {id:'streak_7',     icon:'⭐',name:'Week Warrior',       desc:'Reach a 7-day streak',            check:()=>streakData.best>=7},
+    {id:'streak_30',    icon:'🏆',name:'Unstoppable',        desc:'Reach a 30-day streak',           check:()=>streakData.best>=30},
+    {id:'injection_5',  icon:'🧪',name:'Lab Regular',        desc:'Complete the injection 5 times',  check:()=>(taskCounts['Injection']||0)>=5},
+    {id:'injection_10', icon:'🔬',name:'Research Champion',  desc:'Complete the injection 10 times', check:()=>(taskCounts['Injection']||0)>=10},
+    {id:'tablet_10',    icon:'💊',name:'Tablet Streak',      desc:'Take the tablet 10 times',        check:()=>(taskCounts['Tablet']||0)>=10},
+    {id:'cranes_10',    icon:'🦢',name:'Crane Artist',       desc:'Create paper cranes 10 times',    check:()=>(taskCounts['Cranes']||0)>=10},
+    {id:'cranes_25',    icon:'🪶',name:'Origami Master',     desc:'Create paper cranes 25 times',    check:()=>(taskCounts['Cranes']||0)>=25},
+    {id:'water_20',     icon:'💧',name:'Hydration Hero',     desc:'Drink water 20 times',            check:()=>(taskCounts['Water']||0)>=20},
+    {id:'rank_b',       icon:'💪',name:'Getting Stronger',   desc:'Reach rank B in any stat',        check:()=>Object.values(stats).some(v=>v>=400)},
+    {id:'rank_s',       icon:'🌟',name:"Tachyon's Champion", desc:'Reach rank S in any stat',        check:()=>Object.values(stats).some(v=>v>=600)},
+    {id:'custom_task',  icon:'✨',name:'Self-Starter',       desc:'Add your first custom task',      check:()=>customTasksRaw.length>=1},
+];
+function checkAchievements() {
+    const nu=ACH_DEFS.filter(d=>!achievements[d.id]&&d.check());
+    if(!nu.length)return;
+    nu.forEach(d=>{achievements[d.id]=new Date().toISOString();});
+    scheduleSave();
+    let delay=200;
+    nu.forEach(d=>{setTimeout(()=>showAchToast(d),delay);delay+=3600;});
+    if(document.getElementById('tab-achievements').classList.contains('active'))renderAchievements();
+}
+let toastTimer=null;
+function showAchToast(def) {
+    document.getElementById('t-icon').textContent=def.icon;
+    document.getElementById('t-title').textContent='🏆 '+def.name;
+    document.getElementById('t-desc').textContent=def.desc;
+    const t=document.getElementById('ach-toast');
+    t.classList.add('show');
+    if(toastTimer)clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.classList.remove('show'),3400);
+    setStatus('Achievement unlocked: '+def.name+'! '+def.icon,5000);
+}
+function achProgress(def) {
+    if(achievements[def.id])return'✅ Unlocked!';
+    const c=taskCounts;
+    if(def.id==='streak_3')return`${streakData.best}/3 days`;
+    if(def.id==='streak_7')return`${streakData.best}/7 days`;
+    if(def.id==='streak_30')return`${streakData.best}/30 days`;
+    if(def.id==='injection_5')return`${c['Injection']||0}/5`;
+    if(def.id==='injection_10')return`${c['Injection']||0}/10`;
+    if(def.id==='tablet_10')return`${c['Tablet']||0}/10`;
+    if(def.id==='cranes_10')return`${c['Cranes']||0}/10`;
+    if(def.id==='cranes_25')return`${c['Cranes']||0}/25`;
+    if(def.id==='water_20')return`${c['Water']||0}/20`;
+    if(def.id==='rank_b')return`Best: ${Math.max(...Object.values(stats))}/400`;
+    if(def.id==='rank_s')return`Best: ${Math.max(...Object.values(stats))}/600`;
+    return'🔒 Locked';
+}
+function renderAchievements() {
+    document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`
+        <div class="ach-card ${achievements[def.id]?'unlocked':'locked'}">
+            <span class="ach-icon-lg">${def.icon}</span>
+            <div class="ach-cname">${def.name}</div>
+            <div class="ach-prog">${achProgress(def)}</div>
+        </div>`).join('');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INJECTION FRIDAY
+// ─────────────────────────────────────────────────────────────────────────────
+const INJECTION_REF=new Date(2025,4,9);
+function isInjectionFriday() {
+    const now=new Date();
+    if(now.getDay()!==5)return false;
+    const diff=Math.round((now-INJECTION_REF)/86400000);
+    return diff>=0&&diff%14===0;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CORE TASKS
+// ─────────────────────────────────────────────────────────────────────────────
+const coreTasks = [
+    {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:'Until 10AM',  isEssential:true,  check:h=>h<10},
+    {id:'Breakfast', name:'Have Breakfast',               type:'stamina', anim:'eating',     timeLabel:'Until 12PM',  isEssential:true,  check:h=>h<12},
+    {id:'Tablet',    name:'Take Experimental Tablet',     type:'guts',    anim:'giggle',     timeLabel:'Before 12PM', isEssential:true,  isTablet:true, idealEnd:12, check:h=>h<24},
+    {id:'Water',     name:'Drink Glass Of Water',         type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',  isEssential:true,  check:h=>h>=8&&h<24&&h%2===0},
+    {id:'Lunch',     name:'Eat Lunch',                    type:'stamina', anim:'eating',     timeLabel:'12PM – 3PM',  isEssential:true,  check:h=>h>=12&&h<15},
+    {id:'Snack',     name:'Share A Snack With Tachyon',   type:'stamina', anim:'snack',      timeLabel:'3PM – 5PM',   isEssential:false, check:h=>h>=15&&h<17},
+    {id:'Walk',      name:'Go For A Walk with Tachyon',   type:'power',   anim:'super_dash', timeLabel:'After 3PM',   isEssential:false, check:h=>h>=15&&h<19},
+    {id:'Read',      name:'Read/Study',                   type:'wit',     anim:'sit_down',   timeLabel:'From 5PM',    isEssential:false, check:h=>h>=17},
+    {id:'Cranes',    name:'Create 3 Paper Cranes',        type:'wit',     anim:'say',        timeLabel:'After 5PM',   isEssential:false, days:[0,1,3,5], check:h=>h>=17},
+    {id:'Dinner',    name:'Have Dinner With Tachyon',     type:'stamina', anim:'eating',     timeLabel:'6PM – 10PM',  isEssential:true,  check:h=>h>=18&&h<22},
+    {id:'Teeth',     name:'Brush Your Teeth',             type:'guts',    anim:'giggle',     timeLabel:'AM/PM',       isEssential:true,  check:h=>(h>=7&&h<9)||(h>=17&&h<24)},
+    {id:'Tidy',      name:'Tidy Up Room',                 type:'power',   anim:'float',      timeLabel:'Wed & Sun',   isEssential:false, days:[0,3], check:h=>h<18},
+    {id:'Tidy2',     name:'Scrub The Bathroom',           type:'power',   anim:'dash',       timeLabel:'Sun & Wed',   isEssential:false, days:[0,3], check:h=>h<18},
+    {id:'Shop',      name:'Go Food Shopping With Tachyon',type:'power',   anim:'dash',       timeLabel:'Saturdays',   isEssential:false, days:[6],   check:h=>h<20},
+    {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',    anim:'dash',       timeLabel:'Sundays',     isEssential:false, days:[0],   check:h=>h<18},
+    {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:'3PM – 5PM',   isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&h>=15},
+];
+
+function getEffectiveTask(task) {
+    const ov=coreTaskOverrides[task.id];
+    if(!ov)return task;
+    return Object.assign({},task,{name:ov.name||task.name,type:ov.type||task.type,timeLabel:ov.timeLabel||task.timeLabel,days:ov.days||task.days,
+        check:h=>{if(ov.fromH!==undefined&&ov.toH!==undefined)return ov.fromH<=ov.toH?h>=ov.fromH&&h<ov.toH:h>=ov.fromH||h<ov.toH;return task.check(h);}
+    });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MENU / TABS
+// ─────────────────────────────────────────────────────────────────────────────
+const STAT_ICONS={power:'💪',stamina:'✨',guts:'🔥',wit:'📚'};
+const DAY_NAMES=['Su','Mo','Tu','We','Th','Fr','Sa'];
+let activeTab='custom';
+function switchTab(tab) {
+    activeTab=tab;
+    ['custom','core','achievements'].forEach((t,i)=>{
+        document.querySelectorAll('.tp-tab')[i].classList.toggle('active',t===tab);
+        document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+    });
+    if(tab==='core')renderCoreTaskEditor();
+    if(tab==='achievements')renderAchievements();
+}
+function toggleMenu() {
+    const panel=document.getElementById('task-panel');
+    const open=panel.style.display==='block';
+    panel.style.display=open?'none':'block';
+    if(!open){renderCustomTasks();if(activeTab==='core')renderCoreTaskEditor();if(activeTab==='achievements')renderAchievements();}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CORE TASK EDITOR
+// ─────────────────────────────────────────────────────────────────────────────
+function renderCoreTaskEditor() {
+    const list=document.getElementById('core-task-edit-list');
+    const editable=coreTasks.filter(t=>!t.isEssential&&!t.isInjection);
+    const essentials=coreTasks.filter(t=>t.isEssential||t.isInjection);
+    const essHtml=essentials.map(task=>{
+        const ov=coreTaskOverrides[task.id]||{};
+        const dayStr=(task.days||null)?task.days.map(d=>DAY_NAMES[d]).join(' · '):'Every day';
+        return `<div class="ct-item essential"><div class="ct-info">
+            <div class="ct-name">${ov.name||task.name} <span class="essential-badge">Essential</span></div>
+            <div class="ct-meta">${STAT_ICONS[ov.type||task.type]||''} ${ov.type||task.type} · ${dayStr} · ${ov.timeLabel||task.timeLabel}</div>
+        </div></div>`;
+    }).join('');
+    const editHtml=editable.map(task=>{
+        const ov=coreTaskOverrides[task.id]||{};
+        return `<div class="ct-item" data-coreid="${task.id}"><div class="ct-info">
+            <div class="ct-name">${ov.name||task.name}</div>
+            <div class="ct-meta">${STAT_ICONS[ov.type||task.type]||''} ${ov.type||task.type} · ${ov.timeLabel||task.timeLabel}</div>
+        </div><div class="ct-btns"><button class="btn-edit" onclick="editCoreTask('${task.id}')">✎</button></div></div>`;
+    }).join('');
+    list.innerHTML=`<div class="section-label">Essential (read-only)</div>${essHtml}<div class="section-label" style="margin-top:14px;">Non-essential (editable)</div>${editHtml}`;
+}
+function editCoreTask(id) {
+    const task=coreTasks.find(t=>t.id===id);if(!task)return;
+    const ov=coreTaskOverrides[id]||{};
+    const fromStr=ov.fromH!==undefined?String(ov.fromH).padStart(2,'0')+':00':'';
+    const toStr=ov.toH!==undefined?String(ov.toH).padStart(2,'0')+':00':'';
+    const days=ov.days||task.days||[0,1,2,3,4,5,6];
+    const curType=ov.type||task.type;
+    const daysHtml=DAY_NAMES.map((d,i)=>`<div class="tp-day${days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`).join('');
+    const typeOpts=['power','stamina','guts','wit'].map(t=>`<option value="${t}"${curType===t?' selected':''}>${STAT_ICONS[t]} ${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');
+    document.querySelector(`[data-coreid="${id}"]`).outerHTML=`
+        <div class="ct-edit-form" data-coreid="${id}">
+            <div class="ct-edit-row"><input class="tp-input" id="ce-name-${id}" value="${ov.name||task.name}" style="flex:2"><select class="tp-input" id="ce-type-${id}" style="flex:1">${typeOpts}</select></div>
+            <div class="ct-edit-row"><input class="tp-input" id="ce-from-${id}" type="time" value="${fromStr}" style="flex:1"><span style="font-size:0.8em;color:#b2bec3">–</span><input class="tp-input" id="ce-to-${id}" type="time" value="${toStr}" style="flex:1"></div>
+            <div class="ct-edit-row"><div class="tp-days" id="ce-days-${id}">${daysHtml}</div></div>
             <div class="ct-edit-row">
-                <input class="tp-input" id="edit-name-${id}" value="${t.name}" style="flex:2">
-                <select class="tp-input" id="edit-type-${id}" style="flex:1">
-                    <option value="power"${t.type==='power'?' selected':''}>💪 Power</option>
-                    <option value="stamina"${t.type==='stamina'?' selected':''}>✨ Stamina</option>
-                    <option value="guts"${t.type==='guts'?' selected':''}>🔥 Guts</option>
-                    <option value="wit"${t.type==='wit'?' selected':''}>📚 Wit</option>
-                </select>
-            </div>
-            <div class="ct-edit-row">
-                <input class="tp-input" id="edit-from-${id}" type="time" value="${fromStr}" style="flex:1">
-                <span style="font-size:0.8em;color:#b2bec3">–</span>
-                <input class="tp-input" id="edit-to-${id}" type="time" value="${toStr}" style="flex:1">
-            </div>
-            <div class="ct-edit-row"><div class="tp-days" id="edit-days-${id}">${daysHtml}</div></div>
-            <div class="ct-edit-row">
-                <button class="btn-save" onclick="saveCustomTask('${id}')">Save</button>
-                <button class="btn-cancel" onclick="renderCustomTasks()">Cancel</button>
+                <button class="btn-save" onclick="saveCoreTask('${id}')">Save</button>
+                <button class="btn-cancel" onclick="renderCoreTaskEditor()">Cancel</button>
+                ${Object.keys(ov).length?`<button class="btn-reset" onclick="resetCoreTask('${id}')">Reset</button>`:''}
             </div>
         </div>`;
-    }
+}
+function saveCoreTask(id) {
+    const task=coreTasks.find(t=>t.id===id);if(!task)return;
+    const name=document.getElementById(`ce-name-${id}`).value.trim();
+    const type=document.getElementById(`ce-type-${id}`).value;
+    const fromVal=document.getElementById(`ce-from-${id}`).value;
+    const toVal=document.getElementById(`ce-to-${id}`).value;
+    const days=Array.from(document.querySelectorAll(`#ce-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));
+    if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}
+    const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};
+    let timeLabel=task.timeLabel,fromH,toH;
+    if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} – ${fmt(toVal)}`;}
+    else if(fromVal){fromH=parseInt(fromVal.split(':')[0]);timeLabel=`From ${fmt(fromVal)}`;}
+    coreTaskOverrides[id]={name,type,days,timeLabel};
+    if(fromH!==undefined)coreTaskOverrides[id].fromH=fromH;
+    if(toH!==undefined)coreTaskOverrides[id].toH=toH;
+    scheduleSave();renderCoreTaskEditor();updateUI();setStatus('Task updated! ✨',2000);
+}
+function resetCoreTask(id){delete coreTaskOverrides[id];scheduleSave();renderCoreTaskEditor();updateUI();}
 
-    function saveCustomTask(id) {
-        const name=document.getElementById(`edit-name-${id}`).value.trim();
-        const type=document.getElementById(`edit-type-${id}`).value;
-        const fromVal=document.getElementById(`edit-from-${id}`).value;
-        const toVal=document.getElementById(`edit-to-${id}`).value;
-        const days=Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));
-        if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}
-        const idx=customTasksRaw.findIndex(t=>t.id===id); if(idx===-1)return;
-        customTasksRaw[idx]=buildRaw(id,name,type,days,fromVal,toVal);
-        customTasks=hydrateCustomTasks(customTasksRaw);
-        localStorage.setItem('agnesCustomTasks',JSON.stringify(customTasksRaw));
-        renderCustomTasks(); updateUI();
-        setStatus('Task updated! ✨',2000);
-    }
+// ─────────────────────────────────────────────────────────────────────────────
+// CUSTOM TASKS
+// ─────────────────────────────────────────────────────────────────────────────
+const STAT_ANIMS={power:['super_dash','dash','cheer'],stamina:['eating','snack','wave'],guts:['giggle','cheer','sudden_stop'],wit:['sit_down','say','giggle']};
+function pickAnim(type){const p=STAT_ANIMS[type]||['cheer'];return p[Math.floor(Math.random()*p.length)];}
+function hydrateCustomTasks(raw) {
+    return raw.map(t=>Object.assign({},t,{anim:t.anim||'cheer',check:h=>{
+        if(t.fromH!==undefined&&t.toH!==undefined)return t.fromH<=t.toH?h>=t.fromH&&h<t.toH:h>=t.fromH||h<t.toH;
+        return true;
+    }}));
+}
+function buildRaw(id,name,type,days,fromVal,toVal) {
+    const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};
+    let timeLabel='Anytime',fromH,toH;
+    if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} – ${fmt(toVal)}`;}
+    else if(fromVal){fromH=parseInt(fromVal.split(':')[0]);timeLabel=`From ${fmt(fromVal)}`;}
+    const raw={id,name,type,days,timeLabel,isEssential:false,anim:pickAnim(type)};
+    if(fromH!==undefined)raw.fromH=fromH;
+    if(toH!==undefined)raw.toH=toH;
+    return raw;
+}
+function addCustomTask() {
+    const name=document.getElementById('new-task-name').value.trim();
+    const type=document.getElementById('new-task-type').value;
+    const fromVal=document.getElementById('new-task-from').value;
+    const toVal=document.getElementById('new-task-to').value;
+    const days=Array.from(document.querySelectorAll('#new-task-days .tp-day.on')).map(el=>parseInt(el.dataset.day));
+    if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}
+    customTasksRaw.push(buildRaw('custom_'+Date.now(),name,type,days,fromVal,toVal));
+    customTasks=hydrateCustomTasks(customTasksRaw);
+    scheduleSave();
+    document.getElementById('new-task-name').value='';
+    document.getElementById('new-task-from').value='';
+    document.getElementById('new-task-to').value='';
+    document.querySelectorAll('#new-task-days .tp-day').forEach(el=>el.classList.remove('on'));
+    renderCustomTasks();updateUI();checkAchievements();
+    setStatus('New task added! 💡',3000);
+    showEmoteAndItem(null,EMOTE.idea,null);
+}
+function deleteCustomTask(id){customTasksRaw=customTasksRaw.filter(t=>t.id!==id);customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();}
+function duplicateCustomTask(id){const orig=customTasksRaw.find(t=>t.id===id);if(!orig)return;customTasksRaw.push(Object.assign({},orig,{id:'custom_'+Date.now(),name:orig.name+' (copy)'}));customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();setStatus('Task duplicated! ✌️',2000);}
+function editCustomTask(id) {
+    const t=customTasksRaw.find(t=>t.id===id);if(!t)return;
+    const item=document.querySelector(`[data-id="${id}"]`);if(!item)return;
+    const fromStr=t.fromH!==undefined?String(t.fromH).padStart(2,'0')+':00':'';
+    const toStr=t.toH!==undefined?String(t.toH).padStart(2,'0')+':00':'';
+    const daysHtml=DAY_NAMES.map((d,i)=>`<div class="tp-day${t.days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`).join('');
+    item.outerHTML=`<div class="ct-edit-form" data-id="${id}">
+        <div class="ct-edit-row"><input class="tp-input" id="edit-name-${id}" value="${t.name}" style="flex:2">
+        <select class="tp-input" id="edit-type-${id}" style="flex:1">${['power','stamina','guts','wit'].map(s=>`<option value="${s}"${t.type===s?' selected':''}>${STAT_ICONS[s]} ${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}</select></div>
+        <div class="ct-edit-row"><input class="tp-input" id="edit-from-${id}" type="time" value="${fromStr}" style="flex:1"><span style="font-size:0.8em;color:#b2bec3">–</span><input class="tp-input" id="edit-to-${id}" type="time" value="${toStr}" style="flex:1"></div>
+        <div class="ct-edit-row"><div class="tp-days" id="edit-days-${id}">${daysHtml}</div></div>
+        <div class="ct-edit-row"><button class="btn-save" onclick="saveCustomTask('${id}')">Save</button><button class="btn-cancel" onclick="renderCustomTasks()">Cancel</button></div>
+    </div>`;
+}
+function saveCustomTask(id) {
+    const name=document.getElementById(`edit-name-${id}`).value.trim();
+    const type=document.getElementById(`edit-type-${id}`).value;
+    const fromVal=document.getElementById(`edit-from-${id}`).value;
+    const toVal=document.getElementById(`edit-to-${id}`).value;
+    const days=Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));
+    if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}
+    const idx=customTasksRaw.findIndex(t=>t.id===id);if(idx===-1)return;
+    customTasksRaw[idx]=buildRaw(id,name,type,days,fromVal,toVal);
+    customTasks=hydrateCustomTasks(customTasksRaw);
+    scheduleSave();renderCustomTasks();updateUI();setStatus('Task updated! ✨',2000);
+}
+function renderCustomTasks() {
+    const list=document.getElementById('custom-task-list');
+    if(!customTasksRaw.length){list.innerHTML='';return;}
+    list.innerHTML='<hr class="tp-divider">'+customTasksRaw.map(t=>{
+        const dayStr=t.days.map(d=>DAY_NAMES[d]).join(' · ');
+        return`<div class="ct-item" data-id="${t.id}"><div class="ct-info"><div class="ct-name">${t.name}</div><div class="ct-meta">${STAT_ICONS[t.type]||''} ${t.type} · ${dayStr} · ${t.timeLabel}</div></div>
+        <div class="ct-btns"><button class="btn-dupe" onclick="duplicateCustomTask('${t.id}')" title="Duplicate">⧉</button><button class="btn-edit" onclick="editCustomTask('${t.id}')" title="Edit">✎</button><button class="btn-del" onclick="deleteCustomTask('${t.id}')" title="Delete">✕</button></div></div>`;
+    }).join('');
+}
 
-    const DAY_NAMES=['Su','Mo','Tu','We','Th','Fr','Sa'];
-    function renderCustomTasks() {
-        const list=document.getElementById('custom-task-list');
-        if(!customTasksRaw.length){list.innerHTML='';return;}
-        const icons={power:'💪',stamina:'✨',guts:'🔥',wit:'📚'};
-        list.innerHTML='<hr class="tp-divider">'+customTasksRaw.map(t=>{
-            const dayStr=t.days.map(d=>DAY_NAMES[d]).join(' · ');
-            return `<div class="ct-item" data-id="${t.id}">
-                <div class="ct-info">
-                    <div class="ct-name">${t.name}</div>
-                    <div class="ct-meta">${icons[t.type]||''} ${t.type} · ${dayStr} · ${t.timeLabel}</div>
+// ─────────────────────────────────────────────────────────────────────────────
+// NAG SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+const INJECTION_NAGS=["I NEED this data on time!! Please do the injection! 🔬","Late injection data skews the whole experiment... 😤 Please do it soon!","This is for SCIENCE. Timely data is good data!! 🧪","Tachyon is not impressed. The injection window was 3PM–5PM! 😤","The research won't wait forever... please do the injection! 🌸"];
+const TABLET_NAGS=["Have you taken your tablet yet today? It's important! 💊","The tablet needs to be taken before 12PM — please don't forget! 🌸","I'm watching the tablet situation closely... 😤 Please take it!","Your health matters! Please take your experimental tablet! 💊"];
+let injNagIdx=0,tabNagIdx=0,injNagInterval=null,tabNagInterval=null,_naggingInj=false,_naggingTab=false;
+
+// Helper to check if a task is currently in the checklist
+function isTaskActive(name) {
+    return Array.from(document.querySelectorAll('.task-name')).some(el => el.textContent.includes(name));
+}
+
+function startInjNag(){
+    if(injNagInterval) return;
+    
+    // Start monitoring interval
+    injNagInterval=setInterval(()=>{
+        if(!isTaskActive('Injection')) return;
+        setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);
+        showEmoteAndItem('Injection',EMOTE.anger,null);
+    },90000);
+    
+    // Trigger immediate nag if active
+    if(isTaskActive('Injection')) {
+        setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);
+        showEmoteAndItem('Injection',EMOTE.urgent,null);
+    }
+}
+function stopInjNag(){clearInterval(injNagInterval);injNagInterval=null;}
+
+function startTabNag(){
+    if(tabNagInterval)return;
+    
+    // Start monitoring interval
+    tabNagInterval=setInterval(()=>{
+        if(!isTaskActive('Tablet')) return;
+        setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);
+        showEmoteAndItem('Tablet',EMOTE.anger,null);
+    },90000);
+    
+    // Trigger immediate nag if active
+    if(isTaskActive('Tablet')) {
+        setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);
+        showEmoteAndItem('Tablet',EMOTE.urgent,null);
+    }
+}
+function stopTabNag(){clearInterval(tabNagInterval);tabNagInterval=null;}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ITEM HINT SYSTEM — Tachyon randomly hints at active tasks
+// ─────────────────────────────────────────────────────────────────────────────
+let hintInterval=null;
+
+function getActiveTaskIds() {
+    const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();
+    const all=[...coreTasks.map(getEffectiveTask),...customTasks];
+    return all.filter(task=>{
+        const base=coreTasks.find(t=>t.id===task.id)||task;
+        const taskDays=task.days||[0,1,2,3,4,5,6];
+        return taskDays.includes(day)&&task.check(h)&&history[task.id]!==today&&dismissed[task.id]!==today;
+    }).map(t=>t.id);
+}
+
+function doHint() {
+    const active=getActiveTaskIds();
+    if(!active.length)return;
+    const id=active[Math.floor(Math.random()*active.length)];
+    const base=coreTasks.find(t=>t.id===id);
+    const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));
+    const emoteKey=isUrgent?EMOTE.urgent:EMOTE.hint;
+    showEmoteAndItem(id,emoteKey,null);
+}
+
+function startHintCycle() {
+    if(hintInterval)return;
+    // First hint after 30s, then every 45s
+    setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);
+}
+function stopHintCycle(){clearInterval(hintInterval);hintInterval=null;}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UI UPDATE
+// ─────────────────────────────────────────────────────────────────────────────
+let _lastVisible=new Set();
+function updateUI() {
+    ['power','stamina','guts','wit'].forEach(s=>{
+        const v=stats[s]||0;
+        const bar=document.getElementById('bar-'+s);if(bar)bar.style.width=Math.min(v/5,100)+'%';
+        const rnk=document.getElementById('rank-'+s);if(rnk)rnk.textContent=['F','E','D','C','B','A','S'][Math.floor(Math.min(v/100,6))];
+    });
+    const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();
+    const container=document.getElementById('task-list');if(!container)return;
+    container.innerHTML='';
+    const allTasks=[...coreTasks.map(getEffectiveTask),...customTasks];
+    let visible=0;
+    const nowVisible=new Set();
+    let needInjNag=false,needTabNag=false;
+    allTasks.forEach(task=>{
+        const base=coreTasks.find(t=>t.id===task.id)||task;
+        const taskDays=task.days||[0,1,2,3,4,5,6];
+        const eligible=taskDays.includes(day)&&task.check(h);
+        const done=history[task.id]===today;
+        const skipped=dismissed[task.id]===today;
+        if(_lastVisible.has(task.id)&&!eligible&&!done&&!skipped&&!base.isInjection&&!base.isTablet)setStatus('You missed a task! Better try again next time! 😔',4000);
+        if(base.isInjection&&!done&&!skipped&&h>=17)needInjNag=true;
+        if(base.isTablet&&!done&&!skipped&&h>=12)needTabNag=true;
+        if(eligible&&!done&&!skipped){
+            nowVisible.add(task.id);visible++;
+            const isInjLate=base.isInjection&&h>=17;
+            const isTabLate=base.isTablet&&h>=(base.idealEnd||12);
+            const isLate=isInjLate||isTabLate;
+            const timeLabel=isLate?(base.isInjection?'⚠️ Past ideal window':'⚠️ Late!'):(task.timeLabel||'Anytime');
+            const timeClass=isLate?'task-time late':'task-time';
+            const dismissBtn=task.isEssential?'':`<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
+            const statLabel=base.isInjection?'GUTS + POWER':(task.type||'').toUpperCase();
+            container.innerHTML+=`<div class="task-item${isLate?' task-late':''}">
+                <div class="task-info" onclick="say('Don\\'t forget — ${task.name.toLowerCase()}! ${task.timeLabel}')">
+                    <span class="task-name" style="text-decoration:underline;cursor:pointer">${task.name}</span>
+                    <div class="task-meta"><span class="task-stat">${statLabel}</span><span class="${timeClass}">${timeLabel}</span></div>
                 </div>
-                <div class="ct-btns">
-                    <button class="btn-dupe" onclick="duplicateCustomTask('${t.id}')" title="Duplicate">⧉</button>
-                    <button class="btn-edit" onclick="editCustomTask('${t.id}')" title="Edit">✎</button>
-                    <button class="btn-del"  onclick="deleteCustomTask('${t.id}')" title="Delete">✕</button>
-                </div>
+                <div class="btn-group">${dismissBtn}<button class="btn-check" onclick="complete('${task.id}','${task.anim||'cheer'}','${task.type}',${!!base.isInjection},${!!base.isTablet},${h})">Done</button></div>
             </div>`;
-        }).join('');
-    }
-
-    // ── Expiry tracking ───────────────────────────────────────────────────────
-    let _lastVisibleTasks = new Set();
-
-    // ── UI ───────────────────────────────────────────────────────────────────
-    function updateUI() {
-        ['power','stamina','guts','wit'].forEach(s=>{
-            const val=stats[s];
-            const bar=document.getElementById(`bar-${s}`); if(bar)bar.style.width=Math.min(val/5,100)+'%';
-            const rank=document.getElementById(`rank-${s}`); if(rank)rank.innerText=['F','E','D','C','B','A','S'][Math.floor(Math.min(val/100,6))];
-        });
-        const h=new Date().getHours(), today=new Date().toDateString(), currentDay=new Date().getDay();
-        const container=document.getElementById('task-list');
-        container.innerHTML='';
-        const allTasks=[...coreTasks,...customTasks];
-        let visibleCount=0;
-        const nowVisible=new Set();
-
-        allTasks.forEach(task=>{
-            const taskDays=task.days||[0,1,2,3,4,5,6];
-            const eligible=taskDays.includes(currentDay)&&task.check(h);
-            const done=history[task.id]===today;
-            const skipped=dismissed[task.id]===today;
-            // Expiry: was visible, now window closed, not done or skipped
-            if(_lastVisibleTasks.has(task.id)&&!eligible&&!done&&!skipped){
-                // Only show emotion — status update is done separately without playing 'say'
-                setStatus("You missed a task! Better try again next time!",4000);
-            }
-            if(eligible&&!done&&!skipped){
-                nowVisible.add(task.id); visibleCount++;
-                const dismissBtn=task.isEssential?'':`<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
-                container.innerHTML+=`
-                    <div class="task-item">
-                        <div class="task-info" onclick="say('Don\\'t forget to ${task.name.toLowerCase()}! ${task.timeLabel}')">
-                            <span class="task-name" style="text-decoration:underline;cursor:pointer">${task.name}</span>
-                            <div class="task-meta">
-                                <span class="task-stat">${task.type.toUpperCase()}</span>
-                                <span class="task-time">${task.timeLabel||'Anytime'}</span>
-                            </div>
-                        </div>
-                        <div class="btn-group">
-                            ${dismissBtn}
-                            <button class="btn-check" onclick="complete('${task.id}','${task.anim||'cheer'}','${task.type}')">Done</button>
-                        </div>
-                    </div>`;
-            }
-        });
-        _lastVisibleTasks=nowVisible;
-        if(visibleCount===0) container.innerHTML=`<div class="all-done">🌸 All done for today! Great job!</div>`;
-    }
-
-    function complete(id, anim, type) {
-        const rankBefore=Math.floor(Math.min((stats[type]||0)/100,6));
-        history[id]=new Date().toDateString();
-        stats[type]=(stats[type]||0)+10;
-        const rankAfter=Math.floor(Math.min(stats[type]/100,6));
-        localStorage.setItem('agnesHistory',JSON.stringify(history));
-        localStorage.setItem('agnesStats',JSON.stringify(stats));
-        if(window.cancelCurrent) window.cancelCurrent();
-        if(agnes){agnes.setFlipX(false);agnes.play(anim);}
-        if(rankAfter>rankBefore){
-            // Rank up: show bulb only (clear enough signal)
-            setStatus(rankUpMessages[type]||'✨ Level up!',5000);
-        } else {
-            // Normal complete: heart only
-            setStatus('Good work! 🌸',3000);
         }
-        updateUI();
-    }
+    });
+    _lastVisible=nowVisible;
+    if(needInjNag&&!_naggingInj){_naggingInj=true;startInjNag();}
+    if(!needInjNag&&_naggingInj){_naggingInj=false;stopInjNag();}
+    if(needTabNag&&!_naggingTab){_naggingTab=true;startTabNag();}
+    if(!needTabNag&&_naggingTab){_naggingTab=false;stopTabNag();}
+    if(visible===0)container.innerHTML=`<div class="all-done">🌸 All done for today! Great job!</div>`;
+    renderStreak();
+}
 
-    function dismiss(id) {
-        dismissed[id]=new Date().toDateString();
-        localStorage.setItem('agnesDismissed',JSON.stringify(dismissed));
-        // exclaim only — no status message needed, Agnes's expression says it
-        setStatus("Okay, skipping that one... 😤",3000);
-        updateUI();
-    }
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPLETE / DISMISS
+// ─────────────────────────────────────────────────────────────────────────────
+const RANK_UP_MSGS={power:"Tachyon feels Stronger! 💪",stamina:"Tachyon has more energy! ✨",guts:"Tachyon is tougher now! 🔥",wit:"Tachyon feels Smarter! 📚"};
+const INJ_ONTIME=["Ehehe~ more data for me! 🧪✨","Perfect timing! Tachyon's data is looking great! 🔬🌸","Excellent! Right on schedule — just how Tachyon likes it! 🧪"];
+const INJ_LATE=["Tachyon is not impressed... late data skews the results! Please be on time next time! 😤","Better late than never, but Tachyon needs timely data! 😤 Do try harder!","The experiment requires precision! Please take the injection on time! 😤"];
+const TAB_ONTIME=["Great! Tablet taken on time — Tachyon approves! 💊🌸","Well done taking your tablet! Health first! 💊✨","Tablet done! Tachyon is pleased with your punctuality! 💊"];
+const TAB_LATE=["You were late with your tablet today... please take it before noon next time! 😤","Tachyon is a little disappointed about the tablet timing... health is important! 😤💊","Better late than never for the tablet, but please try to take it before 12PM! 💊"];
+function randFrom(arr){return arr[Math.floor(Math.random()*arr.length)];}
 
-    // ── Status ───────────────────────────────────────────────────────────────
-    let statusTimeout=null, boredTimeout=null, lastActivity=Date.now();
-    const defaultMessages=["Agnes is here! 🌸","Ready for today?","What's on the schedule?"];
-    const boredMessages=["Agnes is bored... 😴","Hmm... nothing to do?","Agnes is waiting patiently...","Is anyone there...? 🌸"];
-    const rankUpMessages={power:"Agnes feels Stronger! 💪",stamina:"Agnes has more energy! ✨",guts:"Agnes is tougher now! 🔥",wit:"Agnes feels Smarter! 📚"};
+function complete(id,anim,type,isInjection,isTablet,h) {
+    const rankBefore=Math.floor(Math.min((stats[type]||0)/100,6));
+    history[id]=new Date().toDateString();
+    if(isInjection){stats['guts']=(stats['guts']||0)+25;stats['power']=(stats['power']||0)+25;}
+    else{stats[type]=(stats[type]||0)+10;}
+    taskCounts[id]=(taskCounts[id]||0)+1;
+    const rankAfter=Math.floor(Math.min(stats[type]/100,6));
+    scheduleSave();
+    if(window.cancelCurrent)window.cancelCurrent();
+    if(agnes){agnes.setFlipX(false);agnes.play(anim);}
+    if(isInjection){
+        const onTime=h>=15&&h<17;
+        setStatus(randFrom(onTime?INJ_ONTIME:INJ_LATE),6000);
+        showEmoteAndItem(id,onTime?EMOTE.science:EMOTE.anger,true);
+        stopInjNag();_naggingInj=false;
+    } else if(isTablet){
+        const onTime=h<12;
+        setStatus(randFrom(onTime?TAB_ONTIME:TAB_LATE),6000);
+        showEmoteAndItem(id,onTime?EMOTE.science:EMOTE.anger,true);
+        stopTabNag();_naggingTab=false;
+    } else if(rankAfter>rankBefore){
+        setStatus(RANK_UP_MSGS[type]||'✨ Level up!',5000);
+        showEmoteAndItem(id,EMOTE.happy,true);
+    } else {
+        setStatus('Good work! 🌸',3000);
+        showEmoteAndItem(id,EMOTE.happy,true);
+    }
+    updateUI();tryAdvanceStreak();checkAchievements();
+}
 
-    function setStatus(text, duration) {
-        const el=document.getElementById('status-text'); if(!el)return;
-        el.style.opacity='0';
-        if(statusTimeout) clearTimeout(statusTimeout);
-        setTimeout(()=>{el.textContent=text;el.style.opacity='1';},300);
-        if(duration) statusTimeout=setTimeout(()=>setStatus(defaultMessages[Math.floor(Math.random()*defaultMessages.length)],0),duration);
-        resetBoredTimer();
-    }
-    function resetBoredTimer() {
-        lastActivity=Date.now();
-        if(boredTimeout) clearTimeout(boredTimeout);
-        boredTimeout=setTimeout(()=>{
-            setStatus(boredMessages[Math.floor(Math.random()*boredMessages.length)],0);
-            boredTimeout=setInterval(()=>setStatus(boredMessages[Math.floor(Math.random()*boredMessages.length)],0),120000);
-        },300000);
-    }
-    function say(text) {
-        setStatus(text,4000);
-        if(agnes) agnes.play('say');
-        // No emotion here — callers add their own if needed
-    }
+function dismiss(id){
+    dismissed[id]=new Date().toDateString();
+    scheduleSave();setStatus('Okay, skipping that one... 😤',3000);updateUI();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATUS / BORED
+// ─────────────────────────────────────────────────────────────────────────────
+let statusTimeout=null,boredTimeout=null;
+const DEFAULT_MSGS=["Tachyon is here! 🌸","Ready for today?","What's on the schedule?"];
+const BORED_MSGS=["Tachyon is bored... 😴","Hmm... nothing to do?","Tachyon is waiting patiently...","Is anyone there...? 🌸"];
+function setStatus(text,duration) {
+    const el=document.getElementById('status-text');if(!el)return;
+    el.style.opacity='0';
+    if(statusTimeout)clearTimeout(statusTimeout);
+    setTimeout(()=>{el.textContent=text;el.style.opacity='1';},300);
+    if(duration)statusTimeout=setTimeout(()=>setStatus(DEFAULT_MSGS[Math.floor(Math.random()*DEFAULT_MSGS.length)],0),duration);
     resetBoredTimer();
+}
+function resetBoredTimer() {
+    if(boredTimeout)clearTimeout(boredTimeout);
+    boredTimeout=setTimeout(()=>{
+        setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0);
+        if(agnes)showEmoteAndItem(null,EMOTE.bored,null);
+        boredTimeout=setInterval(()=>{setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0);},120000);
+    },300000);
+}
+function say(text){setStatus(text,4000);if(agnes)agnes.play('say');}
+resetBoredTimer();
 
-    // ── Clock ─────────────────────────────────────────────────────────────────
-    function updateClock(){const el=document.getElementById('clock');if(el)el.innerText=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
-    updateClock();
-    setInterval(updateClock,1000);
-    setInterval(()=>{updateClock();updateUI();},60000);
-    updateUI();
+// ─────────────────────────────────────────────────────────────────────────────
+// CLOCK
+// ─────────────────────────────────────────────────────────────────────────────
+function updateClock(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
+updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();},60000);
 
-    // ── Phaser ───────────────────────────────────────────────────────────────
-    const canvasWidth=Math.min(360,Math.round(window.innerWidth*0.95)-4);
-    const phaserConfig={type:Phaser.AUTO,width:canvasWidth,height:180,transparent:true,parent:'game-container',scene:{preload,create}};
-    const game=new Phaser.Game(phaserConfig);
+// ─────────────────────────────────────────────────────────────────────────────
+// PHASER — sprite refs exposed to outside
+// ─────────────────────────────────────────────────────────────────────────────
+let agnes=null, gameBooted=false;
+let phaserScene=null;   // ref to the live scene for spawning items/emotes
 
-    function preload(){
-        this.load.atlas('agnes','agnes-sprites.png','agnes-sprites-json.json');
+// Called from outside Phaser to trigger item + emote
+// taskId: the task id to look up sprite (null = no item)
+// emoteFrame: string frame name from emotes atlas
+// isCompletion: true = celebration float-up, false/null = gentle bob
+function showEmoteAndItem(taskId, emoteFrame, isCompletion) {
+    if(!phaserScene||!agnes)return;
+    phaserScene.spawnHint(taskId, emoteFrame, !!isCompletion);
+}
+
+function bootGame() {
+    gameBooted=true;
+    const W=Math.min(360,Math.round(window.innerWidth*0.95)-4);
+    new Phaser.Game({type:Phaser.AUTO,width:W,height:180,transparent:true,parent:'game-container',scene:{preload,create}});
+}
+
+function preload() {
+    // Tachyon sprite
+    this.load.atlas('agnes','agnes-sprites.png','agnes-sprites-json.json');
+    // Item atlases — paths relative to index.html
+    this.load.atlas('snack','snack-sprites.png','snack-sprites.json');
+    this.load.atlas('drink','drink-sprites.png','drink-sprites.json');
+    this.load.atlas('cleaning','Cleaning-cooking-sprites.png','Cleaning-cooking-sprites.json');
+    this.load.atlas('tooth','toothpaste-sprite.png','toothpaste-sprite.json');
+    this.load.atlas('emotes','emotes-sprites.png','emotes-sprites.json');
+}
+
+function create() {
+    const W=Math.min(360,Math.round(window.innerWidth*0.95)-4);
+    const sc=this;
+    phaserScene=sc;
+    agnes=sc.add.sprite(Math.round(W/2),90,'agnes','agtc001A_00').setScale(1.5).setInteractive();
+
+    // ── Tachyon animations ──────────────────────────────────────────────────
+    const A=(key,frames,fr,rep)=>sc.anims.create({key,frames:frames.map(f=>({key:'agnes',frame:f})),frameRate:fr,repeat:rep});
+    A('idle1',    ['agtc001A_00','agtc001A_01','agtc001A_02','agtc100_00','agtc100_01','agtc100_02','agtc100_03'],2,-1);
+    A('walk_left',['agtc101_00','agtc101_01','agtc101_02','agtc101_03','agtc101_04','agtc101_05'],6,-1);
+    A('dash',     ['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'],10,-1);
+    A('super_dash',['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'],12,0);
+    A('sudden_stop',['agtc120_00','agtc120_01'],6,0);
+    A('float',    ['agtc362_00','agtc362_01'],4,-1);
+    A('eating',   ['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'],4,0);
+    A('giggle',   ['agtc500_00','agtc500_01','agtc500_02','agtc500_03'],6,0);
+    A('snack',    ['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'],4,0);
+    A('wave',     ['agtc540_00','agtc540_01'],4,5);
+    A('cheer',    ['agtc602_00','agtc602_01','agtc602_02'],4,3);
+    A('say',      ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'],4,0);
+    A('sit_down', ['agtc320_00','agtc320_01','agtc320_02','agtc320_03','agtc320_04','agtc320_06','agtc320_04','agtc320_06','agtc320_04','agtc320_06'],2,0);
+
+    // ── Emote animations (each frame is 96×32 = 3 sub-frames of 32×32) ──────
+    // We display these as a single static frame scaled up — the atlas frames are already
+    // the full 3-frame strip, so we just show the first 32px crop by using a RenderTexture
+    // Actually simplest: show the atlas frame as a sprite, crop to 32px, cycle manually
+    function makeEmoteAnim(frameBase) {
+        const key='emote_'+frameBase;
+        if(sc.anims.exists(key))return key;
+        // The emote sprite sheet has the 3 frames packed horizontally in one atlas frame (96×32)
+        // We'll use a manual tween+crop approach via a plain sprite + setFrame trick
+        // Since Phaser atlas stores the whole strip as one frame, we render via RenderTexture cropping
+        sc.anims.create({key, frames:[{key:'emotes',frame:frameBase}], frameRate:1, repeat:0});
+        return key;
     }
 
-    function create(){
-        agnes=this.add.sprite(Math.round(canvasWidth/2),90,'agnes','agtc001A_00').setScale(1.5).setInteractive();
-
-        // ── Animations ───────────────────────────────────────────────────────
-        this.anims.create({key:'idle1',frames:[{key:'agnes',frame:'agtc001A_00'},{key:'agnes',frame:'agtc001A_01'},{key:'agnes',frame:'agtc001A_02'},{key:'agnes',frame:'agtc100_00'},{key:'agnes',frame:'agtc100_01'},{key:'agnes',frame:'agtc100_02'},{key:'agnes',frame:'agtc100_03'}],frameRate:2,repeat:-1});
-        this.anims.create({key:'eating',frames:['agtc360_06','agtc360_07','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_08','agtc360_09','agtc360_10','agtc360_11','agtc360_12'].map(f=>({key:'agnes',frame:f})),frameRate:4,repeat:0});
-        this.anims.create({key:'walk_left',frames:[{key:'agnes',frame:'agtc101_00'},{key:'agnes',frame:'agtc101_01'},{key:'agnes',frame:'agtc101_02'},{key:'agnes',frame:'agtc101_03'},{key:'agnes',frame:'agtc101_04'},{key:'agnes',frame:'agtc101_05'}],frameRate:6,repeat:-1});
-        this.anims.create({key:'sit_down',frames:[{key:'agnes',frame:'agtc320_00'},{key:'agnes',frame:'agtc320_01'},{key:'agnes',frame:'agtc320_02'},{key:'agnes',frame:'agtc320_03'},{key:'agnes',frame:'agtc320_04'},{key:'agnes',frame:'agtc320_06'},{key:'agnes',frame:'agtc320_04'},{key:'agnes',frame:'agtc320_06'},{key:'agnes',frame:'agtc320_04'},{key:'agnes',frame:'agtc320_06'}],frameRate:2,repeat:0});
-        this.anims.create({key:'dash',frames:['agtc102_00','agtc102_01','agtc102_02','agtc102_03','agtc102_04','agtc102_05'].map(f=>({key:'agnes',frame:f})),frameRate:10,repeat:-1});
-        this.anims.create({key:'super_dash',frames:['agtc110_00','agtc110_01','agtc111_00','agtc111_01','agtc111_02','agtc111_03','agtc111_04','agtc111_05','agtc111_06','agtc112_00','agtc112_01','agtc113_00','agtc113_01'].map(f=>({key:'agnes',frame:f})),frameRate:12,repeat:0});
-        this.anims.create({key:'sudden_stop',frames:[{key:'agnes',frame:'agtc120_00'},{key:'agnes',frame:'agtc120_01'}],frameRate:6,repeat:0});
-        this.anims.create({key:'float',frames:[{key:'agnes',frame:'agtc362_00'},{key:'agnes',frame:'agtc362_01'}],frameRate:4,repeat:-1});
-        this.anims.create({key:'giggle',frames:['agtc500_00','agtc500_01','agtc500_02','agtc500_03'].map(f=>({key:'agnes',frame:f})),frameRate:6,repeat:0});
-        this.anims.create({key:'snack',frames:['agtc510_00','agtc510_01','agtc510_02','agtc510_03','agtc510_04','agtc510_05'].map(f=>({key:'agnes',frame:f})),frameRate:4,repeat:0});
-        this.anims.create({key:'wave',frames:[{key:'agnes',frame:'agtc540_00'},{key:'agnes',frame:'agtc540_01'}],frameRate:4,repeat:5});
-        this.anims.create({key:'cheer',frames:['agtc602_00','agtc602_01','agtc602_02'].map(f=>({key:'agnes',frame:f})),frameRate:4,repeat:3});
-        this.anims.create({key:'say',frames:['agtc730_00','agtc730_01','agtc730_02','agtc730_03'].map(f=>({key:'agnes',frame:f})),frameRate:4,repeat:0});
-
-        // ── Movement ─────────────────────────────────────────────────────────
-        let agnesVX=0,agnesVY=0,moveMode='none',floatAngle=0,wallBouncing=false,isInterrupted=false;
-        const scene=this;
-        const HOME_X=Math.round(canvasWidth/2), HOME_Y=90;
-        const WALL_L=20, WALL_R=canvasWidth-20, SDASH_L=10, SDASH_R=canvasWidth-10;
-
-        const idleQuotes=[
-            "Life is an experiment, and we its guinea pigs.",
-            "Don't worry about it~",
-            "The worst that could happen is your legs would start glowing green for a while!",
-            "Isn't that a cute side effect?",
-            "Witness me. Watch me run. Burn the sight into your eyes.",
-            "Time for science!",
-            "Want to be my test subject next?",
-            "lets run together next time!",
-        ];
-        let lastQuoteIndex=-1;
-        const maybeQuote=()=>{
-            if(Math.random()<0.2){
-                let idx; do{idx=Math.floor(Math.random()*idleQuotes.length);}while(idx===lastQuoteIndex);
-                lastQuoteIndex=idx;
-                setStatus(idleQuotes[idx],5000);
-                // Music note only — one emotion, no stacking
+    // ── spawnHint: the main entry point for showing item + emote ─────────────
+    sc.spawnHint = function(taskId, emoteFrame, isCompletion) {
+        // --- ITEM SPRITE ---
+        let itemSprite=null;
+        if(taskId) {
+            const mapping=TASK_SPRITES[taskId];
+            if(mapping&&sc.textures.exists(mapping.atlas)) {
+                const goRight=Math.random()>0.5;
+                const startX=goRight?agnes.x-60:agnes.x+60;
+                const targetX=goRight?agnes.x-48:agnes.x+48;
+                itemSprite=sc.add.sprite(startX, agnes.y+10, mapping.atlas, mapping.frame).setScale(2).setAlpha(0).setDepth(5);
+                // Fly in
+                sc.tweens.add({targets:itemSprite,x:targetX,alpha:1,duration:350,ease:'Back.Out',
+                    onComplete:()=>{
+                        if(isCompletion) {
+                            // celebration: bounce up and fade
+                            sc.tweens.add({targets:itemSprite,y:agnes.y-40,alpha:0,duration:800,ease:'Sine.Out',delay:400,onComplete:()=>itemSprite.destroy()});
+                        } else {
+                            // hint: gentle bob, then fade after 3s
+                            sc.tweens.add({targets:itemSprite,y:agnes.y+4,duration:600,ease:'Sine.InOut',yoyo:true,repeat:2,
+                                onComplete:()=>sc.tweens.add({targets:itemSprite,alpha:0,duration:500,onComplete:()=>itemSprite.destroy()})
+                            });
+                        }
+                    }
+                });
             }
-        };
+        }
 
-        const weightedPool=['idle1','idle1','idle1','idle1','idle1','idle1','walk_left','dash','super_dash','float','giggle','wave','cheer'];
-        let idleTimer=null;
-        const scheduleNext=(delayMs)=>{
-            if(idleTimer)idleTimer.remove(false);
-            isInterrupted=false;
-            idleTimer=scene.time.delayedCall(delayMs,playRandomIdle);
-        };
-        const cancelCurrent=()=>{
-            isInterrupted=true;
-            if(idleTimer){idleTimer.remove(false);idleTimer=null;}
-        };
-        window.cancelCurrent=cancelCurrent;
-
-        const scheduleNextQuote=()=>{
-            scene.time.delayedCall(Phaser.Math.Between(25000,45000),()=>{maybeQuote();scheduleNextQuote();});
-        };
-        scheduleNextQuote();
-
-        const stopMoving=()=>{agnesVX=0;agnesVY=0;moveMode='none';wallBouncing=false;};
-        const parkIdle=()=>{stopMoving();agnes.setFlipX(false);agnes.play('idle1');};
-        const walkHome=(onArrival)=>{
-            if(Math.abs(agnes.x-HOME_X)<10){agnes.x=HOME_X;agnes.y=HOME_Y;onArrival();return;}
-            const goRight=agnes.x<HOME_X;
-            agnes.setFlipX(goRight);agnesVX=goRight?60:-60;moveMode='returning';
-            agnes.play('walk_left');scene._walkHomeCallback=onArrival;
-        };
-
-        const playRandomIdle=()=>{
-            isInterrupted=false;
-            const key=weightedPool[Math.floor(Math.random()*weightedPool.length)];
-            stopMoving();
-
-            if(key==='walk_left'){
-                const goRight=Math.random()>0.5;
-                agnes.setFlipX(goRight);agnesVX=goRight?50:-50;moveMode='walk';agnes.play('walk_left');
-                scene.time.delayedCall(Phaser.Math.Between(2000,4000),()=>{
-                    if(isInterrupted||moveMode!=='walk')return;
-                    stopMoving();walkHome(()=>{if(isInterrupted)return;parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));});
+        // --- EMOTE BUBBLE ---
+        if(emoteFrame&&sc.textures.exists('emotes')) {
+            // Each emote atlas frame is 96×32 (3 sub-frames at 32×32 each)
+            // We use a RenderTexture to display each sub-frame in sequence
+            const ex=agnes.x, ey=agnes.y-52;
+            const rt=sc.add.renderTexture(ex,ey,32,32).setScale(2).setAlpha(0).setDepth(10).setOrigin(0.5,1);
+            const tex=sc.textures.get('emotes');
+            const atlasFrame=tex.get(emoteFrame);
+            if(atlasFrame) {
+                let subFrame=0;
+                const drawEmoteFrame=()=>{
+                    rt.clear();
+                    // Draw the sub-frame: crop x offset = subFrame*32 within the atlas frame
+                    const srcX=atlasFrame.realX+subFrame*32;
+                    const srcY=atlasFrame.realY;
+                    rt.draw('emotes',-(srcX),(-(srcY)),1,0xffffff,1);
+                    subFrame=(subFrame+1)%3;
+                };
+                drawEmoteFrame();
+                sc.tweens.add({targets:rt,alpha:1,y:ey-8,duration:200,ease:'Back.Out',
+                    onComplete:()=>{
+                        const emTimer=sc.time.addEvent({delay:200,repeat:5,callback:drawEmoteFrame});
+                        sc.time.delayedCall(1800,()=>{
+                            emTimer.remove(false);
+                            sc.tweens.add({targets:rt,alpha:0,y:ey-18,duration:400,onComplete:()=>rt.destroy()});
+                        });
+                    }
                 });
-            } else if(key==='dash'){
-                const goRight=Math.random()>0.5;
-                agnes.setFlipX(goRight);agnesVX=goRight?160:-160;moveMode='dash';agnes.play('dash'); // ← exclaim for dash
-                scene.time.delayedCall(Phaser.Math.Between(1000,2000),()=>{
-                    if(isInterrupted||moveMode!=='dash')return;
-                    stopMoving();const backRight=agnes.x<HOME_X;
-                    agnes.setFlipX(backRight);agnesVX=backRight?140:-140;moveMode='dash_return';agnes.play('dash');
-                });
-            } else if(key==='super_dash'){
-                const goRight=Math.random()>0.5;
-                agnes.setFlipX(goRight);agnesVX=goRight?220:-220;moveMode='superdash';agnes.play('super_dash'); // ← exclaim for super dash
-            } else if(key==='float'){
-                floatAngle=Math.random()*Math.PI*2;moveMode='float';agnes.play('float'); // ← music for float
-                scene.time.delayedCall(Phaser.Math.Between(5000,9000),()=>{
-                    if(isInterrupted||moveMode!=='float')return;
-                    stopMoving();walkHome(()=>{if(isInterrupted)return;parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));});
-                });
-            } else if(key==='idle1'){
-                agnes.setPosition(HOME_X,HOME_Y);agnes.setFlipX(false);agnes.play('idle1');
-                scheduleNext(Phaser.Math.Between(4000,8000));
             } else {
-                // giggle, wave, cheer — music only, no quote chance here
-                agnes.setFlipX(false);agnes.play(key); // ← music for happy idle
+                rt.destroy();
             }
-        };
+        }
+    };
 
-        agnes.on('animationcomplete',(anim)=>{
-            if(isInterrupted)return;
-            if(anim.key==='super_dash'){
-                stopMoving();walkHome(()=>{if(isInterrupted)return;parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));});
-            } else if(anim.key==='sudden_stop'){
-                parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));
-            } else if(anim.key==='say'){
-                parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));
-            } else if(anim.key==='sit_down'){ // ← zzz after sitting down
-                parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));
-            } else if(anim.key==='walk_left'||anim.key==='dash'){
-                // looping
-            } else if(anim.key==='idle1'){
-                // looping
-            } else {
-                parkIdle();scheduleNext(Phaser.Math.Between(3000,6000));
-            }
-        });
+    // ── Movement ─────────────────────────────────────────────────────────────
+    let vx=0,vy=0,mode='none',fAngle=0,wallBounce=false,interrupted=false;
+    const HX=Math.round(W/2),HY=90;
+    const WL=20,WR=W-20,SDL=10,SDR=W-10;
 
-        agnes.on('pointerdown',()=>{
-            cancelCurrent();scene._walkHomeCallback=null;
-            stopMoving();parkIdle();agnes.setPosition(HOME_X,HOME_Y);
-            say('Hi! Don\'t forget your tasks today! 🌸');
-            scheduleNext(3000);
-        });
+    const QUOTES=["Life is an experiment, and we its guinea pigs.","Don't worry about it~","The worst that could happen is your legs would start glowing green!","Isn't that a cute side effect?","Witness me. Watch me run. Burn the sight into your eyes.","Time for science!","Want to be my test subject next?","Let's run together next time!"];
+    let lastQ=-1;
+    const maybeQuote=()=>{
+        if(Math.random()<0.2){
+            let i;do{i=Math.floor(Math.random()*QUOTES.length);}while(i===lastQ);
+            lastQ=i;setStatus(QUOTES[i],5000);
+            showEmoteAndItem(null,EMOTE.hint,null);
+        }
+    };
 
-        scheduleNext(1000);
+    const pool=['idle1','idle1','idle1','idle1','idle1','idle1','walk_left','dash','super_dash','float','giggle','wave','cheer'];
+    let idleTimer=null;
+    const next=d=>{if(idleTimer)idleTimer.remove(false);interrupted=false;idleTimer=sc.time.delayedCall(d,playIdle);};
+    const cancel=()=>{interrupted=true;if(idleTimer){idleTimer.remove(false);idleTimer=null;}};
+    window.cancelCurrent=cancel;
 
-        scene.events.on('update',(time,delta)=>{
-            if(!agnes)return;
-            const dt=delta/1000;
-            if(moveMode==='float'){
-                floatAngle+=delta*0.0008;
-                agnes.x=HOME_X+Math.sin(floatAngle*1.3)*70+Math.sin(floatAngle*2.7)*20;
-                agnes.y=HOME_Y+Math.sin(floatAngle*0.9)*18+Math.sin(floatAngle*2.1)*8;
-                return;
-            }
-            if(agnesVX===0&&agnesVY===0)return;
-            agnes.x+=agnesVX*dt; agnes.y+=agnesVY*dt;
-            if(moveMode==='returning'&&scene._walkHomeCallback){
-                const arrived=(agnesVX>0&&agnes.x>=HOME_X)||(agnesVX<0&&agnes.x<=HOME_X);
-                if(arrived){agnes.x=HOME_X;agnes.y=HOME_Y;const cb=scene._walkHomeCallback;scene._walkHomeCallback=null;stopMoving();cb();return;}
-            }
-            if(moveMode==='dash_return'){
-                const arrived=(agnesVX>0&&agnes.x>=HOME_X)||(agnesVX<0&&agnes.x<=HOME_X);
-                if(arrived){agnes.x=HOME_X;parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));return;}
-            }
-            const hitLeft=agnes.x<WALL_L, hitRight=agnes.x>WALL_R;
-            if(moveMode==='walk'&&(hitLeft||hitRight)&&!wallBouncing){wallBouncing=true;agnesVX*=-1;agnes.setFlipX(agnesVX>0);}
-            else if(moveMode==='dash'&&(hitLeft||hitRight)&&!wallBouncing){wallBouncing=true;parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));}
-            else if(moveMode==='dash_return'&&(hitLeft||hitRight)){parkIdle();scheduleNext(Phaser.Math.Between(2000,4000));}
-            else if(moveMode==='superdash'&&(agnes.x<SDASH_L||agnes.x>SDASH_R)){agnesVX=0;agnesVY=0;moveMode='none';}
-        });
+    sc.time.delayedCall(Phaser.Math.Between(25000,45000),function rep(){maybeQuote();sc.time.delayedCall(Phaser.Math.Between(25000,45000),rep);});
+
+    const stop=()=>{vx=0;vy=0;mode='none';wallBounce=false;};
+    const park=()=>{stop();agnes.setFlipX(false);agnes.play('idle1');};
+    const goHome=cb=>{
+        if(Math.abs(agnes.x-HX)<10){agnes.x=HX;agnes.y=HY;cb();return;}
+        const r=agnes.x<HX;agnes.setFlipX(r);vx=r?60:-60;mode='returning';agnes.play('walk_left');sc._homeCb=cb;
+    };
+
+    function playIdle() {
+        interrupted=false;
+        const key=pool[Math.floor(Math.random()*pool.length)];
+        stop();
+        if(key==='walk_left'){
+            const r=Math.random()>0.5;agnes.setFlipX(r);vx=r?50:-50;mode='walk';agnes.play('walk_left');
+            sc.time.delayedCall(Phaser.Math.Between(2000,4000),()=>{if(interrupted||mode!=='walk')return;stop();goHome(()=>{if(interrupted)return;park();next(Phaser.Math.Between(2000,4000));});});
+        } else if(key==='dash'){
+            const r=Math.random()>0.5;agnes.setFlipX(r);vx=r?160:-160;mode='dash';agnes.play('dash');
+            sc.time.delayedCall(Phaser.Math.Between(1000,2000),()=>{if(interrupted||mode!=='dash')return;stop();const br=agnes.x<HX;agnes.setFlipX(br);vx=br?140:-140;mode='dash_return';agnes.play('dash');});
+        } else if(key==='super_dash'){
+            const r=Math.random()>0.5;agnes.setFlipX(r);vx=r?220:-220;mode='superdash';agnes.play('super_dash');
+        } else if(key==='float'){
+            fAngle=Math.random()*Math.PI*2;mode='float';agnes.play('float');
+            sc.time.delayedCall(Phaser.Math.Between(5000,9000),()=>{if(interrupted||mode!=='float')return;stop();goHome(()=>{if(interrupted)return;park();next(Phaser.Math.Between(3000,6000));});});
+        } else if(key==='idle1'){
+            agnes.setPosition(HX,HY);agnes.setFlipX(false);agnes.play('idle1');next(Phaser.Math.Between(4000,8000));
+        } else {
+            agnes.setFlipX(false);agnes.play(key);
+        }
     }
+
+    agnes.on('animationcomplete',anim=>{
+        if(interrupted)return;
+        if(anim.key==='super_dash'){stop();goHome(()=>{if(interrupted)return;park();next(Phaser.Math.Between(3000,6000));});}
+        else if(anim.key==='sudden_stop'){park();next(Phaser.Math.Between(3000,6000));}
+        else if(anim.key==='say'||anim.key==='sit_down'){park();next(Phaser.Math.Between(2000,4000));}
+        else if(['walk_left','dash','idle1'].includes(anim.key)){}
+        else{park();next(Phaser.Math.Between(3000,6000));}
+    });
+
+    agnes.on('pointerdown',()=>{
+        cancel();sc._homeCb=null;stop();park();agnes.setPosition(HX,HY);
+        say("Hi! Don't forget your tasks today! 🌸");
+        showEmoteAndItem(null,EMOTE.happy,null);
+        next(3000);
+    });
+
+    next(1000);
+    // Start the hint cycle once the game is running
+    startHintCycle();
+
+    sc.events.on('update',(time,delta)=>{
+        if(!agnes)return;
+        const dt=delta/1000;
+        if(mode==='float'){fAngle+=delta*0.0008;agnes.x=HX+Math.sin(fAngle*1.3)*70+Math.sin(fAngle*2.7)*20;agnes.y=HY+Math.sin(fAngle*0.9)*18+Math.sin(fAngle*2.1)*8;return;}
+        if(vx===0&&vy===0)return;
+        agnes.x+=vx*dt;agnes.y+=vy*dt;
+        if(mode==='returning'&&sc._homeCb){if((vx>0&&agnes.x>=HX)||(vx<0&&agnes.x<=HX)){agnes.x=HX;agnes.y=HY;const cb=sc._homeCb;sc._homeCb=null;stop();cb();return;}}
+        if(mode==='dash_return'){if((vx>0&&agnes.x>=HX)||(vx<0&&agnes.x<=HX)){agnes.x=HX;park();next(Phaser.Math.Between(2000,4000));return;}}
+        const hl=agnes.x<WL,hr=agnes.x>WR;
+        if(mode==='walk'&&(hl||hr)&&!wallBounce){wallBounce=true;vx*=-1;agnes.setFlipX(vx>0);}
+        else if(mode==='dash'&&(hl||hr)&&!wallBounce){wallBounce=true;park();next(Phaser.Math.Between(2000,4000));}
+        else if(mode==='dash_return'&&(hl||hr)){park();next(Phaser.Math.Between(2000,4000));}
+        else if(mode==='superdash'&&(agnes.x<SDL||agnes.x>SDR)){vx=0;vy=0;mode='none';}
+    });
+}
 </script>
 </body>
 </html>

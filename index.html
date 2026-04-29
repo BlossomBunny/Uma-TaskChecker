@@ -195,6 +195,7 @@
                 <button class="tp-tab active" onclick="switchTab('custom')">Custom</button>
                 <button class="tp-tab" onclick="switchTab('core')">Core Tasks</button>
                 <button class="tp-tab" onclick="switchTab('achievements')">Achievements</button>
+            
             </div>
             <!-- Custom Tasks -->
             <div class="tp-section active" id="tab-custom">
@@ -559,25 +560,33 @@ function showAchToast(def){
     setStatus('Achievement unlocked: '+def.name+'! '+def.icon,5000);
 }
 function achProgress(def){
-    if(achievements[def.id])return'✅ Unlocked!';
-    const c=taskCounts;
-    if(def.id==='streak_3')return`${streakData.best}/3 days`;
-    if(def.id==='streak_7')return`${streakData.best}/7 days`;
-    if(def.id==='streak_30')return`${streakData.best}/30 days`;
-    if(def.id==='injection_5')return`${c['Injection']||0}/5`;
-    if(def.id==='injection_10')return`${c['Injection']||0}/10`;
-    if(def.id==='tablet_10')return`${c['Tablet']||0}/10`;
-    if(def.id==='cranes_10')return`${c['Cranes']||0}/10`;
-    if(def.id==='cranes_25')return`${c['Cranes']||0}/25`;
-    if(def.id==='water_20')return`${c['Water']||0}/20`;
-    if(def.id==='rank_b')return`Best: ${Math.max(...Object.values(stats))}/${RANK_THRESHOLDS[4]} needed`;
-    if(def.id==='rank_s')return`Best: ${Math.max(...Object.values(stats))}/${RANK_THRESHOLDS[6]} needed`;
+    if(achievements[def.id]) return '✅ Unlocked!';
+    
+    const c = taskCounts;
+    // THIS LINE IS REQUIRED to fix your error
+    const total = Object.values(c).reduce((a, b) => a + b, 0); 
+    
+    if(def.id==='streak_3') return `${streakData.best}/3 days`;
+    if(def.id==='streak_7') return `${streakData.best}/7 days`;
+    if(def.id==='streak_30') return `${streakData.best}/30 days`;
+    if(def.id==='injection_5') return `${c['Injection']||0}/5`;
+    if(def.id==='injection_10') return `${c['Injection']||0}/10`;
+    if(def.id==='tablet_10') return `${c['Tablet']||0}/10`;
+    if(def.id==='cranes_10') return `${c['Cranes']||0}/10`;
+    if(def.id==='cranes_25') return `${c['Cranes']||0}/25`;
+    if(def.id==='water_20') return `${c['Water']||0}/20`;
+    
+    if(def.id==='rank_b') return `Best: ${Math.max(...Object.values(stats))}/${RANK_THRESHOLDS[4]} needed`;
+    if(def.id==='rank_s') return `Best: ${Math.max(...Object.values(stats))}/${RANK_THRESHOLDS[6]} needed`;
+    
+    // Now 'total' is available to these lines:
     if(def.id==='master_of_all') return `Stats: ${Object.values(stats).filter(v=>getRank(v)>=6).length}/${Object.keys(stats).length} S-Ranked`;
     if(def.id==='habit_machine') return `${total}/100 total tasks`;
-    if(def.id==='explorer')      return `${Object.keys(c).length}/5 task types`;
+    if(def.id==='explorer') return `${Object.keys(c).length}/5 task types`;
     if(def.id==='hydration_max') return `${c['Water']||0}/100`;
-    if(def.id==='no_days_off')   return `${streakData.best}/14 days`;
-    return'🔒 Locked';
+    if(def.id==='no_days_off') return `${streakData.best}/14 days`;
+    
+    return '🔒 Locked';
 }
 function renderAchievements(){
     document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`
@@ -1250,10 +1259,14 @@ function create(){
     });
 }
 
-    const CURRENT_VERSION = '1.3.2'; // Update this whenever you deploy changes
+    const CURRENT_VERSION = '1.3.3'; // Update this whenever you deploy changes
 
 // Define your history here. Newest versions at the TOP.
 const CHANGELOG_HISTORY = [
+    {
+        version: '1.3.3',
+        changes: ['Fixed Achievements not showing bug', ]
+    },
     {
         version: '1.3.0',
         changes: ['🏆 Added 4 new achievements', '🛠️ Added "Architect" achievement', '📊 Rank display fixes']

@@ -314,7 +314,7 @@ const TASK_REMINDERS = {
     Tidy2: "Cleaning time!",
     Shop: "Time to go shopping! 🛒",
     Laundry: "Don't forget the laundry! 🧺",
-    Injection: "Time for your injection. hehehe~ 🧪"
+    Injection: "Time for your injection. You've got this! 🧪"
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -826,6 +826,9 @@ function doHint(){
     const id=active[Math.floor(Math.random()*active.length)];
     const base=coreTasks.find(t=>t.id===id);
     const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));
+    // Show reminder text in status box
+    const reminder = TASK_REMINDERS[id] || (base ? `Don't forget — ${(base.name||'').toLowerCase()}!` : null);
+    if(reminder) setStatus(reminder, 5000);
     showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);
 }
 function startHintCycle(){if(hintInterval)return;setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);}
@@ -906,6 +909,54 @@ const TAB_ONTIME=["Great! Tablet taken on time — Tachyon approves! 💊🌸","
 const TAB_LATE=["You were late with your tablet today... please take it before noon next time! 😤","Tachyon is a little disappointed about the tablet timing... 😤💊","Better late than never for the tablet, but please try to take it before 12PM! 💊"];
 function randFrom(arr){return arr[Math.floor(Math.random()*arr.length)];}
 
+// ── Task completion message library ──────────────────────────────────────────
+// Per-task specific messages (checked first)
+const TASK_COMPLETE_MSGS = {
+    Stretch:   ["Muscles warmed up! Let's have a great day! 💪","Good morning stretch! Tachyon approves of your limbering up! 🌸","The experiment begins! Starting the day right! ✨"],
+    Breakfast: ["Fuel loaded! Science runs on a full stomach! 🍳","Breakfast done! Tachyon can now begin her daily research! 🌸","Nutrition is important for the experiment! Well done! ✨"],
+    Tablet:    ["Tablet taken! Tachyon is monitoring the effects closely... 💊","Medicine down! For science, of course! 💊🌸","Good! The experimental tablet has been administered! 🧪"],
+    Water:     ["Hydration status: optimal! 💧","Water consumed! Even guinea pigs need to stay hydrated! 💧🌸","Tachyon notes: hydration levels satisfactory! 💧✨"],
+    Lunch:     ["Lunch complete! Energy reserves replenished! 🍱","Fed and ready! Tachyon approves of your nutrition! 🌸","A well-fed test subject is a productive test subject! ✨"],
+    Snack:     ["Snack time success! Even Tachyon enjoys a little treat! 🍪","Delightful! A small reward for your hard work! 🌸","Tachyon enjoyed that snack very much, for research purposes! 🍪✨"],
+    Walk:      ["Walk complete! Fresh air and exercise — the perfect combo! 🌿","Out and about! Tachyon's outdoor data collection is complete! 🌸","Exercise logged! Tachyon feels the wind in her hair! 💨✨"],
+    Read:      ["Knowledge gained! Tachyon is pleased with your studiousness! 📚","Reading done! The mind grows sharper! 📚🌸","Excellent! A well-read test subject is Tachyon's favourite kind! ✨"],
+    Cranes:    ["Beautiful cranes! Each fold is a meditation! 🦢","Paper cranes complete! Tachyon counts them for her records! 🦢🌸","Origami done! Peace and patience — Tachyon approves! ✨"],
+    Dinner:    ["Dinner done! End-of-day nutrition: complete! 🍜","Fed and satisfied! Another day well-eaten! 🌸","Tachyon enjoyed dinner very much. For the data, obviously! ✨"],
+    Teeth:     ["Sparkling clean! Tachyon insists on dental hygiene! ✨","Teeth brushed! Tachyon approves of good oral care! 🌸","Minty fresh! Even guinea pigs need to take care of their teeth! 😄"],
+    Tidy:      ["Room tidied! A clean space makes for clear thinking! 🧹","Tidy done! Tachyon can breathe easier in a clean environment! 🌸","Order restored! Tachyon's lab assistant qualities are showing! ✨"],
+    Tidy2:     ["Bathroom sparkles! Tachyon is impressed! ✨","Scrubbed clean! Tachyon appreciates the hygiene effort! 🌸","Bathroom clean! Even experiment spaces need maintenance! 🧴✨"],
+    Shop:      ["Shopping complete! Supplies acquired! 🛒","Groceries done! Tachyon has analysed the nutritional value of your choices! 🌸","Food shopping logged! The experiment continues well-provisioned! ✨"],
+    Laundry:   ["Clean clothes achieved! Tachyon notes improved textile hygiene! 🧺","Laundry done! Fresh and clean, just like a newly scrubbed test tube! 🌸","Washing complete! Even lab coats need washing occasionally! ✨"],
+    Injection: ["Injection logged! Tachyon is delighted with this data point! 🧪","Data collected! Tachyon's research advances! 🔬🌸","Wonderful! The experiment is proceeding exactly as planned! 🧪✨"],
+};
+
+// Generic completion messages by stat type (fallback)
+const GENERIC_COMPLETE_MSGS = {
+    power:   ["Strength growing! Keep it up! 💪","Power increasing — Tachyon can see the results! 💪🌸","Physical progress logged! Excellent work! 💪✨","That's the spirit! Power stat rising! 🌸"],
+    stamina: ["Stamina building! Every bit counts! ✨","Well done! Your endurance is improving! ✨🌸","Stamina task complete! Tachyon is monitoring your vitals! ✨","Nourished and energised! Great work! 🌸"],
+    guts:    ["Guts level up! That took courage! 🔥","Tachyon is toughening you up nicely! 🔥🌸","Resilience increasing! Excellent persistence! 🔥✨","Brave and bold! The experiment appreciates your guts! 🌸"],
+    wit:     ["Wisdom grows! Knowledge is power! 📚","Intelligence stat rising! Tachyon is pleased! 📚🌸","Wit increasing — Tachyon approves of your mental fortitude! 📚✨","Sharp as ever! The mind grows stronger! 🌸"],
+};
+
+// Class-specific completion messages
+const CLASS_COMPLETE_MSGS = [
+    "Class attended! Brain cells activated! 📚✨",
+    "Learning complete! Tachyon finds academia fascinating! 📚🌸",
+    "Class done! Knowledge is the best experiment! 📚",
+    "Attended and accounted for! Tachyon has noted your scholarly dedication! 🌸",
+    "Education logged! A well-rounded test subject is Tachyon's favourite! 📚✨",
+];
+
+function getCompletionMessage(taskId, type, isInjection, isTablet, isClass) {
+    if (isInjection) return randFrom(INJ_ONTIME); // handled separately
+    if (isTablet) return randFrom(TAB_ONTIME);    // handled separately
+    if (isClass) return randFrom(CLASS_COMPLETE_MSGS);
+    const specific = TASK_COMPLETE_MSGS[taskId];
+    if (specific) return randFrom(specific);
+    const generic = GENERIC_COMPLETE_MSGS[type] || GENERIC_COMPLETE_MSGS.power;
+    return randFrom(generic);
+}
+
 function complete(id,anim,type,isInjection,isTablet,h){
     const xpBefore=stats[type]||0;
     const rankBefore=getRank(xpBefore);
@@ -917,6 +968,8 @@ function complete(id,anim,type,isInjection,isTablet,h){
     scheduleSave();
     if(window.cancelCurrent)window.cancelCurrent();
     if(agnes){agnes.setFlipX(false);agnes.play(anim);}
+    const base=coreTasks.find(t=>t.id===id);
+    const isClass=!!(base&&base.isClass);
     if(isInjection){
         const onTime=h>=15&&h<17;
         setStatus(randFrom(onTime?INJ_ONTIME:INJ_LATE),6000);
@@ -931,7 +984,8 @@ function complete(id,anim,type,isInjection,isTablet,h){
         setStatus(RANK_UP_MSGS[type]||'✨ Level up!',5000);
         showEmoteAndItem(id,EMOTE.happy,true);
     } else {
-        setStatus('Good work! 🌸',3000);
+        // Use the rich completion message library
+        setStatus(getCompletionMessage(id,type,false,false,isClass),4000);
         showEmoteAndItem(id,EMOTE.happy,true);
     }
     updateUI();tryAdvanceStreak();checkAchievements();

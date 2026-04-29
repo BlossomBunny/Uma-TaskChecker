@@ -34,8 +34,11 @@
         #streak-sub { font-size: 0.68em; color: #a5b1c2; }
         /* ── Task panel ── */
         #task-panel { display: none; width: 95%; max-width: 400px; background: white; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.07); overflow: hidden; }
-        #task-panel-header { background: var(--accent); color: white; padding: 12px 16px; font-weight: bold; font-size: 0.88em; display: flex; justify-content: space-between; align-items: center; }
+        #task-panel-header { background: var(--accent); color: white; padding: 12px 16px; font-weight: bold; font-size: 0.88em; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         #task-panel-header button { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; }
+        /* Holiday mode toggle button */
+        #holiday-btn { background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.5) !important; border-radius: 8px; padding: 4px 10px !important; font-size: 0.72em !important; font-weight: bold; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+        #holiday-btn.on { background: white !important; color: var(--accent) !important; }
         .tp-body { padding: 14px 16px 16px; }
         .tp-tabs { display: flex; gap: 0; margin-bottom: 14px; border-radius: 10px; overflow: hidden; border: 1.5px solid #eee; }
         .tp-tab { flex: 1; padding: 8px 4px; font-size: 0.68em; font-weight: bold; text-align: center; cursor: pointer; background: #fafafa; color: #a5b1c2; border: none; font-family: inherit; }
@@ -54,6 +57,7 @@
         .ct-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; gap: 8px; }
         .ct-item:last-child { border-bottom: none; }
         .ct-item.essential { opacity: 0.75; }
+        .ct-item.class-task { border-left: 3px solid #a29bfe; padding-left: 6px; }
         .ct-info { flex: 1; min-width: 0; }
         .ct-name { font-size: 0.82em; font-weight: 600; color: #596275; }
         .ct-meta { font-size: 0.67em; color: #a5b1c2; margin-top: 1px; }
@@ -68,14 +72,16 @@
         .btn-del { background: #ff7675; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; }
         .btn-reset { background: #fdcb6e; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75em; font-family: inherit; }
         .essential-badge { font-size: 0.6em; background: #ffe0eb; color: var(--accent); border-radius: 4px; padding: 1px 5px; font-weight: bold; margin-left: 4px; vertical-align: middle; }
+        .class-badge { font-size: 0.6em; background: #ede7f6; color: #7c4dff; border-radius: 4px; padding: 1px 5px; font-weight: bold; margin-left: 4px; vertical-align: middle; }
         .section-label { font-size: 0.68em; font-weight: bold; color: #a5b1c2; letter-spacing: 0.06em; margin: 12px 0 6px; text-transform: uppercase; }
         /* ── HUD / checklist ── */
         #hud, #checklist { width: 95%; max-width: 400px; background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); box-sizing: border-box; }
         .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .stat-label { width: 40px; font-weight: bold; font-size: 0.8em; }
-        .bar-container { flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
+        .bar-container { position: relative; flex-grow: 1; height: 10px; background: var(--bar-bg); border-radius: 5px; overflow: hidden; }
         .bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s; }
         .rank { width: 25px; font-weight: bold; font-size: 0.9em; text-align: center; color: var(--accent); }
+        .xp-label { font-size: 0.58em; color: #a5b1c2; width: 52px; text-align: right; }
         /* ── Tachyon widget ── */
         #tachyon-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; }
         #status-box { width: min(364px, 95vw); background: white; border: 2px solid var(--accent); border-bottom: none; border-radius: 16px 16px 0 0; padding: 8px 12px; box-sizing: border-box; font-size: 0.72em; color: #596275; line-height: 1.4; text-align: center; min-height: 44px; display: flex; align-items: center; justify-content: center; }
@@ -84,6 +90,7 @@
         /* ── Checklist items ── */
         .task-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; gap: 6px; }
         .task-item.task-late { background: #fff8f8; border-radius: 8px; padding: 10px 8px; border-left: 3px solid #ff7675; margin-bottom: 2px; }
+        .task-item.task-class { border-left: 3px solid #a29bfe; padding-left: 8px; }
         .task-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
         .task-name { font-weight: 600; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .task-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
@@ -111,6 +118,8 @@
         .ach-icon-lg { font-size: 1.4em; display: block; margin-bottom: 3px; }
         .ach-cname { font-size: 0.72em; font-weight: bold; color: #596275; }
         .ach-prog { font-size: 0.62em; color: #a5b1c2; margin-top: 2px; }
+        /* ── Holiday notice ── */
+        #holiday-notice { width: 95%; max-width: 400px; background: #ede7f6; border: 1.5px solid #a29bfe; border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.76em; color: #5c35aa; display: none; text-align: center; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -149,6 +158,8 @@
     <div id="sync-status"></div>
     <div id="clock">Loading time...</div>
 
+    <div id="holiday-notice">🏖️ Holiday Mode is on — class tasks are hidden. Toggle it off in ⚙️ to restore them.</div>
+
     <div id="streak-bar">
         <div id="streak-flame">✨</div>
         <div id="streak-info">
@@ -160,7 +171,10 @@
     <div id="task-panel">
         <div id="task-panel-header">
             <span>✏️ Manage Tasks</span>
-            <button onclick="toggleMenu()">✕</button>
+            <div style="display:flex;gap:6px;align-items:center;">
+                <button id="holiday-btn" onclick="toggleHoliday()" title="Toggle Holiday Mode">🏖️ Holiday</button>
+                <button onclick="toggleMenu()">✕</button>
+            </div>
         </div>
         <div class="tp-body">
             <div class="tp-tabs">
@@ -213,10 +227,10 @@
     </div>
 
     <div id="hud">
-        <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div></div>
-        <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div></div>
+        <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div><div id="xp-power" class="xp-label"></div></div>
+        <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div><div id="xp-stamina" class="xp-label"></div></div>
+        <div class="stat-row"><div class="stat-label">Gts</div><div class="bar-container"><div id="bar-guts" class="bar-fill"></div></div><div id="rank-guts" class="rank">F</div><div id="xp-guts" class="xp-label"></div></div>
+        <div class="stat-row"><div class="stat-label">Wit</div><div class="bar-container"><div id="bar-wit" class="bar-fill"></div></div><div id="rank-wit" class="rank">F</div><div id="xp-wit" class="xp-label"></div></div>
     </div>
 
     <div id="tachyon-wrap">
@@ -232,57 +246,77 @@
 
 <script>
 // ─────────────────────────────────────────────────────────────────────────────
+// XP / RANK SYSTEM — exponential thresholds
+// Rank:   F     E     D     C     B      A      S
+// XP:     0   100   300   600  1100   2100   4100
+// ─────────────────────────────────────────────────────────────────────────────
+const RANK_THRESHOLDS = [0, 100, 300, 600, 1100, 2100, 4100];
+const RANK_NAMES = ['F','E','D','C','B','A','S'];
+
+function getRank(xp) {
+    let rank = 0;
+    for (let i = 1; i < RANK_THRESHOLDS.length; i++) {
+        if (xp >= RANK_THRESHOLDS[i]) rank = i;
+        else break;
+    }
+    return rank;
+}
+function getRankProgress(xp) {
+    const rank = getRank(xp);
+    if (rank >= RANK_NAMES.length - 1) return { pct: 100, label: 'MAX' };
+    const low = RANK_THRESHOLDS[rank];
+    const high = RANK_THRESHOLDS[rank + 1];
+    const pct = Math.round(((xp - low) / (high - low)) * 100);
+    return { pct, label: `${xp - low}/${high - low}` };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // TASK → SPRITE MAPPING
-// Each task maps to: { atlas, frame } for the item that floats beside Tachyon
 // ─────────────────────────────────────────────────────────────────────────────
 const TASK_SPRITES = {
     Breakfast: { atlas: 'snack',    frame: '80_pancakes_dish' },
     Water:     { atlas: 'drink',    frame: 'water' },
     Lunch:     { atlas: 'snack',    frame: '92_sandwich' },
     Snack:     { atlas: 'snack',    frame: '28_cookies' },
-    Snack2:    { atlas: 'snack',    frame: '50_giantgummybear' },     // fun/energy
-    Snack3:      { atlas: 'snack',    frame: '26_chocolate' },          // cosy treat
     Dinner:    { atlas: 'snack',    frame: '87_ramen' },
-    Dinner2:   { atlas: 'snack',    frame: '96_steak_dish' },        // energy food
     Teeth:     { atlas: 'tooth',    frame: 'toothpaste' },
     Tidy:      { atlas: 'cleaning', frame: 'cleaning_brush' },
     Tidy2:     { atlas: 'cleaning', frame: 'bathroom_cleaner' },
-    Shop:      { atlas: 'snack',    frame: '15_burger' },             // groceries → food
+    Shop:      { atlas: 'snack',    frame: '15_burger' },
     Laundry:   { atlas: 'cleaning', frame: 'detergent' },
 };
 
-// Emote frame indices (each frame in emotes atlas is a 3-frame 96×32 animation strip)
-// Picked contextually:
+// Emote frames from the NEW atlas (pipo-popupemotes)
+// Each frame is 96×32 — 3 animation sub-frames of 32×32
 const EMOTE = {
-    hint:      'pipo-popupemotes010',  // music note  — gentle reminder
-    urgent:    'pipo-popupemotes003',  // ! exclaim   — urgent/late
-    happy:     'pipo-popupemotes012',  // heart        — completion
-    science:   'pipo-popupemotes005',  // sparkle star — injection/tablet
-    bored:     'pipo-popupemotes001',  // zzz          — idle bored
-    anger:     'pipo-popupemotes008',  // anger        — scolding late
-    idea:      'pipo-popupemotes009',  // lightbulb    — new task
+    hint:    'pipo-popupemotes010', // music note  — gentle reminder
+    urgent:  'pipo-popupemotes003', // ! exclaim   — urgent/late
+    happy:   'pipo-popupemotes012', // heart       — completion
+    science: 'pipo-popupemotes005', // sparkle     — injection/tablet
+    bored:   'pipo-popupemotes001', // zzz         — idle bored
+    anger:   'pipo-popupemotes008', // anger       — scolding late
+    idea:    'pipo-popupemotes009', // lightbulb   — new task
 };
 
-// Add this near your TASK_SPRITES definition
 const TASK_REMINDERS = {
-    Stretch:   "Time to wake up and warm up!",
+    Stretch: "Time to wake up and warm up!",
     Breakfast: "Don't forget to eat something yummy!",
-    Tablet:    "Time for your medicine, I need healthy test subjects!",
-    Water:     "Stay hydrated! Take a sip. 💧",
-    Lunch:     "Lunch time! Feed your brain. ",
-    Snack:     "A small treat for your hard work!",
-    Walk:      "Let's get some fresh air. ",
-    Read:      "Time for some quiet reading. 📚",
-    Cranes:    "Folding paper cranes is so relaxing... 🦢",
-    Dinner:    "What's on the menu tonight?",
-    Teeth:     "Brush those teeth! ✨",
-    Tidy:      "A little tidy-up makes a happy space. 🧹",
-    Tidy2:     "Cleaning time! ✨",
-    Shop:      "Time to go shopping! 🛒",
-    Laundry:   "Don't forget the laundry! 🧺",
+    Tablet: "Time for your medicine!",
+    Water: "Stay hydrated! 💧",
+    Lunch: "Lunch time! Feed your brain.",
+    Snack: "A small treat for your hard work!",
+    Walk: "Let's get some fresh air.",
+    Read: "Time for some quiet reading. 📚",
+    Cranes: "Folding paper cranes is so relaxing... 🦢",
+    Dinner: "What's on the menu tonight?",
+    Teeth: "Brush those teeth! ✨",
+    Tidy: "A little tidy-up makes a happy space. 🧹",
+    Tidy2: "Cleaning time!",
+    Shop: "Time to go shopping! 🛒",
+    Laundry: "Don't forget the laundry! 🧺",
     Injection: "Time for your injection. You've got this! 🧪"
 };
-    
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SUPABASE
 // ─────────────────────────────────────────────────────────────────────────────
@@ -299,16 +333,33 @@ async function supaFetch(path, method='GET', body=null) {
 // ─────────────────────────────────────────────────────────────────────────────
 // SESSION & MIGRATION
 // ─────────────────────────────────────────────────────────────────────────────
-function hashPin(u,p) { let h=0; const s=u.toLowerCase()+':'+p+':tachyon-salt-2025'; for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0; return 'ph_'+Math.abs(h).toString(36); }
-function saveSession(u,ph) { localStorage.setItem('tachyonSession',JSON.stringify({username:u,pinHash:ph})); }
-function clearSession() { localStorage.removeItem('tachyonSession'); }
-function getSession() { try{return JSON.parse(localStorage.getItem('tachyonSession'));}catch{return null;} }
-function getLegacyData() {
+function hashPin(u,p){let h=0;const s=u.toLowerCase()+':'+p+':tachyon-salt-2025';for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return 'ph_'+Math.abs(h).toString(36);}
+function saveSession(u,ph){localStorage.setItem('tachyonSession',JSON.stringify({username:u,pinHash:ph}));}
+function clearSession(){localStorage.removeItem('tachyonSession');}
+function getSession(){try{return JSON.parse(localStorage.getItem('tachyonSession'));}catch{return null;}}
+function getLegacyData(){
     const s=JSON.parse(localStorage.getItem('agnesStats')||'null');
     if(!s||(s.power===0&&s.stamina===0&&s.guts===0&&s.wit===0))return null;
-    return { stats:s, history:JSON.parse(localStorage.getItem('agnesHistory')||'{}'), dismissed:JSON.parse(localStorage.getItem('agnesDismissed')||'{}'), custom_tasks:JSON.parse(localStorage.getItem('agnesCustomTasks')||'[]') };
+    return{stats:s,history:JSON.parse(localStorage.getItem('agnesHistory')||'{}'),dismissed:JSON.parse(localStorage.getItem('agnesDismissed')||'{}'),custom_tasks:JSON.parse(localStorage.getItem('agnesCustomTasks')||'[]')};
 }
-function clearLegacy() { ['agnesStats','agnesHistory','agnesDismissed','agnesCustomTasks'].forEach(k=>localStorage.removeItem(k)); }
+function clearLegacy(){['agnesStats','agnesHistory','agnesDismissed','agnesCustomTasks'].forEach(k=>localStorage.removeItem(k));}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HOLIDAY MODE
+// ─────────────────────────────────────────────────────────────────────────────
+let holidayMode = JSON.parse(localStorage.getItem('holidayMode') || 'false');
+function toggleHoliday() {
+    holidayMode = !holidayMode;
+    localStorage.setItem('holidayMode', JSON.stringify(holidayMode));
+    syncHolidayBtn();
+    updateUI();
+}
+function syncHolidayBtn() {
+    const btn = document.getElementById('holiday-btn');
+    if (btn) btn.classList.toggle('on', holidayMode);
+    const notice = document.getElementById('holiday-notice');
+    if (notice) notice.style.display = holidayMode ? 'block' : 'none';
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA STATE
@@ -330,6 +381,7 @@ function loadSaveData(row) {
 // AUTO LOGIN
 // ─────────────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
+    syncHolidayBtn();
     const session=getSession();
     if (session) {
         try {
@@ -380,14 +432,15 @@ async function submitLogin() {
             loadSaveData(rows[0]);
         }
         saveSession(username,ph); showApp();
-    } catch(e) { errEl.textContent='Something went wrong: '+e.message; }
-    finally { btn.disabled=false; btn.textContent=loginIsRegister?'Create Account 🌸':"Let's Go! 🌸"; }
+    } catch(e){errEl.textContent='Something went wrong: '+e.message;}
+    finally{btn.disabled=false;btn.textContent=loginIsRegister?'Create Account 🌸':"Let's Go! 🌸";}
 }
 
 function showApp() {
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
     document.getElementById('welcome-name').textContent='Hi, '+currentUser.username+'! 🌸';
+    syncHolidayBtn();
     renderStreak(); updateUI();
     if(!gameBooted) bootGame();
 }
@@ -407,16 +460,16 @@ function logout() {
 // CLOUD SAVE
 // ─────────────────────────────────────────────────────────────────────────────
 let saveDebounce=null;
-function scheduleSave() { if(saveDebounce)clearTimeout(saveDebounce); saveDebounce=setTimeout(cloudSave,900); }
+function scheduleSave(){if(saveDebounce)clearTimeout(saveDebounce);saveDebounce=setTimeout(cloudSave,900);}
 async function cloudSave() {
     if(!currentUser)return;
     setSyncStatus('syncing','Saving… 🌸');
     try {
         await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,updated_at:new Date().toISOString()});
         setSyncStatus('ok','');
-    } catch(e) { setSyncStatus('error','Save failed — retrying…'); saveDebounce=setTimeout(cloudSave,6000); }
+    } catch(e){setSyncStatus('error','Save failed — retrying…');saveDebounce=setTimeout(cloudSave,6000);}
 }
-function setSyncStatus(state,msg) { const el=document.getElementById('sync-status'); el.className=state; el.textContent=msg; }
+function setSyncStatus(state,msg){const el=document.getElementById('sync-status');el.className=state;el.textContent=msg;}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STREAK
@@ -462,8 +515,8 @@ const ACH_DEFS = [
     {id:'cranes_10',    icon:'🦢',name:'Crane Artist',       desc:'Create paper cranes 10 times',    check:()=>(taskCounts['Cranes']||0)>=10},
     {id:'cranes_25',    icon:'🪶',name:'Origami Master',     desc:'Create paper cranes 25 times',    check:()=>(taskCounts['Cranes']||0)>=25},
     {id:'water_20',     icon:'💧',name:'Hydration Hero',     desc:'Drink water 20 times',            check:()=>(taskCounts['Water']||0)>=20},
-    {id:'rank_b',       icon:'💪',name:'Getting Stronger',   desc:'Reach rank B in any stat',        check:()=>Object.values(stats).some(v=>v>=400)},
-    {id:'rank_s',       icon:'🌟',name:"Tachyon's Champion", desc:'Reach rank S in any stat',        check:()=>Object.values(stats).some(v=>v>=600)},
+    {id:'rank_b',       icon:'💪',name:'Getting Stronger',   desc:'Reach rank B in any stat',        check:()=>Object.values(stats).some(v=>getRank(v)>=4)},
+    {id:'rank_s',       icon:'🌟',name:"Tachyon's Champion", desc:'Reach rank S in any stat',        check:()=>Object.values(stats).some(v=>getRank(v)>=6)},
     {id:'custom_task',  icon:'✨',name:'Self-Starter',       desc:'Add your first custom task',      check:()=>customTasksRaw.length>=1},
 ];
 function checkAchievements() {
@@ -476,7 +529,7 @@ function checkAchievements() {
     if(document.getElementById('tab-achievements').classList.contains('active'))renderAchievements();
 }
 let toastTimer=null;
-function showAchToast(def) {
+function showAchToast(def){
     document.getElementById('t-icon').textContent=def.icon;
     document.getElementById('t-title').textContent='🏆 '+def.name;
     document.getElementById('t-desc').textContent=def.desc;
@@ -486,7 +539,7 @@ function showAchToast(def) {
     toastTimer=setTimeout(()=>t.classList.remove('show'),3400);
     setStatus('Achievement unlocked: '+def.name+'! '+def.icon,5000);
 }
-function achProgress(def) {
+function achProgress(def){
     if(achievements[def.id])return'✅ Unlocked!';
     const c=taskCounts;
     if(def.id==='streak_3')return`${streakData.best}/3 days`;
@@ -498,11 +551,11 @@ function achProgress(def) {
     if(def.id==='cranes_10')return`${c['Cranes']||0}/10`;
     if(def.id==='cranes_25')return`${c['Cranes']||0}/25`;
     if(def.id==='water_20')return`${c['Water']||0}/20`;
-    if(def.id==='rank_b')return`Best: ${Math.max(...Object.values(stats))}/400`;
-    if(def.id==='rank_s')return`Best: ${Math.max(...Object.values(stats))}/600`;
+    if(def.id==='rank_b')return`Best: ${Math.max(...Object.values(stats))}/${RANK_THRESHOLDS[4]} needed`;
+    if(def.id==='rank_s')return`Best: ${Math.max(...Object.values(stats))}/${RANK_THRESHOLDS[6]} needed`;
     return'🔒 Locked';
 }
-function renderAchievements() {
+function renderAchievements(){
     document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`
         <div class="ach-card ${achievements[def.id]?'unlocked':'locked'}">
             <span class="ach-icon-lg">${def.icon}</span>
@@ -515,7 +568,7 @@ function renderAchievements() {
 // INJECTION FRIDAY
 // ─────────────────────────────────────────────────────────────────────────────
 const INJECTION_REF=new Date(2025,4,9);
-function isInjectionFriday() {
+function isInjectionFriday(){
     const now=new Date();
     if(now.getDay()!==5)return false;
     const diff=Math.round((now-INJECTION_REF)/86400000);
@@ -523,9 +576,10 @@ function isInjectionFriday() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CORE TASKS
+// CORE TASKS — including new class schedule
 // ─────────────────────────────────────────────────────────────────────────────
 const coreTasks = [
+    // ── Daily essentials ──────────────────────────────────────────────────────
     {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:'Until 10AM',  isEssential:true,  check:h=>h<10},
     {id:'Breakfast', name:'Have Breakfast',               type:'stamina', anim:'eating',     timeLabel:'Until 12PM',  isEssential:true,  check:h=>h<12},
     {id:'Tablet',    name:'Take Experimental Tablet',     type:'guts',    anim:'giggle',     timeLabel:'Before 12PM', isEssential:true,  isTablet:true, idealEnd:12, check:h=>h<24},
@@ -540,8 +594,16 @@ const coreTasks = [
     {id:'Tidy',      name:'Tidy Up Room',                 type:'power',   anim:'float',      timeLabel:'Wed & Sun',   isEssential:false, days:[0,3], check:h=>h<18},
     {id:'Tidy2',     name:'Scrub The Bathroom',           type:'power',   anim:'dash',       timeLabel:'Sun & Wed',   isEssential:false, days:[0,3], check:h=>h<18},
     {id:'Shop',      name:'Go Food Shopping With Tachyon',type:'power',   anim:'dash',       timeLabel:'Saturdays',   isEssential:false, days:[6],   check:h=>h<20},
-    {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',    anim:'dash',       timeLabel:'Sundays',     isEssential:false, days:[0],   check:h=>h<18},
+    {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',   anim:'dash',       timeLabel:'Sundays',     isEssential:false, days:[0],   check:h=>h<18},
     {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:'3PM – 5PM',   isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&h>=15},
+
+    // ── Class schedule (suppressed by Holiday mode) ───────────────────────────
+    {id:'Class_PsychMon',    name:'Psych Class',           type:'wit', anim:'sit_down', timeLabel:'10AM – 11AM',  isEssential:false, isClass:true, days:[1], check:h=>h>=10&&h<11},
+    {id:'Class_MHWed',       name:'Mental Health Class',   type:'wit', anim:'sit_down', timeLabel:'11:30AM – 1PM',isEssential:false, isClass:true, days:[3], check:h=>h>=11&&h<13},
+    {id:'Class_SocPsychThu', name:'Social Psych Class',    type:'wit', anim:'sit_down', timeLabel:'9AM – 11AM',   isEssential:false, isClass:true, days:[4], check:h=>h>=9&&h<11},
+    {id:'Class_PsychThu',    name:'Psych Class',           type:'wit', anim:'sit_down', timeLabel:'2PM – 4PM',    isEssential:false, isClass:true, days:[4], check:h=>h>=14&&h<16},
+    {id:'Class_MHFri',       name:'Mental Health Class',   type:'wit', anim:'sit_down', timeLabel:'9AM – 10:30AM',isEssential:false, isClass:true, days:[5], check:h=>h>=9&&h<11},
+    {id:'Class_SocPsychFri', name:'Social Psych Class',    type:'wit', anim:'sit_down', timeLabel:'2PM – 3PM',    isEssential:false, isClass:true, days:[5], check:h=>h>=14&&h<15},
 ];
 
 function getEffectiveTask(task) {
@@ -571,7 +633,7 @@ function toggleMenu() {
     const panel=document.getElementById('task-panel');
     const open=panel.style.display==='block';
     panel.style.display=open?'none':'block';
-    if(!open){renderCustomTasks();if(activeTab==='core')renderCoreTaskEditor();if(activeTab==='achievements')renderAchievements();}
+    if(!open){syncHolidayBtn();renderCustomTasks();if(activeTab==='core')renderCoreTaskEditor();if(activeTab==='achievements')renderAchievements();}
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -579,24 +641,37 @@ function toggleMenu() {
 // ─────────────────────────────────────────────────────────────────────────────
 function renderCoreTaskEditor() {
     const list=document.getElementById('core-task-edit-list');
-    const editable=coreTasks.filter(t=>!t.isEssential&&!t.isInjection);
     const essentials=coreTasks.filter(t=>t.isEssential||t.isInjection);
+    const classes=coreTasks.filter(t=>t.isClass);
+    const editable=coreTasks.filter(t=>!t.isEssential&&!t.isInjection&&!t.isClass);
     const essHtml=essentials.map(task=>{
         const ov=coreTaskOverrides[task.id]||{};
         const dayStr=(task.days||null)?task.days.map(d=>DAY_NAMES[d]).join(' · '):'Every day';
-        return `<div class="ct-item essential"><div class="ct-info">
+        return`<div class="ct-item essential"><div class="ct-info">
             <div class="ct-name">${ov.name||task.name} <span class="essential-badge">Essential</span></div>
             <div class="ct-meta">${STAT_ICONS[ov.type||task.type]||''} ${ov.type||task.type} · ${dayStr} · ${ov.timeLabel||task.timeLabel}</div>
         </div></div>`;
     }).join('');
+    const classHtml=classes.map(task=>{
+        const ov=coreTaskOverrides[task.id]||{};
+        const dayStr=task.days.map(d=>DAY_NAMES[d]).join(' · ');
+        return`<div class="ct-item class-task"><div class="ct-info">
+            <div class="ct-name">${ov.name||task.name} <span class="class-badge">Class${holidayMode?' 🏖️':''}</span></div>
+            <div class="ct-meta">${STAT_ICONS[task.type]} wit · ${dayStr} · ${task.timeLabel}</div>
+        </div></div>`;
+    }).join('');
     const editHtml=editable.map(task=>{
         const ov=coreTaskOverrides[task.id]||{};
-        return `<div class="ct-item" data-coreid="${task.id}"><div class="ct-info">
+        return`<div class="ct-item" data-coreid="${task.id}"><div class="ct-info">
             <div class="ct-name">${ov.name||task.name}</div>
             <div class="ct-meta">${STAT_ICONS[ov.type||task.type]||''} ${ov.type||task.type} · ${ov.timeLabel||task.timeLabel}</div>
         </div><div class="ct-btns"><button class="btn-edit" onclick="editCoreTask('${task.id}')">✎</button></div></div>`;
     }).join('');
-    list.innerHTML=`<div class="section-label">Essential (read-only)</div>${essHtml}<div class="section-label" style="margin-top:14px;">Non-essential (editable)</div>${editHtml}`;
+    list.innerHTML=`
+        <div class="section-label">Essential (read-only)</div>${essHtml}
+        <div class="section-label" style="margin-top:14px;">Classes <span style="font-size:0.85em;color:#a5b1c2">${holidayMode?'(Holiday mode — hidden)':''}</span></div>
+        ${classHtml}
+        <div class="section-label" style="margin-top:14px;">Non-essential (editable)</div>${editHtml}`;
 }
 function editCoreTask(id) {
     const task=coreTasks.find(t=>t.id===id);if(!task)return;
@@ -643,13 +718,13 @@ function resetCoreTask(id){delete coreTaskOverrides[id];scheduleSave();renderCor
 // ─────────────────────────────────────────────────────────────────────────────
 const STAT_ANIMS={power:['super_dash','dash','cheer'],stamina:['eating','snack','wave'],guts:['giggle','cheer','sudden_stop'],wit:['sit_down','say','giggle']};
 function pickAnim(type){const p=STAT_ANIMS[type]||['cheer'];return p[Math.floor(Math.random()*p.length)];}
-function hydrateCustomTasks(raw) {
+function hydrateCustomTasks(raw){
     return raw.map(t=>Object.assign({},t,{anim:t.anim||'cheer',check:h=>{
         if(t.fromH!==undefined&&t.toH!==undefined)return t.fromH<=t.toH?h>=t.fromH&&h<t.toH:h>=t.fromH||h<t.toH;
         return true;
     }}));
 }
-function buildRaw(id,name,type,days,fromVal,toVal) {
+function buildRaw(id,name,type,days,fromVal,toVal){
     const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};
     let timeLabel='Anytime',fromH,toH;
     if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} – ${fmt(toVal)}`;}
@@ -659,7 +734,7 @@ function buildRaw(id,name,type,days,fromVal,toVal) {
     if(toH!==undefined)raw.toH=toH;
     return raw;
 }
-function addCustomTask() {
+function addCustomTask(){
     const name=document.getElementById('new-task-name').value.trim();
     const type=document.getElementById('new-task-type').value;
     const fromVal=document.getElementById('new-task-from').value;
@@ -679,7 +754,7 @@ function addCustomTask() {
 }
 function deleteCustomTask(id){customTasksRaw=customTasksRaw.filter(t=>t.id!==id);customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();}
 function duplicateCustomTask(id){const orig=customTasksRaw.find(t=>t.id===id);if(!orig)return;customTasksRaw.push(Object.assign({},orig,{id:'custom_'+Date.now(),name:orig.name+' (copy)'}));customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();setStatus('Task duplicated! ✌️',2000);}
-function editCustomTask(id) {
+function editCustomTask(id){
     const t=customTasksRaw.find(t=>t.id===id);if(!t)return;
     const item=document.querySelector(`[data-id="${id}"]`);if(!item)return;
     const fromStr=t.fromH!==undefined?String(t.fromH).padStart(2,'0')+':00':'';
@@ -693,7 +768,7 @@ function editCustomTask(id) {
         <div class="ct-edit-row"><button class="btn-save" onclick="saveCustomTask('${id}')">Save</button><button class="btn-cancel" onclick="renderCustomTasks()">Cancel</button></div>
     </div>`;
 }
-function saveCustomTask(id) {
+function saveCustomTask(id){
     const name=document.getElementById(`edit-name-${id}`).value.trim();
     const type=document.getElementById(`edit-type-${id}`).value;
     const fromVal=document.getElementById(`edit-from-${id}`).value;
@@ -705,7 +780,7 @@ function saveCustomTask(id) {
     customTasks=hydrateCustomTasks(customTasksRaw);
     scheduleSave();renderCustomTasks();updateUI();setStatus('Task updated! ✨',2000);
 }
-function renderCustomTasks() {
+function renderCustomTasks(){
     const list=document.getElementById('custom-task-list');
     if(!customTasksRaw.length){list.innerHTML='';return;}
     list.innerHTML='<hr class="tp-divider">'+customTasksRaw.map(t=>{
@@ -718,93 +793,59 @@ function renderCustomTasks() {
 // ─────────────────────────────────────────────────────────────────────────────
 // NAG SYSTEM
 // ─────────────────────────────────────────────────────────────────────────────
-const INJECTION_NAGS=["I NEED this data on time!! Please do the injection! 🔬","Late injection data skews the whole experiment... 😤 Please do it soon!","This is for SCIENCE. Timely data is good data!! 🧪","Tachyon is not impressed. The injection window was 3PM–5PM! 😤","The research won't wait forever... please do the injection! 🌸"];
-const TABLET_NAGS=["Have you taken your tablet yet today? It's important! 💊","The tablet needs to be taken before 12PM — please don't forget! 🌸","I'm watching the tablet situation closely... 😤 Please take it!","Your health matters! Please take your experimental tablet! 💊"];
+const INJECTION_NAGS=["I NEED this data on time!! Please do the injection! 🔬","Late injection data skews the whole experiment... 😤","This is for SCIENCE. Timely data is good data!! 🧪","Tachyon is not impressed. The injection window was 3PM–5PM! 😤","The research won't wait forever... please do the injection! 🌸"];
+const TABLET_NAGS=["Have you taken your tablet yet today? It's important! 💊","The tablet needs to be taken before 12PM — please don't forget! 🌸","I'm watching the tablet situation closely... 😤","Your health matters! Please take your experimental tablet! 💊"];
 let injNagIdx=0,tabNagIdx=0,injNagInterval=null,tabNagInterval=null,_naggingInj=false,_naggingTab=false;
-
-// Helper to check if a task is currently in the checklist
-function isTaskActive(name) {
-    return Array.from(document.querySelectorAll('.task-name')).some(el => el.textContent.includes(name));
-}
-
+function isTaskActive(name){return Array.from(document.querySelectorAll('.task-name')).some(el=>el.textContent.includes(name));}
 function startInjNag(){
-    if(injNagInterval) return;
-    
-    // Start monitoring interval
-    injNagInterval=setInterval(()=>{
-        if(!isTaskActive('Injection')) return;
-        setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);
-        showEmoteAndItem('Injection',EMOTE.anger,null);
-    },90000);
-    
-    // Trigger immediate nag if active
-    if(isTaskActive('Injection')) {
-        setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);
-        showEmoteAndItem('Injection',EMOTE.urgent,null);
-    }
+    if(injNagInterval)return;
+    injNagInterval=setInterval(()=>{if(!isTaskActive('Injection'))return;setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);showEmoteAndItem('Injection',EMOTE.anger,null);},90000);
+    if(isTaskActive('Injection')){setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);showEmoteAndItem('Injection',EMOTE.urgent,null);}
 }
 function stopInjNag(){clearInterval(injNagInterval);injNagInterval=null;}
-
 function startTabNag(){
     if(tabNagInterval)return;
-    
-    // Start monitoring interval
-    tabNagInterval=setInterval(()=>{
-        if(!isTaskActive('Tablet')) return;
-        setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);
-        showEmoteAndItem('Tablet',EMOTE.anger,null);
-    },90000);
-    
-    // Trigger immediate nag if active
-    if(isTaskActive('Tablet')) {
-        setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);
-        showEmoteAndItem('Tablet',EMOTE.urgent,null);
-    }
+    tabNagInterval=setInterval(()=>{if(!isTaskActive('Tablet'))return;setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.anger,null);},90000);
+    if(isTaskActive('Tablet')){setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.urgent,null);}
 }
 function stopTabNag(){clearInterval(tabNagInterval);tabNagInterval=null;}
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ITEM HINT SYSTEM — Tachyon randomly hints at active tasks
+// HINT SYSTEM
 // ─────────────────────────────────────────────────────────────────────────────
 let hintInterval=null;
-
-function getActiveTaskIds() {
+function getActiveTaskIds(){
     const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();
-    const all=[...coreTasks.map(getEffectiveTask),...customTasks];
-    return all.filter(task=>{
-        const base=coreTasks.find(t=>t.id===task.id)||task;
+    return [...coreTasks.map(getEffectiveTask),...customTasks].filter(task=>{
         const taskDays=task.days||[0,1,2,3,4,5,6];
         return taskDays.includes(day)&&task.check(h)&&history[task.id]!==today&&dismissed[task.id]!==today;
     }).map(t=>t.id);
 }
-
-function doHint() {
-    const active=getActiveTaskIds();
-    if(!active.length)return;
+function doHint(){
+    const active=getActiveTaskIds();if(!active.length)return;
     const id=active[Math.floor(Math.random()*active.length)];
     const base=coreTasks.find(t=>t.id===id);
     const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));
-    const emoteKey=isUrgent?EMOTE.urgent:EMOTE.hint;
-    showEmoteAndItem(id,emoteKey,null);
+    showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);
 }
-
-function startHintCycle() {
-    if(hintInterval)return;
-    // First hint after 30s, then every 45s
-    setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);
-}
+function startHintCycle(){if(hintInterval)return;setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);}
 function stopHintCycle(){clearInterval(hintInterval);hintInterval=null;}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // UI UPDATE
 // ─────────────────────────────────────────────────────────────────────────────
 let _lastVisible=new Set();
-function updateUI() {
+function updateUI(){
+    // HUD bars with new XP curve
     ['power','stamina','guts','wit'].forEach(s=>{
         const v=stats[s]||0;
-        const bar=document.getElementById('bar-'+s);if(bar)bar.style.width=Math.min(v/5,100)+'%';
-        const rnk=document.getElementById('rank-'+s);if(rnk)rnk.textContent=['F','E','D','C','B','A','S'][Math.floor(Math.min(v/100,6))];
+        const rank=getRank(v);
+        const {pct,label}=getRankProgress(v);
+        const bar=document.getElementById('bar-'+s);if(bar)bar.style.width=pct+'%';
+        const rnk=document.getElementById('rank-'+s);if(rnk)rnk.textContent=RANK_NAMES[rank];
+        const xpEl=document.getElementById('xp-'+s);if(xpEl)xpEl.textContent=rank>=6?'MAX':label;
     });
+
     const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();
     const container=document.getElementById('task-list');if(!container)return;
     container.innerHTML='';
@@ -812,8 +853,13 @@ function updateUI() {
     let visible=0;
     const nowVisible=new Set();
     let needInjNag=false,needTabNag=false;
+
     allTasks.forEach(task=>{
         const base=coreTasks.find(t=>t.id===task.id)||task;
+
+        // Skip class tasks if holiday mode is on
+        if(base.isClass&&holidayMode)return;
+
         const taskDays=task.days||[0,1,2,3,4,5,6];
         const eligible=taskDays.includes(day)&&task.check(h);
         const done=history[task.id]===today;
@@ -830,7 +876,8 @@ function updateUI() {
             const timeClass=isLate?'task-time late':'task-time';
             const dismissBtn=task.isEssential?'':`<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
             const statLabel=base.isInjection?'GUTS + POWER':(task.type||'').toUpperCase();
-            container.innerHTML+=`<div class="task-item${isLate?' task-late':''}">
+            const isClass=base.isClass;
+            container.innerHTML+=`<div class="task-item${isLate?' task-late':isClass?' task-class':''}">
                 <div class="task-info" onclick="say('Don\\'t forget — ${task.name.toLowerCase()}! ${task.timeLabel}')">
                     <span class="task-name" style="text-decoration:underline;cursor:pointer">${task.name}</span>
                     <div class="task-meta"><span class="task-stat">${statLabel}</span><span class="${timeClass}">${timeLabel}</span></div>
@@ -839,6 +886,7 @@ function updateUI() {
             </div>`;
         }
     });
+
     _lastVisible=nowVisible;
     if(needInjNag&&!_naggingInj){_naggingInj=true;startInjNag();}
     if(!needInjNag&&_naggingInj){_naggingInj=false;stopInjNag();}
@@ -852,19 +900,20 @@ function updateUI() {
 // COMPLETE / DISMISS
 // ─────────────────────────────────────────────────────────────────────────────
 const RANK_UP_MSGS={power:"Tachyon feels Stronger! 💪",stamina:"Tachyon has more energy! ✨",guts:"Tachyon is tougher now! 🔥",wit:"Tachyon feels Smarter! 📚"};
-const INJ_ONTIME=["Ehehe~ more data for me! 🧪✨","Perfect timing! Tachyon's data is looking great! 🔬🌸","Excellent! Right on schedule — just how Tachyon likes it! 🧪"];
-const INJ_LATE=["Tachyon is not impressed... late data skews the results! Please be on time next time! 😤","Better late than never, but Tachyon needs timely data! 😤 Do try harder!","The experiment requires precision! Please take the injection on time! 😤"];
-const TAB_ONTIME=["Great! Tablet taken on time — Tachyon approves! 💊🌸","Well done taking your tablet! Health first! 💊✨","Tablet done! Tachyon is pleased with your punctuality! 💊"];
-const TAB_LATE=["You were late with your tablet today... please take it before noon next time! 😤","Tachyon is a little disappointed about the tablet timing... health is important! 😤💊","Better late than never for the tablet, but please try to take it before 12PM! 💊"];
+const INJ_ONTIME=["Ehehe~ more data for me! 🧪✨","Perfect timing! Tachyon's data is looking great! 🔬🌸","Excellent! Right on schedule! 🧪"];
+const INJ_LATE=["Tachyon is not impressed... late data skews the results! 😤","Better late than never, but Tachyon needs timely data! 😤","The experiment requires precision! Please be on time! 😤"];
+const TAB_ONTIME=["Great! Tablet taken on time — Tachyon approves! 💊🌸","Well done taking your tablet! Health first! 💊✨","Tablet done! Tachyon is pleased! 💊"];
+const TAB_LATE=["You were late with your tablet today... please take it before noon next time! 😤","Tachyon is a little disappointed about the tablet timing... 😤💊","Better late than never for the tablet, but please try to take it before 12PM! 💊"];
 function randFrom(arr){return arr[Math.floor(Math.random()*arr.length)];}
 
-function complete(id,anim,type,isInjection,isTablet,h) {
-    const rankBefore=Math.floor(Math.min((stats[type]||0)/100,6));
+function complete(id,anim,type,isInjection,isTablet,h){
+    const xpBefore=stats[type]||0;
+    const rankBefore=getRank(xpBefore);
     history[id]=new Date().toDateString();
     if(isInjection){stats['guts']=(stats['guts']||0)+25;stats['power']=(stats['power']||0)+25;}
     else{stats[type]=(stats[type]||0)+10;}
     taskCounts[id]=(taskCounts[id]||0)+1;
-    const rankAfter=Math.floor(Math.min(stats[type]/100,6));
+    const rankAfter=getRank(stats[type]||0);
     scheduleSave();
     if(window.cancelCurrent)window.cancelCurrent();
     if(agnes){agnes.setFlipX(false);agnes.play(anim);}
@@ -887,7 +936,6 @@ function complete(id,anim,type,isInjection,isTablet,h) {
     }
     updateUI();tryAdvanceStreak();checkAchievements();
 }
-
 function dismiss(id){
     dismissed[id]=new Date().toDateString();
     scheduleSave();setStatus('Okay, skipping that one... 😤',3000);updateUI();
@@ -899,7 +947,7 @@ function dismiss(id){
 let statusTimeout=null,boredTimeout=null;
 const DEFAULT_MSGS=["Tachyon is here! 🌸","Ready for today?","What's on the schedule?"];
 const BORED_MSGS=["Tachyon is bored... 😴","Hmm... nothing to do?","Tachyon is waiting patiently...","Is anyone there...? 🌸"];
-function setStatus(text,duration) {
+function setStatus(text,duration){
     const el=document.getElementById('status-text');if(!el)return;
     el.style.opacity='0';
     if(statusTimeout)clearTimeout(statusTimeout);
@@ -907,12 +955,12 @@ function setStatus(text,duration) {
     if(duration)statusTimeout=setTimeout(()=>setStatus(DEFAULT_MSGS[Math.floor(Math.random()*DEFAULT_MSGS.length)],0),duration);
     resetBoredTimer();
 }
-function resetBoredTimer() {
+function resetBoredTimer(){
     if(boredTimeout)clearTimeout(boredTimeout);
     boredTimeout=setTimeout(()=>{
         setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0);
         if(agnes)showEmoteAndItem(null,EMOTE.bored,null);
-        boredTimeout=setInterval(()=>{setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0);},120000);
+        boredTimeout=setInterval(()=>setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0),120000);
     },300000);
 }
 function say(text){setStatus(text,4000);if(agnes)agnes.play('say');}
@@ -925,38 +973,32 @@ function updateClock(){const el=document.getElementById('clock');if(el)el.textCo
 updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();},60000);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PHASER — sprite refs exposed to outside
+// PHASER
 // ─────────────────────────────────────────────────────────────────────────────
-let agnes=null, gameBooted=false;
-let phaserScene=null;   // ref to the live scene for spawning items/emotes
+let agnes=null, gameBooted=false, phaserScene=null;
 
-// Called from outside Phaser to trigger item + emote
-// taskId: the task id to look up sprite (null = no item)
-// emoteFrame: string frame name from emotes atlas
-// isCompletion: true = celebration float-up, false/null = gentle bob
-function showEmoteAndItem(taskId, emoteFrame, isCompletion) {
+function showEmoteAndItem(taskId, emoteFrame, isCompletion){
     if(!phaserScene||!agnes)return;
     phaserScene.spawnHint(taskId, emoteFrame, !!isCompletion);
 }
 
-function bootGame() {
+function bootGame(){
     gameBooted=true;
     const W=Math.min(360,Math.round(window.innerWidth*0.95)-4);
     new Phaser.Game({type:Phaser.AUTO,width:W,height:180,transparent:true,parent:'game-container',scene:{preload,create}});
 }
 
-function preload() {
-    // Tachyon sprite
+function preload(){
     this.load.atlas('agnes','agnes-sprites.png','agnes-sprites-json.json');
-    // Item atlases — paths relative to index.html
     this.load.atlas('snack','snack-sprites.png','snack-sprites.json');
     this.load.atlas('drink','drink-sprites.png','drink-sprites.json');
     this.load.atlas('cleaning','Cleaning-cooking-sprites.png','Cleaning-cooking-sprites.json');
     this.load.atlas('tooth','toothpaste-sprite.png','toothpaste-sprite.json');
+    // New emote atlas — proper Phaser atlas with JSON
     this.load.atlas('emotes','emotes-sprites.png','emotes-sprites.json');
 }
 
-function create() {
+function create(){
     const W=Math.min(360,Math.round(window.innerWidth*0.95)-4);
     const sc=this;
     phaserScene=sc;
@@ -978,39 +1020,26 @@ function create() {
     A('say',      ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'],4,0);
     A('sit_down', ['agtc320_00','agtc320_01','agtc320_02','agtc320_03','agtc320_04','agtc320_06','agtc320_04','agtc320_06','agtc320_04','agtc320_06'],2,0);
 
-    // ── Emote animations (each frame is 96×32 = 3 sub-frames of 32×32) ──────
-    // We display these as a single static frame scaled up — the atlas frames are already
-    // the full 3-frame strip, so we just show the first 32px crop by using a RenderTexture
-    // Actually simplest: show the atlas frame as a sprite, crop to 32px, cycle manually
-    function makeEmoteAnim(frameBase) {
-        const key='emote_'+frameBase;
-        if(sc.anims.exists(key))return key;
-        // The emote sprite sheet has the 3 frames packed horizontally in one atlas frame (96×32)
-        // We'll use a manual tween+crop approach via a plain sprite + setFrame trick
-        // Since Phaser atlas stores the whole strip as one frame, we render via RenderTexture cropping
-        sc.anims.create({key, frames:[{key:'emotes',frame:frameBase}], frameRate:1, repeat:0});
-        return key;
-    }
+    // ── Emote animations using the new proper atlas ──────────────────────────
+    // Each frame in the atlas is 96×32 (3 sub-frames of 32×32 each)
+    // We create a 3-frame animation per emote by slicing the atlas frame into sub-frames
+    // using a RenderTexture approach in spawnHint below
 
-    // ── spawnHint: the main entry point for showing item + emote ─────────────
+    // ── spawnHint ────────────────────────────────────────────────────────────
     sc.spawnHint = function(taskId, emoteFrame, isCompletion) {
         // --- ITEM SPRITE ---
-        let itemSprite=null;
         if(taskId) {
             const mapping=TASK_SPRITES[taskId];
             if(mapping&&sc.textures.exists(mapping.atlas)) {
                 const goRight=Math.random()>0.5;
                 const startX=goRight?agnes.x-60:agnes.x+60;
                 const targetX=goRight?agnes.x-48:agnes.x+48;
-                itemSprite=sc.add.sprite(startX, agnes.y+10, mapping.atlas, mapping.frame).setScale(2).setAlpha(0).setDepth(5);
-                // Fly in
+                const itemSprite=sc.add.sprite(startX,agnes.y+10,mapping.atlas,mapping.frame).setScale(2).setAlpha(0).setDepth(5);
                 sc.tweens.add({targets:itemSprite,x:targetX,alpha:1,duration:350,ease:'Back.Out',
                     onComplete:()=>{
-                        if(isCompletion) {
-                            // celebration: bounce up and fade
+                        if(isCompletion){
                             sc.tweens.add({targets:itemSprite,y:agnes.y-40,alpha:0,duration:800,ease:'Sine.Out',delay:400,onComplete:()=>itemSprite.destroy()});
                         } else {
-                            // hint: gentle bob, then fade after 3s
                             sc.tweens.add({targets:itemSprite,y:agnes.y+4,duration:600,ease:'Sine.InOut',yoyo:true,repeat:2,
                                 onComplete:()=>sc.tweens.add({targets:itemSprite,alpha:0,duration:500,onComplete:()=>itemSprite.destroy()})
                             });
@@ -1020,37 +1049,39 @@ function create() {
             }
         }
 
-        // --- EMOTE BUBBLE ---
-        if(emoteFrame&&sc.textures.exists('emotes')) {
-            // Each emote atlas frame is 96×32 (3 sub-frames at 32×32 each)
-            // We use a RenderTexture to display each sub-frame in sequence
+        // --- EMOTE BUBBLE using new atlas ---
+        // The atlas frame is 96×32. Each emote has 3 animation frames (each 32×32).
+        // We use a RenderTexture to draw the correct sub-frame and cycle through them.
+        if(emoteFrame && sc.textures.exists('emotes')) {
+            const tex = sc.textures.get('emotes');
+            const atlasFrame = tex.get(emoteFrame);
+            if(!atlasFrame) return;
+
             const ex=agnes.x, ey=agnes.y-52;
-            const rt=sc.add.renderTexture(ex,ey,32,32).setScale(2).setAlpha(0).setDepth(10).setOrigin(0.5,1);
-            const tex=sc.textures.get('emotes');
-            const atlasFrame=tex.get(emoteFrame);
-            if(atlasFrame) {
-                let subFrame=0;
-                const drawEmoteFrame=()=>{
-                    rt.clear();
-                    // Draw the sub-frame: crop x offset = subFrame*32 within the atlas frame
-                    const srcX=atlasFrame.realX+subFrame*32;
-                    const srcY=atlasFrame.realY;
-                    rt.draw('emotes',-(srcX),(-(srcY)),1,0xffffff,1);
-                    subFrame=(subFrame+1)%3;
-                };
-                drawEmoteFrame();
-                sc.tweens.add({targets:rt,alpha:1,y:ey-8,duration:200,ease:'Back.Out',
-                    onComplete:()=>{
-                        const emTimer=sc.time.addEvent({delay:200,repeat:5,callback:drawEmoteFrame});
-                        sc.time.delayedCall(1800,()=>{
-                            emTimer.remove(false);
-                            sc.tweens.add({targets:rt,alpha:0,y:ey-18,duration:400,onComplete:()=>rt.destroy()});
-                        });
-                    }
-                });
-            } else {
-                rt.destroy();
-            }
+            // 32×32 displayed at 2x = 64px bubble
+            const rt=sc.add.renderTexture(ex, ey, 32, 32).setScale(2).setAlpha(0).setDepth(10).setOrigin(0.5, 1);
+
+            let subFrame=0;
+            const drawFrame=()=>{
+                rt.clear();
+                // Offset into the 96px wide strip: subFrame*32
+                const sx = atlasFrame.realX + subFrame * 32;
+                const sy = atlasFrame.realY;
+                // Draw by offsetting the source texture
+                rt.draw('emotes', -sx, -sy, 1, 0xffffff, 1);
+                subFrame = (subFrame+1) % 3;
+            };
+
+            drawFrame();
+            sc.tweens.add({targets:rt, alpha:1, y:ey-6, duration:180, ease:'Back.Out',
+                onComplete:()=>{
+                    const timer=sc.time.addEvent({delay:160, repeat:8, callback:drawFrame});
+                    sc.time.delayedCall(1800, ()=>{
+                        timer.remove(false);
+                        sc.tweens.add({targets:rt, alpha:0, y:ey-16, duration:350, onComplete:()=>rt.destroy()});
+                    });
+                }
+            });
         }
     };
 
@@ -1084,7 +1115,7 @@ function create() {
         const r=agnes.x<HX;agnes.setFlipX(r);vx=r?60:-60;mode='returning';agnes.play('walk_left');sc._homeCb=cb;
     };
 
-    function playIdle() {
+    function playIdle(){
         interrupted=false;
         const key=pool[Math.floor(Math.random()*pool.length)];
         stop();
@@ -1123,7 +1154,6 @@ function create() {
     });
 
     next(1000);
-    // Start the hint cycle once the game is running
     startHintCycle();
 
     sc.events.on('update',(time,delta)=>{

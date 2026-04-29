@@ -120,6 +120,20 @@
         .ach-prog { font-size: 0.62em; color: #a5b1c2; margin-top: 2px; }
         /* ── Holiday notice ── */
         #holiday-notice { width: 95%; max-width: 400px; background: #ede7f6; border: 1.5px solid #a29bfe; border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.76em; color: #5c35aa; display: none; text-align: center; box-sizing: border-box; }
+    
+    /* Update Modal Styles */
+.modal-overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.5); display: none; /* hidden by default */
+    align-items: center; justify-content: center; z-index: 9999;
+}
+.modal-content { 
+    background: white; padding: 25px; border-radius: 20px; 
+    width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.changelog-entry { margin-bottom: 15px; text-align: left; }
+.changelog-entry h4 { margin: 5px 0; color: #596275; }
+.changelog-entry ul { padding-left: 20px; margin: 0; color: #777; }
     </style>
 </head>
 <body>
@@ -518,6 +532,11 @@ const ACH_DEFS = [
     {id:'rank_b',       icon:'💪',name:'Getting Stronger',   desc:'Reach rank B in any stat',        check:()=>Object.values(stats).some(v=>getRank(v)>=4)},
     {id:'rank_s',       icon:'🌟',name:"Tachyon's Champion", desc:'Reach rank S in any stat',        check:()=>Object.values(stats).some(v=>getRank(v)>=6)},
     {id:'custom_task',  icon:'✨',name:'Self-Starter',       desc:'Add your first custom task',      check:()=>customTasksRaw.length>=1},
+{id:'master_of_all', icon:'💎', name:'Master of All', desc:'Reach Rank S in all stats', check:()=>Object.values(stats).every(v=>getRank(v)>=6)},
+{id:'habit_machine', icon:'⚙️', name:'Habit Machine', desc:'Complete 100 total tasks', check:()=>Object.values(taskCounts).reduce((a,b)=>a+b,0)>=100},
+{id:'explorer',      icon:'🗺️', name:'Explorer',      desc:'Complete 5 different types of tasks', check:()=>Object.keys(taskCounts).length>=5},
+{id:'hydration_max', icon:'🌊', name:'Oceanic',       desc:'Drink water 100 times', check:()=>(taskCounts['Water']||0)>=100},
+{id:'no_days_off',   icon:'📅', name:'Consistency',   desc:'Complete at least one task for 14 days straight', check:()=>streakData.best>=14},
 ];
 function checkAchievements() {
     const nu=ACH_DEFS.filter(d=>!achievements[d.id]&&d.check());
@@ -553,6 +572,11 @@ function achProgress(def){
     if(def.id==='water_20')return`${c['Water']||0}/20`;
     if(def.id==='rank_b')return`Best: ${Math.max(...Object.values(stats))}/${RANK_THRESHOLDS[4]} needed`;
     if(def.id==='rank_s')return`Best: ${Math.max(...Object.values(stats))}/${RANK_THRESHOLDS[6]} needed`;
+    if(def.id==='master_of_all') return `Stats: ${Object.values(stats).filter(v=>getRank(v)>=6).length}/${Object.keys(stats).length} S-Ranked`;
+    if(def.id==='habit_machine') return `${total}/100 total tasks`;
+    if(def.id==='explorer')      return `${Object.keys(c).length}/5 task types`;
+    if(def.id==='hydration_max') return `${c['Water']||0}/100`;
+    if(def.id==='no_days_off')   return `${streakData.best}/14 days`;
     return'🔒 Locked';
 }
 function renderAchievements(){
@@ -1225,6 +1249,68 @@ function create(){
         else if(mode==='superdash'&&(agnes.x<SDL||agnes.x>SDR)){vx=0;vy=0;mode='none';}
     });
 }
+
+    const CURRENT_VERSION = '1.1.0'; // Update this whenever you deploy changes
+
+// Define your history here. Newest versions at the TOP.
+const CHANGELOG_HISTORY = [
+    {
+        version: '1.3.0',
+        changes: ['🏆 Added 4 new achievements', '🛠️ Added "Architect" achievement', '📊 Rank display fixes']
+    },
+    {
+        version: '1.2.0',
+        changes: ['✨ Added custom task creation', '📱 UI responsive layout improvements']
+    }
+];
+
+// 1. Check if user needs update info
+async function checkUpdates(userProfile) {
+    // userProfile should be fetched from Supabase (e.g. { id: '...', last_seen_version: '1.1.0' })
+    const lastSeen = userProfile.last_seen_version || '0.0.0';
+    
+    if (lastSeen !== CURRENT_VERSION) {
+        // Filter for all changes the user hasn't seen yet
+        const newChanges = CHANGELOG_HISTORY.filter(entry => entry.version > lastSeen);
+        
+        if (newChanges.length > 0) {
+            showUpdateModal(newChanges);
+        }
+    }
+}
+
+// 2. Show the modal
+function showUpdateModal(changes) {
+    const list = document.getElementById('changelog-list');
+    list.innerHTML = changes.map(entry => `
+        <div class="changelog-entry">
+            <h4>v${entry.version}</h4>
+            <ul>${entry.changes.map(c => `<li>${c}</li>`).join('')}</ul>
+        </div>
+    `).join('');
+    
+    document.getElementById('update-modal').style.display = 'flex';
+}
+
+// 3. Close modal and save to Supabase
+async function closeUpdateModal() {
+    document.getElementById('update-modal').style.display = 'none';
+    
+    // Save the new version to Supabase
+    const { error } = await supabase
+        .from('users') // Change 'users' to your specific table name
+        .update({ last_seen_version: CURRENT_VERSION })
+        .eq('id', userId); // Assuming you have a variable 'userId' available
+        
+    if (error) console.error("Error saving version:", error);
+}
 </script>
+    <div id="update-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h2>✨ Update Log</h2>
+        <div id="changelog-list" style="max-height: 300px; overflow-y: auto;"></div>
+        <button onclick="closeUpdateModal()" style="margin-top:20px; padding: 10px 20px; border-radius: 10px; border: none; background: var(--accent); color: white; cursor: pointer; font-weight: bold;">Got it!</button>
+    </div>
+</div>
 </body>
 </html>

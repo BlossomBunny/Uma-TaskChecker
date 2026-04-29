@@ -1318,11 +1318,12 @@ async function closeUpdateModal() {
     if (error) console.error("Error saving version:", error);
 }
 </script>
-    <div id="update-modal" class="modal-overlay">
-    <div class="modal-content">
-        <h2>✨ Update Log</h2>
-        <div id="changelog-list" style="max-height: 300px; overflow-y: auto;"></div>
-        <button onclick="closeUpdateModal()" style="margin-top:20px; padding: 10px 20px; border-radius: 10px; border: none; background: var(--accent); color: white; cursor: pointer; font-weight: bold;">Got it!</button>
+<div id="update-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:white; width:90%; max-width:400px; border-radius:20px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.2);">
+        <h2 style="margin-top:0; color:var(--accent);">New Updates! 🌸</h2>
+        <div id="changelog-list" style="font-size:0.85em; color:#596275; margin-bottom:20px; max-height:300px; overflow-y:auto;">
+            </div>
+        <button class="tp-add" onclick="closeUpdateModal()">Awesome!</button>
     </div>
 </div>
 </body>

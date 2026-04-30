@@ -630,13 +630,14 @@ const coreTasks = [
     {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',   anim:'dash',       timeLabel:'Sundays',     isEssential:false, days:[0],   check:h=>h<18},
     {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:'3PM – 5PM',   isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&h>=15},
 
-   // ── Class schedule (suppressed by Holiday mode) ───────────────────────────
-    {id:'Class_PsychMon',    name:'Psych Class',           type:'wit', anim:'sit_down', timeLabel:'10AM – 11AM',     isEssential:false, isClass:true, days:[1], check:h=>h>=9.83&&h<11.17},
-    {id:'Class_MHWed',       name:'Mental Health Class',   type:'wit', anim:'sit_down', timeLabel:'11:30AM – 1PM',   isEssential:false, isClass:true, days:[3], check:h=>h>=11.33&&h<13.17},
-    {id:'Class_SocPsychThu', name:'Social Psych Class',    type:'wit', anim:'sit_down', timeLabel:'9AM – 11AM',      isEssential:false, isClass:true, days:[4], check:h=>h>=8.83&&h<11.17},
-    {id:'Class_PsychThu',    name:'Psych Class',           type:'wit', anim:'sit_down', timeLabel:'2PM – 4PM',       isEssential:false, isClass:true, days:[4], check:h=>h>=13.83&&h<16.17},
-    {id:'Class_MHFri',       name:'Mental Health Class',   type:'wit', anim:'sit_down', timeLabel:'9AM – 10:30AM',   isEssential:false, isClass:true, days:[5], check:h=>h>=8.83&&h<10.67},
-    {id:'Class_SocPsychFri', name:'Social Psych Class',    type:'wit', anim:'sit_down', timeLabel:'2PM – 3PM',       isEssential:false, isClass:true, days:[5], check:h=>h>=13.83&&h<15.17},
+// ── Class schedule (Original Times + 30min buffers) ───────────────────────────
+const classes = [
+    {id:'Class_PsychMon',    name:'Psych Class',           type:'wit', anim:'sit_down', timeLabel:'10AM – 11AM',      isEssential:false, isClass:true, days:[1], check:h=>h>=9.5 && h<11.5},
+    {id:'Class_MHWed',       name:'Mental Health Class',   type:'wit', anim:'sit_down', timeLabel:'11:30AM – 1PM',    isEssential:false, isClass:true, days:[3], check:h=>h>=11 && h<13.5},
+    {id:'Class_SocPsychThu', name:'Social Psych Class',    type:'wit', anim:'sit_down', timeLabel:'9AM – 11AM',       isEssential:false, isClass:true, days:[4], check:h=>h>=8.5 && h<11.5},
+    {id:'Class_PsychThu',    name:'Psych Class',           type:'wit', anim:'sit_down', timeLabel:'2PM – 4PM',        isEssential:false, isClass:true, days:[4], check:h=>h>=13.5 && h<16.5},
+    {id:'Class_MHFri',       name:'Mental Health Class',   type:'wit', anim:'sit_down', timeLabel:'9AM – 10:30AM',    isEssential:false, isClass:true, days:[5], check:h=>h>=8.5 && h<11},
+    {id:'Class_SocPsychFri', name:'Social Psych Class',    type:'wit', anim:'sit_down', timeLabel:'2PM – 3PM',        isEssential:false, isClass:true, days:[5], check:h=>h>=13.5 && h<15.5},
 ];
     
 function getEffectiveTask(task) {

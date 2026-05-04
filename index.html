@@ -279,11 +279,15 @@
 </div>
 
 <script>
-<script>
 // ── Version system ────────────────────────────────────────────────────────────
-const CURRENT_VERSION = '1.4.1';
+const CURRENT_VERSION = '1.4.2';
 
 const CHANGELOG = [
+    { version: '1.4.2', changes: [
+        '🐛 Fixed critical JavaScript syntax error that broke the login button',
+        '🧹 Removed duplicate CHANGELOG declaration and stray closing brace',
+        '🔧 Improved script loading reliability',
+    ]},
     { version: '1.4.1', changes: [
         '🔔 Live update banner — see when a new version is deployed while you\'re in the app',
         '🐛 Fixed login screen showing again after login (duplicate HTML bug)',
@@ -302,7 +306,7 @@ const CHANGELOG = [
     { version: '1.3.3', changes: ['🐛 Fixed Achievements display bug'] },
     { version: '1.3.0', changes: ['🏆 Added new achievements', '📊 Rank display fixes'] },
 ];
-
+    
 function semverGt(a, b) {
     const pa = a.split('.').map(Number), pb = b.split('.').map(Number);
     for (let i = 0; i < 3; i++) {

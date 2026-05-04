@@ -127,6 +127,22 @@
         @keyframes hudFlash { 0%,100%{box-shadow:0 5px 15px rgba(0,0,0,0.05)} 50%{box-shadow:0 0 30px rgba(248,165,194,0.6)} }
         #hud.flashing { animation: hudFlash 0.4s ease 4; }
     </style>
+    <!-- PWA Meta Tags -->
+<meta name="theme-color" content="#f8a5c2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tachyon">
+
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js');
+  });
+}
+</script>
 </head>
 <body>
 

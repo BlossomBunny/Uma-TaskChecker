@@ -135,7 +135,14 @@
 
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
+    
+<!-- iOS Splash Screen Support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tachyon">
 
+<!-- Optional: Add these for better launch experience -->
+<link rel="apple-touch-icon" href="icon-512.png">
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

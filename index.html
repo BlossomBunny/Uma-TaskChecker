@@ -126,7 +126,6 @@
         @keyframes confettiFall { 0%{transform:translateY(-10px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
         @keyframes hudFlash { 0%,100%{box-shadow:0 5px 15px rgba(0,0,0,0.05)} 50%{box-shadow:0 0 30px rgba(248,165,194,0.6)} }
         #hud.flashing { animation: hudFlash 0.4s ease 4; }
-        /* ── Version popup ── */
     </style>
 </head>
 <body>
@@ -150,11 +149,6 @@
     </div>
 </div>
 
-<!-- VERSION POPUP -->
-        <button class="tp-add" onclick="closeUpdateModal()">Awesome, let's go! 🌸</button>
-    </div>
-</div>
-
 <!-- UPDATE BANNER (shown when a new deploy is detected while app is open) -->
 <div id="update-banner" onclick="doUpdateReload()" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(400px,95vw);background:var(--accent);color:white;text-align:center;padding:12px 16px;font-size:0.82em;font-weight:bold;font-family:'Segoe UI',sans-serif;cursor:pointer;z-index:9998;border-radius:16px 16px 0 0;box-shadow:0 -4px 16px rgba(248,165,194,0.35);">
     <span>🌸</span> A new update is available! Tap to refresh.
@@ -168,7 +162,7 @@
         <button class="tp-add" onclick="closeUpdateModal()">Awesome, let's go! 🌸</button>
     </div>
 </div>
-
+    
 <div id="login-screen">
     <h2>🌸 Daily Life With Tachyon</h2>
     <p>Sign in to keep your progress safe!</p>

@@ -170,34 +170,12 @@
     </div>
 </div>
 
-<!-- VERSION POPUP -->
-        <button class="tp-add" onclick="closeUpdateModal()">Awesome, let's go! 🌸</button>
-    </div>
-</div>
-
-<!-- UPDATE BANNER (shown when a new deploy is detected while app is open) -->
 <!-- UPDATE BANNER -->
 <div id="update-banner" onclick="doUpdateReload()" 
-     style="display:none; 
-            position:fixed !important;
-            bottom:0 !important;
-            top:auto !important;
-            left:50% !important;
-            transform:translateX(-50%) !important;
-            width:min(400px,95vw);
-            background:var(--accent);
-            color:white;
-            text-align:center;
-            padding:12px 16px;
-            font-size:0.82em;
-            font-weight:bold;
-            font-family:'Segoe UI',sans-serif;
-            cursor:pointer;
-            z-index:9999 !important;
-            border-radius:16px 16px 0 0;
-            box-shadow:0 -4px 16px rgba(248,165,194,0.35);">
+     style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(400px,95vw);background:var(--accent);color:white;text-align:center;padding:12px 16px;font-size:0.82em;font-weight:bold;font-family:'Segoe UI',sans-serif;cursor:pointer;z-index:9999;border-radius:16px 16px 0 0;box-shadow:0 -4px 16px rgba(248,165,194,0.35);">
     <span>🌸</span> A new update is available! Tap to refresh.
 </div>
+
 <!-- UPDATE MODAL -->
 <div id="update-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:88888;display:none;align-items:center;justify-content:center;">
     <div style="background:white;width:90%;max-width:380px;border-radius:20px;padding:22px 20px 18px;box-shadow:0 10px 30px rgba(0,0,0,0.2);">
@@ -328,10 +306,10 @@
 
 <script>
 // ── Version system ────────────────────────────────────────────────────────────
-const CURRENT_VERSION = '1.4.7';
+const CURRENT_VERSION = '1.4.8';
 
 const CHANGELOG = [
- { version: '1.4.7', changes: [
+ { version: '1.4.8', changes: [
         'Correcting issue where changelog banner persists at top of screen',
     ]},
     

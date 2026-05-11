@@ -109,7 +109,7 @@
         .ach-cname { font-size: 0.72em; font-weight: bold; color: #596275; }
         .ach-prog { font-size: 0.62em; color: #a5b1c2; margin-top: 2px; }
         #holiday-notice { width: 95%; max-width: 400px; background: #ede7f6; border: 1.5px solid #a29bfe; border-radius: 14px; padding: 10px 14px; margin-bottom: 12px; font-size: 0.76em; color: #5c35aa; display: none; text-align: center; box-sizing: border-box; }
-        /* ââ Rank-up celebration overlay ââ */
+        /* Ã¢ÂÂÃ¢ÂÂ Rank-up celebration overlay Ã¢ÂÂÃ¢ÂÂ */
         #rankup-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
         #rankup-overlay.show { opacity: 1; pointer-events: auto; }
         #rankup-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(248,165,194,0.35) 0%, rgba(255,240,245,0.6) 100%); backdrop-filter: blur(2px); }
@@ -154,7 +154,7 @@ if ('serviceWorker' in navigator) {
 <body>
 
 <div id="ach-toast">
-    <span class="t-icon" id="t-icon">ð</span>
+    <span class="t-icon" id="t-icon">Ã°ÂÂÂ</span>
     <div class="t-title" id="t-title">Achievement Unlocked!</div>
     <div class="t-desc" id="t-desc"></div>
 </div>
@@ -163,38 +163,38 @@ if ('serviceWorker' in navigator) {
 <div id="rankup-overlay">
     <div id="rankup-bg" onclick="closeRankUp()"></div>
     <div id="rankup-card">
-        <span id="rankup-badge">â­</span>
+        <span id="rankup-badge">Ã¢Â­Â</span>
         <div id="rankup-title">RANK UP!</div>
         <div id="rankup-stat">Power</div>
         <div id="rankup-new-rank">B</div>
         <div id="rankup-msg">Tachyon is impressed!</div>
-        <button id="rankup-close" onclick="closeRankUp()">Amazing! ð¸</button>
+        <button id="rankup-close" onclick="closeRankUp()">Amazing! Ã°ÂÂÂ¸</button>
     </div>
 </div>
 
 <!-- UPDATE BANNER (shown when a new deploy is detected while app is open) -->
 <div id="update-banner" onclick="doUpdateReload()" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(400px,95vw);background:var(--accent);color:white;text-align:center;padding:12px 16px;font-size:0.82em;font-weight:bold;font-family:'Segoe UI',sans-serif;cursor:pointer;z-index:9998;border-radius:16px 16px 0 0;box-shadow:0 -4px 16px rgba(248,165,194,0.35);">
-    <span>ð¸</span> A new update is available! Tap to refresh.
+    <span>Ã°ÂÂÂ¸</span> A new update is available! Tap to refresh.
 </div>
 <!-- UPDATE MODAL -->
 <div id="update-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:88888;display:none;align-items:center;justify-content:center;">
     <div style="background:white;width:90%;max-width:380px;border-radius:20px;padding:22px 20px 18px;box-shadow:0 10px 30px rgba(0,0,0,0.2);">
-        <h2 style="margin:0 0 4px;color:var(--accent);font-size:1.1em;">What's New! ð¸</h2>
+        <h2 style="margin:0 0 4px;color:var(--accent);font-size:1.1em;">What's New! Ã°ÂÂÂ¸</h2>
         <p id="update-modal-subtitle" style="font-size:0.72em;color:#a5b1c2;margin:0 0 14px;"></p>
         <div id="changelog-list" style="font-size:0.8em;color:#596275;margin-bottom:14px;max-height:260px;overflow-y:auto;"></div>
-        <button onclick="closeUpdateModal()" style="width:100%;padding:10px;background:var(--accent);color:white;border:none;border-radius:10px;font-weight:bold;font-size:0.85em;cursor:pointer;font-family:inherit;margin-top:2px;">Awesome, let's go! ð¸</button>
+        <button onclick="closeUpdateModal()" style="width:100%;padding:10px;background:var(--accent);color:white;border:none;border-radius:10px;font-weight:bold;font-size:0.85em;cursor:pointer;font-family:inherit;margin-top:2px;">Awesome, let's go! Ã°ÂÂÂ¸</button>
     </div>
 </div>
     
 <div id="login-screen">
-    <h2>ð¸ Daily Life With Tachyon</h2>
+    <h2>Ã°ÂÂÂ¸ Daily Life With Tachyon</h2>
     <p>Sign in to keep your progress safe!</p>
     <div id="login-mode-label">Sign In</div>
-    <div id="login-migrate-notice">ð¸ Existing save data found! It will carry over to your new account automatically.</div>
+    <div id="login-migrate-notice">Ã°ÂÂÂ¸ Existing save data found! It will carry over to your new account automatically.</div>
     <input class="login-input" id="login-username" placeholder="Username" autocomplete="username">
     <input class="login-input" id="login-pin" placeholder="PIN (4 digits)" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password">
     <div id="login-error"></div>
-    <button class="login-btn" id="login-submit-btn" onclick="submitLogin()">Let's Go! ð¸</button>
+    <button class="login-btn" id="login-submit-btn" onclick="submitLogin()">Let's Go! Ã°ÂÂÂ¸</button>
     <div id="login-toggle" onclick="toggleLoginMode()">Don't have an account? Create one!</div>
 </div>
 
@@ -207,22 +207,22 @@ if ('serviceWorker' in navigator) {
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
             <button id="logout-btn" onclick="logout()">Sign out</button>
-            <button id="menu-btn" onclick="toggleMenu()">âï¸</button>
+            <button id="menu-btn" onclick="toggleMenu()">Ã¢ÂÂÃ¯Â¸Â</button>
         </div>
     </header>
     <!-- Install Prompt -->
 <div id="install-prompt" style="display:none; width:95%; max-width:400px; background:white; border-radius:16px; padding:12px 16px; margin:10px 0; box-shadow:0 4px 15px rgba(0,0,0,0.08); text-align:center;">
     <button onclick="installApp()" style="background:#f8a5c2; color:white; border:none; padding:12px 24px; border-radius:12px; font-weight:bold; font-size:0.95em; cursor:pointer;">
-        ð± Install App on Home Screen
+        Ã°ÂÂÂ± Install App on Home Screen
     </button>
     <p style="font-size:0.75em; color:#a5b1c2; margin:8px 0 0;">Get quick access + better experience</p>
 </div>
     <div id="sync-status"></div>
     <div id="clock">Loading time...</div>
-    <div id="holiday-notice">ðï¸ Holiday Mode is on â class tasks are hidden. Toggle it off in âï¸ to restore them.</div>
+    <div id="holiday-notice">Ã°ÂÂÂÃ¯Â¸Â Holiday Mode is on Ã¢ÂÂ class tasks are hidden. Toggle it off in Ã¢ÂÂÃ¯Â¸Â to restore them.</div>
 
     <div id="streak-bar">
-        <div id="streak-flame">â¨</div>
+        <div id="streak-flame">Ã¢ÂÂ¨</div>
         <div id="streak-info">
             <div id="streak-count">No streak yet</div>
             <div id="streak-sub">Complete all essential tasks to start your streak!</div>
@@ -231,10 +231,10 @@ if ('serviceWorker' in navigator) {
 
     <div id="task-panel">
         <div id="task-panel-header">
-            <span>âï¸ Manage Tasks</span>
+            <span>Ã¢ÂÂÃ¯Â¸Â Manage Tasks</span>
             <div style="display:flex;gap:6px;align-items:center;">
-                <button id="holiday-btn" onclick="toggleHoliday()" title="Toggle Holiday Mode">ðï¸ Holiday</button>
-                <button onclick="toggleMenu()">â</button>
+                <button id="holiday-btn" onclick="toggleHoliday()" title="Toggle Holiday Mode">Ã°ÂÂÂÃ¯Â¸Â Holiday</button>
+                <button onclick="toggleMenu()">Ã¢ÂÂ</button>
             </div>
         </div>
         <div class="tp-body">
@@ -245,18 +245,18 @@ if ('serviceWorker' in navigator) {
             </div>
             <div class="tp-section active" id="tab-custom">
                 <div class="tp-row">
-                    <input class="tp-input" id="new-task-name" placeholder="Task nameâ¦" style="flex:2">
+                    <input class="tp-input" id="new-task-name" placeholder="Task nameÃ¢ÂÂ¦" style="flex:2">
                     <select class="tp-input" id="new-task-type" style="flex:1">
-                        <option value="power">ðª Power</option>
-                        <option value="stamina">â¨ Stamina</option>
-                        <option value="guts">ð¥ Guts</option>
-                        <option value="wit">ð Wit</option>
+                        <option value="power">Ã°ÂÂÂª Power</option>
+                        <option value="stamina">Ã¢ÂÂ¨ Stamina</option>
+                        <option value="guts">Ã°ÂÂÂ¥ Guts</option>
+                        <option value="wit">Ã°ÂÂÂ Wit</option>
                     </select>
                 </div>
                 <div class="tp-row">
                     <span class="tp-label">TIME WINDOW (optional)</span>
                     <input class="tp-input" id="new-task-from" type="time" style="flex:1">
-                    <span style="font-size:0.8em;color:#b2bec3;padding:0 2px">â</span>
+                    <span style="font-size:0.8em;color:#b2bec3;padding:0 2px">Ã¢ÂÂ</span>
                     <input class="tp-input" id="new-task-to" type="time" style="flex:1">
                 </div>
                 <div class="tp-row" style="flex-direction:column;align-items:flex-start;">
@@ -292,7 +292,7 @@ if ('serviceWorker' in navigator) {
     </div>
 
     <div id="tachyon-wrap">
-        <div id="status-box"><span id="status-text">Tachyon is here! ð¸</span></div>
+        <div id="status-box"><span id="status-text">Tachyon is here! Ã°ÂÂÂ¸</span></div>
         <div id="game-container"></div>
     </div>
 
@@ -303,19 +303,22 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <script>
-// ââ Version system ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-const CURRENT_VERSION = '1.4.4';
+// Ã¢ÂÂÃ¢ÂÂ Version system Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+const CURRENT_VERSION = '1.4.5';
 
 const CHANGELOG = [
+    { version: '1.4.5', changes: [
+        '🦷 "Brush Your Teeth" is now two separate tasks — morning (7–9AM) and evening (after 7PM) — so doing one no longer blocks the other!',
+    ]},
     { version: '1.4.4', changes: [
-        '🐛 Fixed update popup button showing as a pink banner at top of screen',
+        'ð Fixed update popup button showing as a pink banner at top of screen',
     ]},
     { version: '1.4.3', changes: [
-        'ð± You can now install "Daily Life With Tachyon" as a real app on your phone!',
-        'ð¥ï¸ Added a big "Install App" button inside the app to make it easier',
-        'â¡ Improved performance and offline support',
-        'ð¸ Better experience when launching from your home screen on iPhone & Android',
-        'â¨ Overall polish and stability improvements'
+        'Ã°ÂÂÂ± You can now install "Daily Life With Tachyon" as a real app on your phone!',
+        'Ã°ÂÂÂ¥Ã¯Â¸Â Added a big "Install App" button inside the app to make it easier',
+        'Ã¢ÂÂ¡ Improved performance and offline support',
+        'Ã°ÂÂÂ¸ Better experience when launching from your home screen on iPhone & Android',
+        'Ã¢ÂÂ¨ Overall polish and stability improvements'
     ]},
 ];    
     
@@ -351,9 +354,9 @@ async function closeUpdateModal() {
     }
 }
 
-// ââ Deploy polling â shows banner if a new version is deployed while app is open ââ
+// Ã¢ÂÂÃ¢ÂÂ Deploy polling Ã¢ÂÂ shows banner if a new version is deployed while app is open Ã¢ÂÂÃ¢ÂÂ
 function doUpdateReload() {
-    setStatus('Reloading for the latest update... ð¸', 4000);
+    setStatus('Reloading for the latest update... Ã°ÂÂÂ¸', 4000);
     setTimeout(() => location.reload(true), 1500);
 }
 
@@ -375,15 +378,15 @@ setTimeout(() => {
     
     
     
-// ââ XP / Rank âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ XP / Rank Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const RANK_THRESHOLDS = [0, 100, 300, 600, 1100, 2100, 4100];
 const RANK_NAMES = ['F','E','D','C','B','A','S'];
-const RANK_BADGES = { F:'ð°', E:'ð¥', D:'ð¥', C:'ð¥', B:'ð', A:'ð', S:'ð' };
+const RANK_BADGES = { F:'Ã°ÂÂÂ°', E:'Ã°ÂÂ¥Â', D:'Ã°ÂÂ¥Â', C:'Ã°ÂÂ¥Â', B:'Ã°ÂÂÂ', A:'Ã°ÂÂÂ', S:'Ã°ÂÂÂ' };
 const RANK_MSGS = {
-    power:   { E:'Tachyon notices your improved physique! ðª', D:'Getting stronger! The data is promising! ðª', C:'Impressive power levels! Tachyon is taking notes! ðª', B:'Remarkable strength! A worthy test subject! ðª', A:'Elite power! Tachyon is genuinely impressed! ðª', S:'MAXIMUM POWER! Tachyon\'s experiment is a resounding success! ððª' },
-    stamina: { E:'Your energy is improving! â¨', D:'Excellent stamina growth! Tachyon approves! â¨', C:'Outstanding endurance! The research continues! â¨', B:'Incredible vitality! A model test subject! â¨', A:'Peak stamina achieved! Tachyon is delighted! â¨', S:'LEGENDARY STAMINA! Tachyon can barely contain her excitement! ðâ¨' },
-    guts:    { E:'Growing bolder! Tachyon likes the spirit! ð¥', D:'Real courage emerging! The experiment progresses! ð¥', C:'Impressive resilience! Tachyon is proud! ð¥', B:'Exceptional guts! You make a fine test subject! ð¥', A:'Unbreakable! Tachyon is in awe! ð¥', S:'MAXIMUM GUTS! Nothing can stop you now! ðð¥' },
-    wit:     { E:'Sharpening that mind! ð', D:'Excellent intellectual growth! ð', C:'Remarkable wit! Tachyon\'s favourite kind of subject! ð', B:'Brilliant! The mind data is extraordinary! ð', A:'Genius-level wit! Tachyon might be slightly jealous! ð', S:'SUPREME WIT! Tachyon proclaims you her greatest experiment! ðð' },
+    power:   { E:'Tachyon notices your improved physique! Ã°ÂÂÂª', D:'Getting stronger! The data is promising! Ã°ÂÂÂª', C:'Impressive power levels! Tachyon is taking notes! Ã°ÂÂÂª', B:'Remarkable strength! A worthy test subject! Ã°ÂÂÂª', A:'Elite power! Tachyon is genuinely impressed! Ã°ÂÂÂª', S:'MAXIMUM POWER! Tachyon\'s experiment is a resounding success! Ã°ÂÂÂÃ°ÂÂÂª' },
+    stamina: { E:'Your energy is improving! Ã¢ÂÂ¨', D:'Excellent stamina growth! Tachyon approves! Ã¢ÂÂ¨', C:'Outstanding endurance! The research continues! Ã¢ÂÂ¨', B:'Incredible vitality! A model test subject! Ã¢ÂÂ¨', A:'Peak stamina achieved! Tachyon is delighted! Ã¢ÂÂ¨', S:'LEGENDARY STAMINA! Tachyon can barely contain her excitement! Ã°ÂÂÂÃ¢ÂÂ¨' },
+    guts:    { E:'Growing bolder! Tachyon likes the spirit! Ã°ÂÂÂ¥', D:'Real courage emerging! The experiment progresses! Ã°ÂÂÂ¥', C:'Impressive resilience! Tachyon is proud! Ã°ÂÂÂ¥', B:'Exceptional guts! You make a fine test subject! Ã°ÂÂÂ¥', A:'Unbreakable! Tachyon is in awe! Ã°ÂÂÂ¥', S:'MAXIMUM GUTS! Nothing can stop you now! Ã°ÂÂÂÃ°ÂÂÂ¥' },
+    wit:     { E:'Sharpening that mind! Ã°ÂÂÂ', D:'Excellent intellectual growth! Ã°ÂÂÂ', C:'Remarkable wit! Tachyon\'s favourite kind of subject! Ã°ÂÂÂ', B:'Brilliant! The mind data is extraordinary! Ã°ÂÂÂ', A:'Genius-level wit! Tachyon might be slightly jealous! Ã°ÂÂÂ', S:'SUPREME WIT! Tachyon proclaims you her greatest experiment! Ã°ÂÂÂÃ°ÂÂÂ' },
 };
 
 function getRank(xp) {
@@ -398,11 +401,11 @@ function getRankProgress(xp) {
     return { pct: Math.round(((xp - low) / (high - low)) * 100), label: `${xp - low}/${high - low}` };
 }
 
-// ââ Rank-up celebration âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Rank-up celebration Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function showRankUp(stat, newRankIdx) {
     const rankName = RANK_NAMES[newRankIdx];
-    const badge = RANK_BADGES[rankName] || 'â­';
-    const statLabel = { power:'Power ðª', stamina:'Stamina â¨', guts:'Guts ð¥', wit:'Wit ð' }[stat] || stat;
+    const badge = RANK_BADGES[rankName] || 'Ã¢Â­Â';
+    const statLabel = { power:'Power Ã°ÂÂÂª', stamina:'Stamina Ã¢ÂÂ¨', guts:'Guts Ã°ÂÂÂ¥', wit:'Wit Ã°ÂÂÂ' }[stat] || stat;
     const msg = (RANK_MSGS[stat] || {})[rankName] || 'Tachyon is impressed!';
     document.getElementById('rankup-badge').textContent = badge;
     document.getElementById('rankup-stat').textContent = statLabel;
@@ -421,7 +424,7 @@ function showRankUp(stat, newRankIdx) {
         if (window.cancelCurrent) window.cancelCurrent();
         agnes.setFlipX(false);
         agnes.play('cheer');
-        // Loop cheer while overlay is open â handled by animationcomplete
+        // Loop cheer while overlay is open Ã¢ÂÂ handled by animationcomplete
         window._rankUpCelebrating = true;
     }
 }
@@ -451,21 +454,22 @@ function spawnConfetti() {
     }
 }
 
-// ââ Task sprites ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Task sprites Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const TASK_SPRITES = {
     Breakfast:{ atlas:'snack',    frame:'80_pancakes_dish' },
     Water:    { atlas:'drink',    frame:'water' },
     Lunch:    { atlas:'snack',    frame:'92_sandwich' },
     Snack:    { atlas:'snack',    frame:'28_cookies' },
     Dinner:   { atlas:'snack',    frame:'87_ramen' },
-    Teeth:    { atlas:'tooth',    frame:'toothpaste' },
+    Teeth_AM: { atlas:'tooth', frame:'toothpaste' },
+    Teeth_PM: { atlas:'tooth', frame:'toothpaste' },
     Tidy:     { atlas:'cleaning', frame:'cleaning_brush' },
     Tidy2:    { atlas:'cleaning', frame:'bathroom_cleaner' },
     Shop:     { atlas:'snack',    frame:'15_burger' },
     Laundry:  { atlas:'cleaning', frame:'detergent' },
 };
 
-// Spread positions around Tachyon â rotated through so multiple items don't overlap
+// Spread positions around Tachyon Ã¢ÂÂ rotated through so multiple items don't overlap
 const ITEM_POSITIONS = [
     { dx: -52, dy:  0  },  // left
     { dx:  52, dy:  0  },  // right
@@ -488,14 +492,14 @@ const EMOTE = {
 
 const TASK_REMINDERS = {
     Stretch:'Time to wake up and warm up!', Breakfast:"Don't forget to eat something yummy!", Tablet:'Time for your medicine!',
-    Water:'Stay hydrated! ð§', Lunch:'Lunch time! Feed your brain.', Snack:'A small treat for your hard work!',
-    Walk:"Let's get some fresh air.", Read:'Time for some quiet reading. ð', Cranes:'Folding paper cranes is so relaxing... ð¦¢',
-    Dinner:"What's on the menu tonight?", Teeth:'Brush those teeth! â¨', Tidy:'A little tidy-up makes a happy space. ð§¹',
-    Tidy2:'Cleaning time!', Shop:'Time to go shopping! ð', Laundry:"Don't forget the laundry! ð§º",
-    Injection:'Time for your injection. You\'ve got this! ð§ª',
+    Water:'Stay hydrated! Ã°ÂÂÂ§', Lunch:'Lunch time! Feed your brain.', Snack:'A small treat for your hard work!',
+    Walk:"Let's get some fresh air.", Read:'Time for some quiet reading. Ã°ÂÂÂ', Cranes:'Folding paper cranes is so relaxing... Ã°ÂÂ¦Â¢',
+    Dinner:"What's on the menu tonight?", Teeth_AM:'Morning brush time! Brush before you head out!', Teeth_PM:'Evening brush before bed!', Tidy:'A little tidy-up makes a happy space. Ã°ÂÂ§Â¹',
+    Tidy2:'Cleaning time!', Shop:'Time to go shopping! Ã°ÂÂÂ', Laundry:"Don't forget the laundry! Ã°ÂÂ§Âº",
+    Injection:'Time for your injection. You\'ve got this! Ã°ÂÂ§Âª',
 };
 
-// ââ Supabase ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Supabase Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const SUPA_URL = 'https://iusspgrnigizjsvkpiug.supabase.co';
 const SUPA_KEY = 'sb_publishable_Ad0oD2l3laFTst4tG0qw3A_2k7Fwa36';
 async function supaFetch(path, method='GET', body=null) {
@@ -506,7 +510,7 @@ async function supaFetch(path, method='GET', body=null) {
     return res.status===204 ? null : res.json();
 }
 
-// ââ Session âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Session Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function hashPin(u,p){let h=0;const s=u.toLowerCase()+':'+p+':tachyon-salt-2025';for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return 'ph_'+Math.abs(h).toString(36);}
 function saveSession(u,ph){localStorage.setItem('tachyonSession',JSON.stringify({username:u,pinHash:ph}));}
 function clearSession(){localStorage.removeItem('tachyonSession');}
@@ -514,18 +518,18 @@ function getSession(){try{return JSON.parse(localStorage.getItem('tachyonSession
 function getLegacyData(){const s=JSON.parse(localStorage.getItem('agnesStats')||'null');if(!s||(s.power===0&&s.stamina===0&&s.guts===0&&s.wit===0))return null;return{stats:s,history:JSON.parse(localStorage.getItem('agnesHistory')||'{}'),dismissed:JSON.parse(localStorage.getItem('agnesDismissed')||'{}'),custom_tasks:JSON.parse(localStorage.getItem('agnesCustomTasks')||'[]')};}
 function clearLegacy(){['agnesStats','agnesHistory','agnesDismissed','agnesCustomTasks'].forEach(k=>localStorage.removeItem(k));}
 
-// ââ Holiday mode ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Holiday mode Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 let holidayMode = JSON.parse(localStorage.getItem('holidayMode') || 'false');
 function toggleHoliday(){holidayMode=!holidayMode;localStorage.setItem('holidayMode',JSON.stringify(holidayMode));syncHolidayBtn();updateUI();}
 function syncHolidayBtn(){const b=document.getElementById('holiday-btn');if(b)b.classList.toggle('on',holidayMode);const n=document.getElementById('holiday-notice');if(n)n.style.display=holidayMode?'block':'none';}
 
-// ââ Data state ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Data state Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 let stats={power:0,stamina:0,guts:0,wit:0},history={},dismissed={},customTasksRaw=[],coreTaskOverrides={};
 let streakData={current:0,best:0,lastDate:''},achievements={},taskCounts={},customTasks=[];
 let currentUser=null;
 function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};customTasks=hydrateCustomTasks(customTasksRaw);}
 
-// ââ Auto login ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Auto login Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 window.addEventListener('DOMContentLoaded', async () => {
     syncHolidayBtn();
     const session=getSession();
@@ -539,7 +543,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 let loginIsRegister=false;
-function toggleLoginMode(){loginIsRegister=!loginIsRegister;document.getElementById('login-mode-label').textContent=loginIsRegister?'Create Account':'Sign In';document.getElementById('login-toggle').textContent=loginIsRegister?'Already have an account? Sign in':"Don't have an account? Create one!";document.getElementById('login-submit-btn').textContent=loginIsRegister?'Create Account ð¸':"Let's Go! ð¸";document.getElementById('login-error').textContent='';document.getElementById('login-migrate-notice').style.display=(loginIsRegister&&getLegacyData())?'block':'none';}
+function toggleLoginMode(){loginIsRegister=!loginIsRegister;document.getElementById('login-mode-label').textContent=loginIsRegister?'Create Account':'Sign In';document.getElementById('login-toggle').textContent=loginIsRegister?'Already have an account? Sign in':"Don't have an account? Create one!";document.getElementById('login-submit-btn').textContent=loginIsRegister?'Create Account Ã°ÂÂÂ¸':"Let's Go! Ã°ÂÂÂ¸";document.getElementById('login-error').textContent='';document.getElementById('login-migrate-notice').style.display=(loginIsRegister&&getLegacyData())?'block':'none';}
 
 async function submitLogin(){
     const username=document.getElementById('login-username').value.trim().toLowerCase();
@@ -555,21 +559,21 @@ async function submitLogin(){
             const legacy=getLegacyData();
             const payload={username,pin_hash:ph,stats:legacy?.stats||{power:0,stamina:0,guts:0,wit:0},history:legacy?.history||{},dismissed:legacy?.dismissed||{},custom_tasks:legacy?.custom_tasks||[],core_task_overrides:{},streaks:{current:0,best:0,lastDate:''},achievements:{},task_counts:{}};
             const created=await supaFetch('agnes_saves','POST',payload);currentUser={id:created[0].id,username};loadSaveData(created[0]);
-            if(legacy){clearLegacy();setTimeout(()=>setStatus('Your save data was carried over! ð¸',5000),1800);}
+            if(legacy){clearLegacy();setTimeout(()=>setStatus('Your save data was carried over! Ã°ÂÂÂ¸',5000),1800);}
         }else{
             if(rows.length===0){errEl.textContent="Hmm, can't find that account!";return;}
-            if(rows[0].pin_hash!==ph){errEl.textContent='Wrong PIN! Try again ð¸';return;}
+            if(rows[0].pin_hash!==ph){errEl.textContent='Wrong PIN! Try again Ã°ÂÂÂ¸';return;}
             currentUser={id:rows[0].id,username};loadSaveData(rows[0]);
         }
         saveSession(username,ph);showApp();
     }catch(e){errEl.textContent='Something went wrong: '+e.message;}
-    finally{btn.disabled=false;btn.textContent=loginIsRegister?'Create Account ð¸':"Let's Go! ð¸";}
+    finally{btn.disabled=false;btn.textContent=loginIsRegister?'Create Account Ã°ÂÂÂ¸':"Let's Go! Ã°ÂÂÂ¸";}
 }
 
 function showApp(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
-    document.getElementById('welcome-name').textContent='Hi, '+currentUser.username+'! ð¸';
+    document.getElementById('welcome-name').textContent='Hi, '+currentUser.username+'! Ã°ÂÂÂ¸';
     syncHolidayBtn();renderStreak();updateUI();
     if(!gameBooted)bootGame();
     // Show version popup after a short delay so the app settles
@@ -577,43 +581,43 @@ function showApp(){
 }
 function logout(){clearSession();currentUser=null;loginIsRegister=false;document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';['login-username','login-pin'].forEach(id=>document.getElementById(id).value='');document.getElementById('login-error').textContent='';document.getElementById('login-mode-label').textContent='Sign In';document.getElementById('login-toggle').textContent="Don't have an account? Create one!";document.getElementById('login-migrate-notice').style.display=getLegacyData()?'block':'none';}
 
-// ââ Cloud save ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Cloud save Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 let saveDebounce=null;
 function scheduleSave(){if(saveDebounce)clearTimeout(saveDebounce);saveDebounce=setTimeout(cloudSave,900);}
-async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','Savingâ¦ ð¸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed â retryingâ¦');saveDebounce=setTimeout(cloudSave,6000);}}
+async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','SavingÃ¢ÂÂ¦ Ã°ÂÂÂ¸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed Ã¢ÂÂ retryingÃ¢ÂÂ¦');saveDebounce=setTimeout(cloudSave,6000);}}
 function setSyncStatus(state,msg){const el=document.getElementById('sync-status');el.className=state;el.textContent=msg;}
 
-// ââ Streak ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Streak Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function getTodayEssentials(){const day=new Date().getDay();return coreTasks.filter(t=>{if(!t.isEssential)return false;if(t.isInjection&&!isInjectionFriday())return false;return(t.days||[0,1,2,3,4,5,6]).includes(day);});}
-function tryAdvanceStreak(){const today=new Date().toDateString();if(streakData.lastDate===today)return;if(!getTodayEssentials().every(t=>history[t.id]===today))return;const yesterday=new Date(Date.now()-86400000).toDateString();streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:1;streakData.best=Math.max(streakData.best,streakData.current);streakData.lastDate=today;const ms={1:'First full day done! ð¸',3:'3 days in a row! ð¥',7:'A whole week!! â­',14:'Two week streak! ðª',30:'30 DAYS! ð'};if(ms[streakData.current])setTimeout(()=>setStatus(ms[streakData.current],7000),800);scheduleSave();renderStreak();checkAchievements();}
-function renderStreak(){const n=streakData.current;document.getElementById('streak-flame').textContent=n>=14?'ð':n>=7?'â­':n>=3?'ð¥':'â¨';document.getElementById('streak-count').textContent=n===0?'No streak yet':`${n} day streak!`;document.getElementById('streak-sub').textContent=n===0?'Complete all essential tasks to start your streak!':`Personal best: ${streakData.best} day${streakData.best!==1?'s':''}`;}
+function tryAdvanceStreak(){const today=new Date().toDateString();if(streakData.lastDate===today)return;if(!getTodayEssentials().every(t=>history[t.id]===today))return;const yesterday=new Date(Date.now()-86400000).toDateString();streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:1;streakData.best=Math.max(streakData.best,streakData.current);streakData.lastDate=today;const ms={1:'First full day done! Ã°ÂÂÂ¸',3:'3 days in a row! Ã°ÂÂÂ¥',7:'A whole week!! Ã¢Â­Â',14:'Two week streak! Ã°ÂÂÂª',30:'30 DAYS! Ã°ÂÂÂ'};if(ms[streakData.current])setTimeout(()=>setStatus(ms[streakData.current],7000),800);scheduleSave();renderStreak();checkAchievements();}
+function renderStreak(){const n=streakData.current;document.getElementById('streak-flame').textContent=n>=14?'Ã°ÂÂÂ':n>=7?'Ã¢Â­Â':n>=3?'Ã°ÂÂÂ¥':'Ã¢ÂÂ¨';document.getElementById('streak-count').textContent=n===0?'No streak yet':`${n} day streak!`;document.getElementById('streak-sub').textContent=n===0?'Complete all essential tasks to start your streak!':`Personal best: ${streakData.best} day${streakData.best!==1?'s':''}`;}
 
-// ââ Achievements ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Achievements Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const ACH_DEFS=[
-    {id:'first_task',   icon:'ð±',name:'First Steps',       desc:'Complete your first task',              check:()=>Object.keys(history).length>=1},
-    {id:'streak_3',     icon:'ð¥',name:'On a Roll',         desc:'Reach a 3-day streak',                  check:()=>streakData.best>=3},
-    {id:'streak_7',     icon:'â­',name:'Week Warrior',      desc:'Reach a 7-day streak',                  check:()=>streakData.best>=7},
-    {id:'streak_30',    icon:'ð',name:'Unstoppable',       desc:'Reach a 30-day streak',                 check:()=>streakData.best>=30},
-    {id:'injection_5',  icon:'ð§ª',name:'Lab Regular',       desc:'Complete the injection 5 times',        check:()=>(taskCounts['Injection']||0)>=5},
-    {id:'injection_10', icon:'ð¬',name:'Research Champion', desc:'Complete the injection 10 times',       check:()=>(taskCounts['Injection']||0)>=10},
-    {id:'tablet_10',    icon:'ð',name:'Tablet Streak',     desc:'Take the tablet 10 times',              check:()=>(taskCounts['Tablet']||0)>=10},
-    {id:'cranes_10',    icon:'ð¦¢',name:'Crane Artist',      desc:'Create paper cranes 10 times',          check:()=>(taskCounts['Cranes']||0)>=10},
-    {id:'cranes_25',    icon:'ðª¶',name:'Origami Master',    desc:'Create paper cranes 25 times',          check:()=>(taskCounts['Cranes']||0)>=25},
-    {id:'water_20',     icon:'ð§',name:'Hydration Hero',    desc:'Drink water 20 times',                  check:()=>(taskCounts['Water']||0)>=20},
-    {id:'water_100',    icon:'ð',name:'Oceanic',           desc:'Drink water 100 times',                 check:()=>(taskCounts['Water']||0)>=100},
-    {id:'rank_b',       icon:'ðª',name:'Getting Stronger',  desc:'Reach rank B in any stat',              check:()=>Object.values(stats).some(v=>getRank(v)>=4)},
-    {id:'rank_s',       icon:'ð',name:"Tachyon's Champion",desc:'Reach rank S in any stat',              check:()=>Object.values(stats).some(v=>getRank(v)>=6)},
-    {id:'rank_s_all',   icon:'ð',name:'Master of All',     desc:'Reach rank S in all stats',             check:()=>Object.values(stats).every(v=>getRank(v)>=6)},
-    {id:'custom_task',  icon:'â¨',name:'Self-Starter',      desc:'Add your first custom task',            check:()=>customTasksRaw.length>=1},
-    {id:'habit_100',    icon:'âï¸',name:'Habit Machine',     desc:'Complete 100 total tasks',              check:()=>Object.values(taskCounts).reduce((a,b)=>a+b,0)>=100},
-    {id:'explorer',     icon:'ðºï¸',name:'Explorer',          desc:'Complete 5 different types of tasks',   check:()=>Object.keys(taskCounts).length>=5},
-    {id:'no_days_off',  icon:'ð',name:'Consistency',       desc:'14-day streak',                         check:()=>streakData.best>=14},
+    {id:'first_task',   icon:'Ã°ÂÂÂ±',name:'First Steps',       desc:'Complete your first task',              check:()=>Object.keys(history).length>=1},
+    {id:'streak_3',     icon:'Ã°ÂÂÂ¥',name:'On a Roll',         desc:'Reach a 3-day streak',                  check:()=>streakData.best>=3},
+    {id:'streak_7',     icon:'Ã¢Â­Â',name:'Week Warrior',      desc:'Reach a 7-day streak',                  check:()=>streakData.best>=7},
+    {id:'streak_30',    icon:'Ã°ÂÂÂ',name:'Unstoppable',       desc:'Reach a 30-day streak',                 check:()=>streakData.best>=30},
+    {id:'injection_5',  icon:'Ã°ÂÂ§Âª',name:'Lab Regular',       desc:'Complete the injection 5 times',        check:()=>(taskCounts['Injection']||0)>=5},
+    {id:'injection_10', icon:'Ã°ÂÂÂ¬',name:'Research Champion', desc:'Complete the injection 10 times',       check:()=>(taskCounts['Injection']||0)>=10},
+    {id:'tablet_10',    icon:'Ã°ÂÂÂ',name:'Tablet Streak',     desc:'Take the tablet 10 times',              check:()=>(taskCounts['Tablet']||0)>=10},
+    {id:'cranes_10',    icon:'Ã°ÂÂ¦Â¢',name:'Crane Artist',      desc:'Create paper cranes 10 times',          check:()=>(taskCounts['Cranes']||0)>=10},
+    {id:'cranes_25',    icon:'Ã°ÂÂªÂ¶',name:'Origami Master',    desc:'Create paper cranes 25 times',          check:()=>(taskCounts['Cranes']||0)>=25},
+    {id:'water_20',     icon:'Ã°ÂÂÂ§',name:'Hydration Hero',    desc:'Drink water 20 times',                  check:()=>(taskCounts['Water']||0)>=20},
+    {id:'water_100',    icon:'Ã°ÂÂÂ',name:'Oceanic',           desc:'Drink water 100 times',                 check:()=>(taskCounts['Water']||0)>=100},
+    {id:'rank_b',       icon:'Ã°ÂÂÂª',name:'Getting Stronger',  desc:'Reach rank B in any stat',              check:()=>Object.values(stats).some(v=>getRank(v)>=4)},
+    {id:'rank_s',       icon:'Ã°ÂÂÂ',name:"Tachyon's Champion",desc:'Reach rank S in any stat',              check:()=>Object.values(stats).some(v=>getRank(v)>=6)},
+    {id:'rank_s_all',   icon:'Ã°ÂÂÂ',name:'Master of All',     desc:'Reach rank S in all stats',             check:()=>Object.values(stats).every(v=>getRank(v)>=6)},
+    {id:'custom_task',  icon:'Ã¢ÂÂ¨',name:'Self-Starter',      desc:'Add your first custom task',            check:()=>customTasksRaw.length>=1},
+    {id:'habit_100',    icon:'Ã¢ÂÂÃ¯Â¸Â',name:'Habit Machine',     desc:'Complete 100 total tasks',              check:()=>Object.values(taskCounts).reduce((a,b)=>a+b,0)>=100},
+    {id:'explorer',     icon:'Ã°ÂÂÂºÃ¯Â¸Â',name:'Explorer',          desc:'Complete 5 different types of tasks',   check:()=>Object.keys(taskCounts).length>=5},
+    {id:'no_days_off',  icon:'Ã°ÂÂÂ',name:'Consistency',       desc:'14-day streak',                         check:()=>streakData.best>=14},
 ];
 function checkAchievements(){const nu=ACH_DEFS.filter(d=>!achievements[d.id]&&d.check());if(!nu.length)return;nu.forEach(d=>{achievements[d.id]=new Date().toISOString();});scheduleSave();let delay=200;nu.forEach(d=>{setTimeout(()=>showAchToast(d),delay);delay+=3600;});if(document.getElementById('tab-achievements').classList.contains('active'))renderAchievements();}
 let toastTimer=null;
-function showAchToast(def){document.getElementById('t-icon').textContent=def.icon;document.getElementById('t-title').textContent='ð '+def.name;document.getElementById('t-desc').textContent=def.desc;const t=document.getElementById('ach-toast');t.classList.add('show');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3400);setStatus('Achievement unlocked: '+def.name+'! '+def.icon,5000);}
+function showAchToast(def){document.getElementById('t-icon').textContent=def.icon;document.getElementById('t-title').textContent='Ã°ÂÂÂ '+def.name;document.getElementById('t-desc').textContent=def.desc;const t=document.getElementById('ach-toast');t.classList.add('show');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3400);setStatus('Achievement unlocked: '+def.name+'! '+def.icon,5000);}
 function achProgress(def){
-    if(achievements[def.id])return'â Unlocked!';
+    if(achievements[def.id])return'Ã¢ÂÂ Unlocked!';
     const c=taskCounts,total=Object.values(c).reduce((a,b)=>a+b,0);
     if(def.id==='streak_3')return`${streakData.best}/3 days`;
     if(def.id==='streak_7')return`${streakData.best}/7 days`;
@@ -631,79 +635,80 @@ function achProgress(def){
     if(def.id==='rank_s_all')return`${Object.values(stats).filter(v=>getRank(v)>=6).length}/4 S-Ranked`;
     if(def.id==='habit_100')return`${total}/100 tasks`;
     if(def.id==='explorer')return`${Object.keys(c).length}/5 types`;
-    return'ð Locked';
+    return'Ã°ÂÂÂ Locked';
 }
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
 
-// ââ Injection Friday ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Injection Friday Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const INJECTION_REF=new Date(2025,4,9);
 function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return false;const diff=Math.round((now-INJECTION_REF)/86400000);return diff>=0&&diff%14===0;}
 
-// ââ Core tasks ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Core tasks Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const coreTasks=[
     {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:'Until 10AM',   isEssential:true,  check:h=>h<10},
     {id:'Breakfast', name:'Have Breakfast',               type:'stamina', anim:'eating',     timeLabel:'Until 12PM',   isEssential:true,  check:h=>h<12},
     {id:'Tablet',    name:'Take Experimental Tablet',     type:'guts',    anim:'giggle',     timeLabel:'Before 12PM',  isEssential:true,  isTablet:true, idealEnd:12, check:h=>h<24},
     {id:'Water',     name:'Drink Glass Of Water',         type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',   isEssential:true,  check:h=>h>=8&&h<24&&h%2===0},
-    {id:'Lunch',     name:'Eat Lunch',                    type:'stamina', anim:'eating',     timeLabel:'12PM â 3PM',   isEssential:true,  check:h=>h>=12&&h<15},
-    {id:'Snack',     name:'Share A Snack With Tachyon',   type:'stamina', anim:'snack',      timeLabel:'3PM â 5PM',    isEssential:false, check:h=>h>=15&&h<17},
+    {id:'Lunch',     name:'Eat Lunch',                    type:'stamina', anim:'eating',     timeLabel:'12PM Ã¢ÂÂ 3PM',   isEssential:true,  check:h=>h>=12&&h<15},
+    {id:'Snack',     name:'Share A Snack With Tachyon',   type:'stamina', anim:'snack',      timeLabel:'3PM Ã¢ÂÂ 5PM',    isEssential:false, check:h=>h>=15&&h<17},
     {id:'Walk',      name:'Go For A Walk with Tachyon',   type:'power',   anim:'super_dash', timeLabel:'After 3PM',    isEssential:false, check:h=>h>=15&&h<19},
     {id:'Read',      name:'Read/Study',                   type:'wit',     anim:'sit_down',   timeLabel:'From 5PM',     isEssential:false, check:h=>h>=17},
     {id:'Cranes',    name:'Create 3 Paper Cranes',        type:'wit',     anim:'say',        timeLabel:'After 5PM',    isEssential:false, days:[0,1,3,5], check:h=>h>=17},
-    {id:'Dinner',    name:'Have Dinner With Tachyon',     type:'stamina', anim:'eating',     timeLabel:'6PM â 10PM',   isEssential:true,  check:h=>h>=18&&h<22},
-    {id:'Teeth',     name:'Brush Your Teeth',             type:'guts',    anim:'giggle',     timeLabel:'AM/PM',        isEssential:true,  check:h=>(h>=7&&h<9)||(h>=17&&h<24)},
+    {id:'Dinner',    name:'Have Dinner With Tachyon',     type:'stamina', anim:'eating',     timeLabel:'6PM Ã¢ÂÂ 10PM',   isEssential:true,  check:h=>h>=18&&h<22},
+    {id:'Teeth_AM', name:'Brush Your Teeth (Morning)', type:'guts', anim:'giggle', timeLabel:'7AM – 9AM', isEssential:true, check:h=>h>=7&&h<9},
+    {id:'Teeth_PM', name:'Brush Your Teeth (Evening)', type:'guts', anim:'giggle', timeLabel:'After 7PM', isEssential:true, check:h=>h>=19&&h<24},
     {id:'Tidy',      name:'Tidy Up Room',                 type:'power',   anim:'float',      timeLabel:'Wed & Sun',    isEssential:false, days:[0,3], check:h=>h<18},
     {id:'Tidy2',     name:'Scrub The Bathroom',           type:'power',   anim:'dash',       timeLabel:'Sun & Wed',    isEssential:false, days:[0,3], check:h=>h<18},
     {id:'Shop',      name:'Go Food Shopping With Tachyon',type:'power',   anim:'dash',       timeLabel:'Saturdays',    isEssential:false, days:[6],   check:h=>h<20},
     {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',   anim:'dash',       timeLabel:'Sundays',      isEssential:false, days:[0],   check:h=>h<18},
-    {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:'3PM â 5PM',    isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&h>=15},
-    {id:'Class_PsychMon',    name:'Psych Class',         type:'wit', anim:'sit_down', timeLabel:'10AM â 11AM',   isEssential:false, isClass:true, days:[1], check:h=>h>=10&&h<11},
-    {id:'Class_MHWed',       name:'Mental Health Class', type:'wit', anim:'sit_down', timeLabel:'11:30AM â 1PM', isEssential:false, isClass:true, days:[3], check:h=>h>=11&&h<13},
-    {id:'Class_SocPsychThu', name:'Social Psych Class',  type:'wit', anim:'sit_down', timeLabel:'9AM â 11AM',    isEssential:false, isClass:true, days:[4], check:h=>h>=9&&h<11},
-    {id:'Class_PsychThu',    name:'Psych Class',         type:'wit', anim:'sit_down', timeLabel:'2PM â 4PM',     isEssential:false, isClass:true, days:[4], check:h=>h>=14&&h<16},
-    {id:'Class_MHFri',       name:'Mental Health Class', type:'wit', anim:'sit_down', timeLabel:'9AM â 10:30AM', isEssential:false, isClass:true, days:[5], check:h=>h>=9&&h<11},
-    {id:'Class_SocPsychFri', name:'Social Psych Class',  type:'wit', anim:'sit_down', timeLabel:'2PM â 3PM',     isEssential:false, isClass:true, days:[5], check:h=>h>=14&&h<15},
+    {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:'3PM Ã¢ÂÂ 5PM',    isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&h>=15},
+    {id:'Class_PsychMon',    name:'Psych Class',         type:'wit', anim:'sit_down', timeLabel:'10AM Ã¢ÂÂ 11AM',   isEssential:false, isClass:true, days:[1], check:h=>h>=10&&h<11},
+    {id:'Class_MHWed',       name:'Mental Health Class', type:'wit', anim:'sit_down', timeLabel:'11:30AM Ã¢ÂÂ 1PM', isEssential:false, isClass:true, days:[3], check:h=>h>=11&&h<13},
+    {id:'Class_SocPsychThu', name:'Social Psych Class',  type:'wit', anim:'sit_down', timeLabel:'9AM Ã¢ÂÂ 11AM',    isEssential:false, isClass:true, days:[4], check:h=>h>=9&&h<11},
+    {id:'Class_PsychThu',    name:'Psych Class',         type:'wit', anim:'sit_down', timeLabel:'2PM Ã¢ÂÂ 4PM',     isEssential:false, isClass:true, days:[4], check:h=>h>=14&&h<16},
+    {id:'Class_MHFri',       name:'Mental Health Class', type:'wit', anim:'sit_down', timeLabel:'9AM Ã¢ÂÂ 10:30AM', isEssential:false, isClass:true, days:[5], check:h=>h>=9&&h<11},
+    {id:'Class_SocPsychFri', name:'Social Psych Class',  type:'wit', anim:'sit_down', timeLabel:'2PM Ã¢ÂÂ 3PM',     isEssential:false, isClass:true, days:[5], check:h=>h>=14&&h<15},
 ];
 
 function getEffectiveTask(task){const ov=coreTaskOverrides[task.id];if(!ov)return task;return Object.assign({},task,{name:ov.name||task.name,type:ov.type||task.type,timeLabel:ov.timeLabel||task.timeLabel,days:ov.days||task.days,check:h=>{if(ov.fromH!==undefined&&ov.toH!==undefined)return ov.fromH<=ov.toH?h>=ov.fromH&&h<ov.toH:h>=ov.fromH||h<ov.toH;return task.check(h);}});}
 
-// ââ Menu / Tabs âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-const STAT_ICONS={power:'ðª',stamina:'â¨',guts:'ð¥',wit:'ð'};
+// Ã¢ÂÂÃ¢ÂÂ Menu / Tabs Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+const STAT_ICONS={power:'Ã°ÂÂÂª',stamina:'Ã¢ÂÂ¨',guts:'Ã°ÂÂÂ¥',wit:'Ã°ÂÂÂ'};
 const DAY_NAMES=['Su','Mo','Tu','We','Th','Fr','Sa'];
 let activeTab='custom';
 function switchTab(tab){activeTab=tab;['custom','core','achievements'].forEach((t,i)=>{document.querySelectorAll('.tp-tab')[i].classList.toggle('active',t===tab);document.getElementById('tab-'+t).classList.toggle('active',t===tab);});if(tab==='core')renderCoreTaskEditor();if(tab==='achievements')renderAchievements();}
 function toggleMenu(){const panel=document.getElementById('task-panel');const open=panel.style.display==='block';panel.style.display=open?'none':'block';if(!open){syncHolidayBtn();renderCustomTasks();if(activeTab==='core')renderCoreTaskEditor();if(activeTab==='achievements')renderAchievements();}}
 
-// ââ Core task editor ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Core task editor Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function renderCoreTaskEditor(){
     const list=document.getElementById('core-task-edit-list');
     const essentials=coreTasks.filter(t=>t.isEssential||t.isInjection);
     const classes=coreTasks.filter(t=>t.isClass);
     const editable=coreTasks.filter(t=>!t.isEssential&&!t.isInjection&&!t.isClass);
-    const essHtml=essentials.map(task=>{const ov=coreTaskOverrides[task.id]||{};const dayStr=(task.days||null)?task.days.map(d=>DAY_NAMES[d]).join(' Â· '):'Every day';return`<div class="ct-item essential"><div class="ct-info"><div class="ct-name">${ov.name||task.name} <span class="essential-badge">Essential</span></div><div class="ct-meta">${STAT_ICONS[ov.type||task.type]||''} ${ov.type||task.type} Â· ${dayStr} Â· ${ov.timeLabel||task.timeLabel}</div></div></div>`;}).join('');
-    const classHtml=classes.map(task=>{const dayStr=task.days.map(d=>DAY_NAMES[d]).join(' Â· ');return`<div class="ct-item class-task"><div class="ct-info"><div class="ct-name">${task.name} <span class="class-badge">Class${holidayMode?' ðï¸':''}</span></div><div class="ct-meta">ð wit Â· ${dayStr} Â· ${task.timeLabel}</div></div></div>`;}).join('');
-    const editHtml=editable.map(task=>{const ov=coreTaskOverrides[task.id]||{};return`<div class="ct-item" data-coreid="${task.id}"><div class="ct-info"><div class="ct-name">${ov.name||task.name}</div><div class="ct-meta">${STAT_ICONS[ov.type||task.type]||''} ${ov.type||task.type} Â· ${ov.timeLabel||task.timeLabel}</div></div><div class="ct-btns"><button class="btn-edit" onclick="editCoreTask('${task.id}')">â</button></div></div>`;}).join('');
-    list.innerHTML=`<div class="section-label">Essential (read-only)</div>${essHtml}<div class="section-label" style="margin-top:14px;">Classes ${holidayMode?'<span style="font-size:0.85em;color:#a5b1c2">(Holiday mode â hidden)</span>':''}  </div>${classHtml}<div class="section-label" style="margin-top:14px;">Non-essential (editable)</div>${editHtml}`;
+    const essHtml=essentials.map(task=>{const ov=coreTaskOverrides[task.id]||{};const dayStr=(task.days||null)?task.days.map(d=>DAY_NAMES[d]).join(' ÃÂ· '):'Every day';return`<div class="ct-item essential"><div class="ct-info"><div class="ct-name">${ov.name||task.name} <span class="essential-badge">Essential</span></div><div class="ct-meta">${STAT_ICONS[ov.type||task.type]||''} ${ov.type||task.type} ÃÂ· ${dayStr} ÃÂ· ${ov.timeLabel||task.timeLabel}</div></div></div>`;}).join('');
+    const classHtml=classes.map(task=>{const dayStr=task.days.map(d=>DAY_NAMES[d]).join(' ÃÂ· ');return`<div class="ct-item class-task"><div class="ct-info"><div class="ct-name">${task.name} <span class="class-badge">Class${holidayMode?' Ã°ÂÂÂÃ¯Â¸Â':''}</span></div><div class="ct-meta">Ã°ÂÂÂ wit ÃÂ· ${dayStr} ÃÂ· ${task.timeLabel}</div></div></div>`;}).join('');
+    const editHtml=editable.map(task=>{const ov=coreTaskOverrides[task.id]||{};return`<div class="ct-item" data-coreid="${task.id}"><div class="ct-info"><div class="ct-name">${ov.name||task.name}</div><div class="ct-meta">${STAT_ICONS[ov.type||task.type]||''} ${ov.type||task.type} ÃÂ· ${ov.timeLabel||task.timeLabel}</div></div><div class="ct-btns"><button class="btn-edit" onclick="editCoreTask('${task.id}')">Ã¢ÂÂ</button></div></div>`;}).join('');
+    list.innerHTML=`<div class="section-label">Essential (read-only)</div>${essHtml}<div class="section-label" style="margin-top:14px;">Classes ${holidayMode?'<span style="font-size:0.85em;color:#a5b1c2">(Holiday mode Ã¢ÂÂ hidden)</span>':''}  </div>${classHtml}<div class="section-label" style="margin-top:14px;">Non-essential (editable)</div>${editHtml}`;
 }
-function editCoreTask(id){const task=coreTasks.find(t=>t.id===id);if(!task)return;const ov=coreTaskOverrides[id]||{};const fromStr=ov.fromH!==undefined?String(ov.fromH).padStart(2,'0')+':00':'';const toStr=ov.toH!==undefined?String(ov.toH).padStart(2,'0')+':00':'';const days=ov.days||task.days||[0,1,2,3,4,5,6];const curType=ov.type||task.type;const daysHtml=DAY_NAMES.map((d,i)=>`<div class="tp-day${days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`).join('');const typeOpts=['power','stamina','guts','wit'].map(t=>`<option value="${t}"${curType===t?' selected':''}>${STAT_ICONS[t]} ${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');document.querySelector(`[data-coreid="${id}"]`).outerHTML=`<div class="ct-edit-form" data-coreid="${id}"><div class="ct-edit-row"><input class="tp-input" id="ce-name-${id}" value="${ov.name||task.name}" style="flex:2"><select class="tp-input" id="ce-type-${id}" style="flex:1">${typeOpts}</select></div><div class="ct-edit-row"><input class="tp-input" id="ce-from-${id}" type="time" value="${fromStr}" style="flex:1"><span style="font-size:0.8em;color:#b2bec3">â</span><input class="tp-input" id="ce-to-${id}" type="time" value="${toStr}" style="flex:1"></div><div class="ct-edit-row"><div class="tp-days" id="ce-days-${id}">${daysHtml}</div></div><div class="ct-edit-row"><button class="btn-save" onclick="saveCoreTask('${id}')">Save</button><button class="btn-cancel" onclick="renderCoreTaskEditor()">Cancel</button>${Object.keys(ov).length?`<button class="btn-reset" onclick="resetCoreTask('${id}')">Reset</button>`:''}</div></div>`;}
-function saveCoreTask(id){const task=coreTasks.find(t=>t.id===id);if(!task)return;const name=document.getElementById(`ce-name-${id}`).value.trim();const type=document.getElementById(`ce-type-${id}`).value;const fromVal=document.getElementById(`ce-from-${id}`).value;const toVal=document.getElementById(`ce-to-${id}`).value;const days=Array.from(document.querySelectorAll(`#ce-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};let timeLabel=task.timeLabel,fromH,toH;if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} â ${fmt(toVal)}`;}else if(fromVal){fromH=parseInt(fromVal.split(':')[0]);timeLabel=`From ${fmt(fromVal)}`;}coreTaskOverrides[id]={name,type,days,timeLabel};if(fromH!==undefined)coreTaskOverrides[id].fromH=fromH;if(toH!==undefined)coreTaskOverrides[id].toH=toH;scheduleSave();renderCoreTaskEditor();updateUI();setStatus('Task updated! â¨',2000);}
+function editCoreTask(id){const task=coreTasks.find(t=>t.id===id);if(!task)return;const ov=coreTaskOverrides[id]||{};const fromStr=ov.fromH!==undefined?String(ov.fromH).padStart(2,'0')+':00':'';const toStr=ov.toH!==undefined?String(ov.toH).padStart(2,'0')+':00':'';const days=ov.days||task.days||[0,1,2,3,4,5,6];const curType=ov.type||task.type;const daysHtml=DAY_NAMES.map((d,i)=>`<div class="tp-day${days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`).join('');const typeOpts=['power','stamina','guts','wit'].map(t=>`<option value="${t}"${curType===t?' selected':''}>${STAT_ICONS[t]} ${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');document.querySelector(`[data-coreid="${id}"]`).outerHTML=`<div class="ct-edit-form" data-coreid="${id}"><div class="ct-edit-row"><input class="tp-input" id="ce-name-${id}" value="${ov.name||task.name}" style="flex:2"><select class="tp-input" id="ce-type-${id}" style="flex:1">${typeOpts}</select></div><div class="ct-edit-row"><input class="tp-input" id="ce-from-${id}" type="time" value="${fromStr}" style="flex:1"><span style="font-size:0.8em;color:#b2bec3">Ã¢ÂÂ</span><input class="tp-input" id="ce-to-${id}" type="time" value="${toStr}" style="flex:1"></div><div class="ct-edit-row"><div class="tp-days" id="ce-days-${id}">${daysHtml}</div></div><div class="ct-edit-row"><button class="btn-save" onclick="saveCoreTask('${id}')">Save</button><button class="btn-cancel" onclick="renderCoreTaskEditor()">Cancel</button>${Object.keys(ov).length?`<button class="btn-reset" onclick="resetCoreTask('${id}')">Reset</button>`:''}</div></div>`;}
+function saveCoreTask(id){const task=coreTasks.find(t=>t.id===id);if(!task)return;const name=document.getElementById(`ce-name-${id}`).value.trim();const type=document.getElementById(`ce-type-${id}`).value;const fromVal=document.getElementById(`ce-from-${id}`).value;const toVal=document.getElementById(`ce-to-${id}`).value;const days=Array.from(document.querySelectorAll(`#ce-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};let timeLabel=task.timeLabel,fromH,toH;if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} Ã¢ÂÂ ${fmt(toVal)}`;}else if(fromVal){fromH=parseInt(fromVal.split(':')[0]);timeLabel=`From ${fmt(fromVal)}`;}coreTaskOverrides[id]={name,type,days,timeLabel};if(fromH!==undefined)coreTaskOverrides[id].fromH=fromH;if(toH!==undefined)coreTaskOverrides[id].toH=toH;scheduleSave();renderCoreTaskEditor();updateUI();setStatus('Task updated! Ã¢ÂÂ¨',2000);}
 function resetCoreTask(id){delete coreTaskOverrides[id];scheduleSave();renderCoreTaskEditor();updateUI();}
 
-// ââ Custom tasks ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Custom tasks Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const STAT_ANIMS={power:['super_dash','dash','cheer'],stamina:['eating','snack','wave'],guts:['giggle','cheer','sudden_stop'],wit:['sit_down','say','giggle']};
 function pickAnim(type){const p=STAT_ANIMS[type]||['cheer'];return p[Math.floor(Math.random()*p.length)];}
 function hydrateCustomTasks(raw){return raw.map(t=>Object.assign({},t,{anim:t.anim||'cheer',check:h=>{if(t.fromH!==undefined&&t.toH!==undefined)return t.fromH<=t.toH?h>=t.fromH&&h<t.toH:h>=t.fromH||h<t.toH;return true;}}));}
-function buildRaw(id,name,type,days,fromVal,toVal){const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};let timeLabel='Anytime',fromH,toH;if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} â ${fmt(toVal)}`;}else if(fromVal){fromH=parseInt(fromVal.split(':')[0]);timeLabel=`From ${fmt(fromVal)}`;}const raw={id,name,type,days,timeLabel,isEssential:false,anim:pickAnim(type)};if(fromH!==undefined)raw.fromH=fromH;if(toH!==undefined)raw.toH=toH;return raw;}
-function addCustomTask(){const name=document.getElementById('new-task-name').value.trim();const type=document.getElementById('new-task-type').value;const fromVal=document.getElementById('new-task-from').value;const toVal=document.getElementById('new-task-to').value;const days=Array.from(document.querySelectorAll('#new-task-days .tp-day.on')).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}customTasksRaw.push(buildRaw('custom_'+Date.now(),name,type,days,fromVal,toVal));customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();document.getElementById('new-task-name').value='';document.getElementById('new-task-from').value='';document.getElementById('new-task-to').value='';document.querySelectorAll('#new-task-days .tp-day').forEach(el=>el.classList.remove('on'));renderCustomTasks();updateUI();checkAchievements();setStatus('New task added! ð¡',3000);showEmoteAndItem(null,EMOTE.idea,null);}
+function buildRaw(id,name,type,days,fromVal,toVal){const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};let timeLabel='Anytime',fromH,toH;if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} Ã¢ÂÂ ${fmt(toVal)}`;}else if(fromVal){fromH=parseInt(fromVal.split(':')[0]);timeLabel=`From ${fmt(fromVal)}`;}const raw={id,name,type,days,timeLabel,isEssential:false,anim:pickAnim(type)};if(fromH!==undefined)raw.fromH=fromH;if(toH!==undefined)raw.toH=toH;return raw;}
+function addCustomTask(){const name=document.getElementById('new-task-name').value.trim();const type=document.getElementById('new-task-type').value;const fromVal=document.getElementById('new-task-from').value;const toVal=document.getElementById('new-task-to').value;const days=Array.from(document.querySelectorAll('#new-task-days .tp-day.on')).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}customTasksRaw.push(buildRaw('custom_'+Date.now(),name,type,days,fromVal,toVal));customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();document.getElementById('new-task-name').value='';document.getElementById('new-task-from').value='';document.getElementById('new-task-to').value='';document.querySelectorAll('#new-task-days .tp-day').forEach(el=>el.classList.remove('on'));renderCustomTasks();updateUI();checkAchievements();setStatus('New task added! Ã°ÂÂÂ¡',3000);showEmoteAndItem(null,EMOTE.idea,null);}
 function deleteCustomTask(id){customTasksRaw=customTasksRaw.filter(t=>t.id!==id);customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();}
-function duplicateCustomTask(id){const orig=customTasksRaw.find(t=>t.id===id);if(!orig)return;customTasksRaw.push(Object.assign({},orig,{id:'custom_'+Date.now(),name:orig.name+' (copy)'}));customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();setStatus('Task duplicated! âï¸',2000);}
-function editCustomTask(id){const t=customTasksRaw.find(t=>t.id===id);if(!t)return;const item=document.querySelector(`[data-id="${id}"]`);if(!item)return;const fromStr=t.fromH!==undefined?String(t.fromH).padStart(2,'0')+':00':'';const toStr=t.toH!==undefined?String(t.toH).padStart(2,'0')+':00':'';const daysHtml=DAY_NAMES.map((d,i)=>`<div class="tp-day${t.days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`).join('');item.outerHTML=`<div class="ct-edit-form" data-id="${id}"><div class="ct-edit-row"><input class="tp-input" id="edit-name-${id}" value="${t.name}" style="flex:2"><select class="tp-input" id="edit-type-${id}" style="flex:1">${['power','stamina','guts','wit'].map(s=>`<option value="${s}"${t.type===s?' selected':''}>${STAT_ICONS[s]} ${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}</select></div><div class="ct-edit-row"><input class="tp-input" id="edit-from-${id}" type="time" value="${fromStr}" style="flex:1"><span style="font-size:0.8em;color:#b2bec3">â</span><input class="tp-input" id="edit-to-${id}" type="time" value="${toStr}" style="flex:1"></div><div class="ct-edit-row"><div class="tp-days" id="edit-days-${id}">${daysHtml}</div></div><div class="ct-edit-row"><button class="btn-save" onclick="saveCustomTask('${id}')">Save</button><button class="btn-cancel" onclick="renderCustomTasks()">Cancel</button></div></div>`;}
-function saveCustomTask(id){const name=document.getElementById(`edit-name-${id}`).value.trim();const type=document.getElementById(`edit-type-${id}`).value;const fromVal=document.getElementById(`edit-from-${id}`).value;const toVal=document.getElementById(`edit-to-${id}`).value;const days=Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}const idx=customTasksRaw.findIndex(t=>t.id===id);if(idx===-1)return;customTasksRaw[idx]=buildRaw(id,name,type,days,fromVal,toVal);customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();setStatus('Task updated! â¨',2000);}
-function renderCustomTasks(){const list=document.getElementById('custom-task-list');if(!customTasksRaw.length){list.innerHTML='';return;}list.innerHTML='<hr class="tp-divider">'+customTasksRaw.map(t=>{const dayStr=t.days.map(d=>DAY_NAMES[d]).join(' Â· ');return`<div class="ct-item" data-id="${t.id}"><div class="ct-info"><div class="ct-name">${t.name}</div><div class="ct-meta">${STAT_ICONS[t.type]||''} ${t.type} Â· ${dayStr} Â· ${t.timeLabel}</div></div><div class="ct-btns"><button class="btn-dupe" onclick="duplicateCustomTask('${t.id}')" title="Duplicate">â§</button><button class="btn-edit" onclick="editCustomTask('${t.id}')" title="Edit">â</button><button class="btn-del" onclick="deleteCustomTask('${t.id}')" title="Delete">â</button></div></div>`;}).join('');}
+function duplicateCustomTask(id){const orig=customTasksRaw.find(t=>t.id===id);if(!orig)return;customTasksRaw.push(Object.assign({},orig,{id:'custom_'+Date.now(),name:orig.name+' (copy)'}));customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();setStatus('Task duplicated! Ã¢ÂÂÃ¯Â¸Â',2000);}
+function editCustomTask(id){const t=customTasksRaw.find(t=>t.id===id);if(!t)return;const item=document.querySelector(`[data-id="${id}"]`);if(!item)return;const fromStr=t.fromH!==undefined?String(t.fromH).padStart(2,'0')+':00':'';const toStr=t.toH!==undefined?String(t.toH).padStart(2,'0')+':00':'';const daysHtml=DAY_NAMES.map((d,i)=>`<div class="tp-day${t.days.includes(i)?' on':''}" data-day="${i}" onclick="this.classList.toggle('on')">${d}</div>`).join('');item.outerHTML=`<div class="ct-edit-form" data-id="${id}"><div class="ct-edit-row"><input class="tp-input" id="edit-name-${id}" value="${t.name}" style="flex:2"><select class="tp-input" id="edit-type-${id}" style="flex:1">${['power','stamina','guts','wit'].map(s=>`<option value="${s}"${t.type===s?' selected':''}>${STAT_ICONS[s]} ${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}</select></div><div class="ct-edit-row"><input class="tp-input" id="edit-from-${id}" type="time" value="${fromStr}" style="flex:1"><span style="font-size:0.8em;color:#b2bec3">Ã¢ÂÂ</span><input class="tp-input" id="edit-to-${id}" type="time" value="${toStr}" style="flex:1"></div><div class="ct-edit-row"><div class="tp-days" id="edit-days-${id}">${daysHtml}</div></div><div class="ct-edit-row"><button class="btn-save" onclick="saveCustomTask('${id}')">Save</button><button class="btn-cancel" onclick="renderCustomTasks()">Cancel</button></div></div>`;}
+function saveCustomTask(id){const name=document.getElementById(`edit-name-${id}`).value.trim();const type=document.getElementById(`edit-type-${id}`).value;const fromVal=document.getElementById(`edit-from-${id}`).value;const toVal=document.getElementById(`edit-to-${id}`).value;const days=Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}const idx=customTasksRaw.findIndex(t=>t.id===id);if(idx===-1)return;customTasksRaw[idx]=buildRaw(id,name,type,days,fromVal,toVal);customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();setStatus('Task updated! Ã¢ÂÂ¨',2000);}
+function renderCustomTasks(){const list=document.getElementById('custom-task-list');if(!customTasksRaw.length){list.innerHTML='';return;}list.innerHTML='<hr class="tp-divider">'+customTasksRaw.map(t=>{const dayStr=t.days.map(d=>DAY_NAMES[d]).join(' ÃÂ· ');return`<div class="ct-item" data-id="${t.id}"><div class="ct-info"><div class="ct-name">${t.name}</div><div class="ct-meta">${STAT_ICONS[t.type]||''} ${t.type} ÃÂ· ${dayStr} ÃÂ· ${t.timeLabel}</div></div><div class="ct-btns"><button class="btn-dupe" onclick="duplicateCustomTask('${t.id}')" title="Duplicate">Ã¢Â§Â</button><button class="btn-edit" onclick="editCustomTask('${t.id}')" title="Edit">Ã¢ÂÂ</button><button class="btn-del" onclick="deleteCustomTask('${t.id}')" title="Delete">Ã¢ÂÂ</button></div></div>`;}).join('');}
 
-// ââ Nag system ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-const INJECTION_NAGS=["I NEED this data on time!! Please do the injection! ð¬","Late injection data skews the whole experiment... ð¤","This is for SCIENCE!! ð§ª","Tachyon is not impressed. The injection window was 3PMâ5PM! ð¤","The research won't wait forever... ð¸"];
-const TABLET_NAGS=["Have you taken your tablet yet today? It's important! ð","The tablet needs to be taken before 12PM! ð¸","I'm watching the tablet situation closely... ð¤","Your health matters! Please take your tablet! ð"];
+// Ã¢ÂÂÃ¢ÂÂ Nag system Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+const INJECTION_NAGS=["I NEED this data on time!! Please do the injection! Ã°ÂÂÂ¬","Late injection data skews the whole experiment... Ã°ÂÂÂ¤","This is for SCIENCE!! Ã°ÂÂ§Âª","Tachyon is not impressed. The injection window was 3PMÃ¢ÂÂ5PM! Ã°ÂÂÂ¤","The research won't wait forever... Ã°ÂÂÂ¸"];
+const TABLET_NAGS=["Have you taken your tablet yet today? It's important! Ã°ÂÂÂ","The tablet needs to be taken before 12PM! Ã°ÂÂÂ¸","I'm watching the tablet situation closely... Ã°ÂÂÂ¤","Your health matters! Please take your tablet! Ã°ÂÂÂ"];
 let injNagIdx=0,tabNagIdx=0,injNagInterval=null,tabNagInterval=null,_naggingInj=false,_naggingTab=false;
 function isTaskActive(name){return Array.from(document.querySelectorAll('.task-name')).some(el=>el.textContent.includes(name));}
 function startInjNag(){if(injNagInterval)return;injNagInterval=setInterval(()=>{if(!isTaskActive('Injection'))return;setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);showEmoteAndItem('Injection',EMOTE.anger,null);},90000);if(isTaskActive('Injection')){setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);showEmoteAndItem('Injection',EMOTE.urgent,null);}}
@@ -711,13 +716,13 @@ function stopInjNag(){clearInterval(injNagInterval);injNagInterval=null;}
 function startTabNag(){if(tabNagInterval)return;tabNagInterval=setInterval(()=>{if(!isTaskActive('Tablet'))return;setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.anger,null);},90000);if(isTaskActive('Tablet')){setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.urgent,null);}}
 function stopTabNag(){clearInterval(tabNagInterval);tabNagInterval=null;}
 
-// ââ Hint system âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Hint system Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 let hintInterval=null;
 function getActiveTaskIds(){const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();return[...coreTasks.map(getEffectiveTask),...customTasks].filter(task=>{const taskDays=task.days||[0,1,2,3,4,5,6];return taskDays.includes(day)&&task.check(h)&&history[task.id]!==today&&dismissed[task.id]!==today;}).map(t=>t.id);}
-function doHint(){const active=getActiveTaskIds();if(!active.length)return;const id=active[Math.floor(Math.random()*active.length)];const base=coreTasks.find(t=>t.id===id);const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));const reminder=TASK_REMINDERS[id]||(base?`Don't forget â ${(base.name||'').toLowerCase()}!`:null);if(reminder)setStatus(reminder,5000);showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);}
+function doHint(){const active=getActiveTaskIds();if(!active.length)return;const id=active[Math.floor(Math.random()*active.length)];const base=coreTasks.find(t=>t.id===id);const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));const reminder=TASK_REMINDERS[id]||(base?`Don't forget Ã¢ÂÂ ${(base.name||'').toLowerCase()}!`:null);if(reminder)setStatus(reminder,5000);showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);}
 function startHintCycle(){if(hintInterval)return;setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);}
 
-// ââ UI update âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ UI update Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 let _lastVisible=new Set();
 function updateUI(){
     ['power','stamina','guts','wit'].forEach(s=>{const v=stats[s]||0;const rank=getRank(v);const{pct,label}=getRankProgress(v);const bar=document.getElementById('bar-'+s);if(bar)bar.style.width=pct+'%';const rnk=document.getElementById('rank-'+s);if(rnk)rnk.textContent=RANK_NAMES[rank];const xpEl=document.getElementById('xp-'+s);if(xpEl)xpEl.textContent=rank>=6?'MAX':label;});
@@ -732,18 +737,18 @@ function updateUI(){
         const taskDays=task.days||[0,1,2,3,4,5,6];
         const eligible=taskDays.includes(day)&&task.check(h);
         const done=history[task.id]===today,skipped=dismissed[task.id]===today;
-        if(_lastVisible.has(task.id)&&!eligible&&!done&&!skipped&&!base.isInjection&&!base.isTablet)setStatus('You missed a task! Better try again next time! ð',4000);
+        if(_lastVisible.has(task.id)&&!eligible&&!done&&!skipped&&!base.isInjection&&!base.isTablet)setStatus('You missed a task! Better try again next time! Ã°ÂÂÂ',4000);
         if(base.isInjection&&!done&&!skipped&&h>=17)needInjNag=true;
         if(base.isTablet&&!done&&!skipped&&h>=12)needTabNag=true;
         if(eligible&&!done&&!skipped){
             nowVisible.add(task.id);visible++;
             const isInjLate=base.isInjection&&h>=17,isTabLate=base.isTablet&&h>=(base.idealEnd||12),isLate=isInjLate||isTabLate;
-            const timeLabel=isLate?(base.isInjection?'â ï¸ Past ideal window':'â ï¸ Late!'):(task.timeLabel||'Anytime');
+            const timeLabel=isLate?(base.isInjection?'Ã¢ÂÂ Ã¯Â¸Â Past ideal window':'Ã¢ÂÂ Ã¯Â¸Â Late!'):(task.timeLabel||'Anytime');
             const timeClass=isLate?'task-time late':'task-time';
             const dismissBtn=task.isEssential?'':`<button class="btn-dismiss" onclick="dismiss('${task.id}')">Dismiss</button>`;
             const statLabel=base.isInjection?'GUTS + POWER':(task.type||'').toUpperCase();
             container.innerHTML+=`<div class="task-item${isLate?' task-late':base.isClass?' task-class':''}">
-                <div class="task-info" onclick="say('Don\\'t forget â ${task.name.toLowerCase()}! ${task.timeLabel}')">
+                <div class="task-info" onclick="say('Don\\'t forget Ã¢ÂÂ ${task.name.toLowerCase()}! ${task.timeLabel}')">
                     <span class="task-name" style="text-decoration:underline;cursor:pointer">${task.name}</span>
                     <div class="task-meta"><span class="task-stat">${statLabel}</span><span class="${timeClass}">${timeLabel}</span></div>
                 </div>
@@ -756,46 +761,41 @@ function updateUI(){
     if(!needInjNag&&_naggingInj){_naggingInj=false;stopInjNag();}
     if(needTabNag&&!_naggingTab){_naggingTab=true;startTabNag();}
     if(!needTabNag&&_naggingTab){_naggingTab=false;stopTabNag();}
-    if(visible===0)container.innerHTML=`<div class="all-done">ð¸ All done for today! Great job!</div>`;
+    if(visible===0)container.innerHTML=`<div class="all-done">Ã°ÂÂÂ¸ All done for today! Great job!</div>`;
     renderStreak();
 }
 
-// ââ Completion messages âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-const INJ_ONTIME=["Ehehe~ more data for me! ð§ªâ¨","Perfect timing! ð¬ð¸","Excellent! Right on schedule! ð§ª"];
-const INJ_LATE=["Tachyon is not impressed... late data! ð¤","Better late than never! ð¤","Please be on time next time! ð¤"];
-const TAB_ONTIME=["Tablet on time â Tachyon approves! ðð¸","Well done! Health first! ðâ¨","Tablet done! ð"];
-const TAB_LATE=["Late with your tablet again... before noon next time! ð¤","Tachyon is disappointed about the tablet timing... ð¤ð","Better late than never! Try before 12PM! ð"];
+// Ã¢ÂÂÃ¢ÂÂ Completion messages Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+const INJ_ONTIME=["Ehehe~ more data for me! Ã°ÂÂ§ÂªÃ¢ÂÂ¨","Perfect timing! Ã°ÂÂÂ¬Ã°ÂÂÂ¸","Excellent! Right on schedule! Ã°ÂÂ§Âª"];
+const INJ_LATE=["Tachyon is not impressed... late data! Ã°ÂÂÂ¤","Better late than never! Ã°ÂÂÂ¤","Please be on time next time! Ã°ÂÂÂ¤"];
+const TAB_ONTIME=["Tablet on time Ã¢ÂÂ Tachyon approves! Ã°ÂÂÂÃ°ÂÂÂ¸","Well done! Health first! Ã°ÂÂÂÃ¢ÂÂ¨","Tablet done! Ã°ÂÂÂ"];
+const TAB_LATE=["Late with your tablet again... before noon next time! Ã°ÂÂÂ¤","Tachyon is disappointed about the tablet timing... Ã°ÂÂÂ¤Ã°ÂÂÂ","Better late than never! Try before 12PM! Ã°ÂÂÂ"];
 function randFrom(arr){return arr[Math.floor(Math.random()*arr.length)];}
 
 const TASK_COMPLETE_MSGS={
-    Stretch:  ["Muscles warmed up! Great day ahead! ðª","Tachyon approves of your limbering up! ð¸","The experiment begins! Starting the day right! â¨"],
-    Breakfast:["Fuel loaded! Science runs on a full stomach! ð³","Breakfast done! Tachyon can begin her research! ð¸","Nutrition logged! Well done! â¨"],
-    Tablet:   ["Tablet taken! Tachyon is monitoring closely... ð","Medicine down! For science! ðð¸","The experimental tablet has been administered! ð§ª"],
-    Water:    ["Hydration status: optimal! ð§","Even guinea pigs need to stay hydrated! ð§ð¸","Tachyon notes: hydration levels satisfactory! ð§â¨"],
-    Lunch:    ["Energy reserves replenished! ð±","Tachyon approves of your nutrition! ð¸","A well-fed test subject is a productive one! â¨"],
-    Snack:    ["Even Tachyon enjoys a little treat! ðª","A small reward for your hard work! ð¸","Tachyon enjoyed that snack. For research purposes! ðªâ¨"],
-    Walk:     ["Fresh air and exercise â the perfect combo! ð¿","Tachyon's outdoor data collection is complete! ð¸","Exercise logged! Tachyon feels the wind in her hair! ð¨â¨"],
-    Read:     ["Knowledge gained! Tachyon is pleased! ð","The mind grows sharper! ðð¸","A well-read test subject is Tachyon's favourite! â¨"],
-    Cranes:   ["Beautiful cranes! Each fold is a meditation! ð¦¢","Tachyon counts them for her records! ð¦¢ð¸","Origami done! Peace and patience â Tachyon approves! â¨"],
-    Dinner:   ["End-of-day nutrition: complete! ð","Another day well-eaten! ð¸","Tachyon enjoyed dinner. For the data, obviously! â¨"],
-    Teeth:    ["Sparkling clean! Tachyon insists on dental hygiene! â¨","Tachyon approves of good oral care! ð¸","Minty fresh! Even guinea pigs need clean teeth! ð"],
-    Tidy:     ["A clean space makes for clear thinking! ð§¹","Tachyon can breathe easier in a clean environment! ð¸","Order restored! â¨"],
-    Tidy2:    ["Bathroom sparkles! Tachyon is impressed! â¨","Tachyon appreciates the hygiene effort! ð¸","Even experiment spaces need maintenance! ð§´â¨"],
-    Shop:     ["Supplies acquired! ð","Tachyon has analysed the nutritional value of your choices! ð¸","The experiment continues well-provisioned! â¨"],
-    Laundry:  ["Tachyon notes improved textile hygiene! ð§º","Fresh and clean, like a newly scrubbed test tube! ð¸","Even lab coats need washing occasionally! â¨"],
-    Injection:["Tachyon is delighted with this data point! ð§ª","Tachyon's research advances! ð¬ð¸","The experiment proceeds exactly as planned! ð§ªâ¨"],
-};
+    Stretch:  ["Muscles warmed up! Great day ahead! Ã°ÂÂÂª","Tachyon approves of your limbering up! Ã°ÂÂÂ¸","The experiment begins! Starting the day right! Ã¢ÂÂ¨"],
+    Breakfast:["Fuel loaded! Science runs on a full stomach! Ã°ÂÂÂ³","Breakfast done! Tachyon can begin her research! Ã°ÂÂÂ¸","Nutrition logged! Well done! Ã¢ÂÂ¨"],
+    Tablet:   ["Tablet taken! Tachyon is monitoring closely... Ã°ÂÂÂ","Medicine down! For science! Ã°ÂÂÂÃ°ÂÂÂ¸","The experimental tablet has been administered! Ã°ÂÂ§Âª"],
+    Water:    ["Hydration status: optimal! Ã°ÂÂÂ§","Even guinea pigs need to stay hydrated! Ã°ÂÂÂ§Ã°ÂÂÂ¸","Tachyon notes: hydration levels satisfactory! Ã°ÂÂÂ§Ã¢ÂÂ¨"],
+    Lunch:    ["Energy reserves replenished! Ã°ÂÂÂ±","Tachyon approves of your nutrition! Ã°ÂÂÂ¸","A well-fed test subject is a productive one! Ã¢ÂÂ¨"],
+    Snack:    ["Even Tachyon enjoys a little treat! Ã°ÂÂÂª","A small reward for your hard work! Ã°ÂÂÂ¸","Tachyon enjoyed that snack. For research purposes! Ã°ÂÂÂªÃ¢ÂÂ¨"],
+    Walk:     ["Fresh air and exercise Ã¢ÂÂ the perfect combo! Ã°ÂÂÂ¿","Tachyon's outdoor data collection is complete! Ã°ÂÂÂ¸","Exercise logged! Tachyon feels the wind in her hair! Ã°ÂÂÂ¨Ã¢ÂÂ¨"],
+    Read:     ["Knowledge gained! Tachyon is pleased! Ã°ÂÂÂ","The mind grows sharper! Ã°ÂÂÂÃ°ÂÂÂ¸","A well-read test subject is Tachyon's favourite! Ã¢ÂÂ¨"],
+    Cranes:   ["Beautiful cranes! Each fold is a meditation! Ã°ÂÂ¦Â¢","Tachyon counts them for her records! Ã°ÂÂ¦Â¢Ã°ÂÂÂ¸","Origami done! Peace and patience Ã¢ÂÂ Tachyon approves! Ã¢ÂÂ¨"],
+    Dinner:   ["End-of-day nutrition: complete! Ã°ÂÂÂ","Another day well-eaten! Ã°ÂÂÂ¸","Tachyon enjoyed dinner. For the data, obviously! Ã¢ÂÂ¨"],
+    Teeth_AM: ["Morning brush done! Ready to face the day!", "Tachyon approves of your AM dental hygiene!", "Minty fresh start!"],
+    Teeth_PM: ["Teeth brushed before bed! Tachyon is pleased!", "Evening brush complete! Sleep well with a clean smile!", "Sparkling teeth at night — perfect!"],
 const GENERIC_COMPLETE_MSGS={
-    power:  ["Strength growing! ðª","Power increasing! ðªð¸","Physical progress logged! ðªâ¨","Power stat rising! ð¸"],
-    stamina:["Stamina building! â¨","Your endurance is improving! â¨ð¸","Tachyon is monitoring your vitals! â¨","Nourished and energised! ð¸"],
-    guts:   ["That took courage! ð¥","Tachyon is toughening you up nicely! ð¥ð¸","Resilience increasing! ð¥â¨","Brave and bold! ð¸"],
-    wit:    ["Wisdom grows! ð","Intelligence stat rising! ðð¸","Wit increasing! ðâ¨","Sharp as ever! ð¸"],
+    power:  ["Strength growing! Ã°ÂÂÂª","Power increasing! Ã°ÂÂÂªÃ°ÂÂÂ¸","Physical progress logged! Ã°ÂÂÂªÃ¢ÂÂ¨","Power stat rising! Ã°ÂÂÂ¸"],
+    stamina:["Stamina building! Ã¢ÂÂ¨","Your endurance is improving! Ã¢ÂÂ¨Ã°ÂÂÂ¸","Tachyon is monitoring your vitals! Ã¢ÂÂ¨","Nourished and energised! Ã°ÂÂÂ¸"],
+    guts:   ["That took courage! Ã°ÂÂÂ¥","Tachyon is toughening you up nicely! Ã°ÂÂÂ¥Ã°ÂÂÂ¸","Resilience increasing! Ã°ÂÂÂ¥Ã¢ÂÂ¨","Brave and bold! Ã°ÂÂÂ¸"],
+    wit:    ["Wisdom grows! Ã°ÂÂÂ","Intelligence stat rising! Ã°ÂÂÂÃ°ÂÂÂ¸","Wit increasing! Ã°ÂÂÂÃ¢ÂÂ¨","Sharp as ever! Ã°ÂÂÂ¸"],
 };
-const CLASS_COMPLETE_MSGS=["Class attended! Brain cells activated! ðâ¨","Learning complete! Tachyon finds academia fascinating! ðð¸","Class done! Knowledge is the best experiment! ð","Education logged! A well-rounded test subject! ðâ¨"];
+const CLASS_COMPLETE_MSGS=["Class attended! Brain cells activated! Ã°ÂÂÂÃ¢ÂÂ¨","Learning complete! Tachyon finds academia fascinating! Ã°ÂÂÂÃ°ÂÂÂ¸","Class done! Knowledge is the best experiment! Ã°ÂÂÂ","Education logged! A well-rounded test subject! Ã°ÂÂÂÃ¢ÂÂ¨"];
 function getCompletionMessage(id,type,isInj,isTab,isClass){if(isInj)return randFrom(INJ_ONTIME);if(isTab)return randFrom(TAB_ONTIME);if(isClass)return randFrom(CLASS_COMPLETE_MSGS);const s=TASK_COMPLETE_MSGS[id];if(s)return randFrom(s);return randFrom(GENERIC_COMPLETE_MSGS[type]||GENERIC_COMPLETE_MSGS.power);}
 
-// ââ Complete / dismiss ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-const RANK_UP_MSGS={power:"Tachyon feels Stronger! ðª",stamina:"Tachyon has more energy! â¨",guts:"Tachyon is tougher now! ð¥",wit:"Tachyon feels Smarter! ð"};
+// Ã¢ÂÂÃ¢ÂÂ Complete / dismiss Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+const RANK_UP_MSGS={power:"Tachyon feels Stronger! Ã°ÂÂÂª",stamina:"Tachyon has more energy! Ã¢ÂÂ¨",guts:"Tachyon is tougher now! Ã°ÂÂÂ¥",wit:"Tachyon feels Smarter! Ã°ÂÂÂ"};
 
 function complete(id,anim,type,isInjection,isTablet,h){
     const rankBefore=getRank(stats[type]||0);
@@ -805,7 +805,7 @@ function complete(id,anim,type,isInjection,isTablet,h){
     taskCounts[id]=(taskCounts[id]||0)+1;
     const rankAfter=getRank(stats[type]||0);
     scheduleSave();
-    // Cancel idle TIMER but don't set interrupted â task anims must complete
+    // Cancel idle TIMER but don't set interrupted Ã¢ÂÂ task anims must complete
     if(window.cancelIdleTimer)window.cancelIdleTimer();
     const base=coreTasks.find(t=>t.id===id);
     const isClass=!!(base&&base.isClass);
@@ -831,22 +831,22 @@ function complete(id,anim,type,isInjection,isTablet,h){
     updateUI();tryAdvanceStreak();checkAchievements();
 }
 
-function dismiss(id){dismissed[id]=new Date().toDateString();scheduleSave();setStatus('Okay, skipping that one... ð¤',3000);updateUI();}
+function dismiss(id){dismissed[id]=new Date().toDateString();scheduleSave();setStatus('Okay, skipping that one... Ã°ÂÂÂ¤',3000);updateUI();}
 
-// ââ Status / bored ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Status / bored Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 let statusTimeout=null,boredTimeout=null;
-const DEFAULT_MSGS=["Tachyon is here! ð¸","Ready for today?","What's on the schedule?"];
-const BORED_MSGS=["Tachyon is bored... ð´","Hmm... nothing to do?","Tachyon is waiting patiently...","Is anyone there...? ð¸"];
+const DEFAULT_MSGS=["Tachyon is here! Ã°ÂÂÂ¸","Ready for today?","What's on the schedule?"];
+const BORED_MSGS=["Tachyon is bored... Ã°ÂÂÂ´","Hmm... nothing to do?","Tachyon is waiting patiently...","Is anyone there...? Ã°ÂÂÂ¸"];
 function setStatus(text,duration){const el=document.getElementById('status-text');if(!el)return;el.style.opacity='0';if(statusTimeout)clearTimeout(statusTimeout);setTimeout(()=>{el.textContent=text;el.style.opacity='1';},300);if(duration)statusTimeout=setTimeout(()=>setStatus(DEFAULT_MSGS[Math.floor(Math.random()*DEFAULT_MSGS.length)],0),duration);resetBoredTimer();}
 function resetBoredTimer(){if(boredTimeout)clearTimeout(boredTimeout);boredTimeout=setTimeout(()=>{setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0);if(agnes)showEmoteAndItem(null,EMOTE.bored,null);boredTimeout=setInterval(()=>setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0),120000);},300000);}
 function say(text){setStatus(text,4000);if(agnes)agnes.play('say');}
 resetBoredTimer();
 
-// ââ Clock âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Clock Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function updateClock(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
 updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();},60000);
 
-// ââ Phaser ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Phaser Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 let agnes=null,gameBooted=false,phaserScene=null;
 window._rankUpCelebrating=false;
 
@@ -888,7 +888,7 @@ function create(){
     A('say',      ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'],4,0);
     A('sit_down', ['agtc320_00','agtc320_01','agtc320_02','agtc320_03','agtc320_04','agtc320_06','agtc320_04','agtc320_06','agtc320_04','agtc320_06'],2,0);
 
-    // ââ spawnHint: item sprites spread around Tachyon + emote bubble ââââââââââ
+    // Ã¢ÂÂÃ¢ÂÂ spawnHint: item sprites spread around Tachyon + emote bubble Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
     sc.spawnHint=function(taskId,emoteFrame,isCompletion){
         if(taskId){
             const mapping=TASK_SPRITES[taskId];
@@ -930,7 +930,7 @@ function create(){
         }
     };
 
-    // ââ Movement ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+    // Ã¢ÂÂÃ¢ÂÂ Movement Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
     let vx=0,vy=0,mode='none',fAngle=0,wallBounce=false,interrupted=false;
     const HX=Math.round(W/2),HY=90,WL=20,WR=W-20,SDL=10,SDR=W-10;
 
@@ -941,10 +941,10 @@ function create(){
     const pool=['idle1','idle1','idle1','idle1','idle1','idle1','walk_left','dash','super_dash','float','giggle','wave','cheer'];
     let idleTimer=null;
 
-    // ââ FIX: Separate idle-timer cancel from interrupted flag âââââââââââââââââ
-    // cancelIdleTimer â stops the next idle from firing, but does NOT set interrupted
+    // Ã¢ÂÂÃ¢ÂÂ FIX: Separate idle-timer cancel from interrupted flag Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+    // cancelIdleTimer Ã¢ÂÂ stops the next idle from firing, but does NOT set interrupted
     //   so task-completion anims finish cleanly and animationcomplete parks Agnes
-    // cancelCurrent â full interrupt (used only when tapping Agnes directly)
+    // cancelCurrent Ã¢ÂÂ full interrupt (used only when tapping Agnes directly)
     const cancelIdleTimer=()=>{if(idleTimer){idleTimer.remove(false);idleTimer=null;}};
     const next=d=>{cancelIdleTimer();interrupted=false;idleTimer=sc.time.delayedCall(d,playIdle);};
     const cancelCurrent=()=>{interrupted=true;cancelIdleTimer();};
@@ -973,7 +973,7 @@ function create(){
     agnes.on('animationcomplete',anim=>{
         // During rank-up celebration, loop cheer
         if(window._rankUpCelebrating&&anim.key==='cheer'){agnes.play('cheer');return;}
-        // Task-completion anims always park and resume â do NOT check interrupted here
+        // Task-completion anims always park and resume Ã¢ÂÂ do NOT check interrupted here
         const TASK_ANIMS=['eating','snack','giggle','wave','cheer','say','sit_down','super_dash','sudden_stop','float'];
         if(TASK_ANIMS.includes(anim.key)){
             if(anim.key==='super_dash'){stop();goHome(()=>{park();next(Phaser.Math.Between(3000,6000));});return;}
@@ -989,7 +989,7 @@ function create(){
 
     agnes.on('pointerdown',()=>{
         cancelCurrent();sc._homeCb=null;stop();park();agnes.setPosition(HX,HY);
-        say("Hi! Don't forget your tasks today! ð¸");
+        say("Hi! Don't forget your tasks today! Ã°ÂÂÂ¸");
         showEmoteAndItem(null,EMOTE.happy,null);
         next(3000);
     });

@@ -306,9 +306,13 @@
 
 <script>
 // ── Version system ────────────────────────────────────────────────────────────
-const CURRENT_VERSION = '1.4.8';
+const CURRENT_VERSION = '1.4.9';
 
 const CHANGELOG = [
+    { version: '1.4.9', changes: [
+        '🔥 Streak system is now much more reliable — fixed issues with streaks not advancing or resetting unexpectedly',
+        '💧 Water is no longer an essential task so it won't block your streak',
+    ]},
  { version: '1.4.8', changes: [
         'Correcting issue where changelog banner persists at top of screen',
     ]},
@@ -615,7 +619,19 @@ function setSyncStatus(state,msg){const el=document.getElementById('sync-status'
 
 // ── Streak ────────────────────────────────────────────────────────────────────
 function getTodayEssentials(){const day=new Date().getDay();return coreTasks.filter(t=>{if(!t.isEssential)return false;if(t.isInjection&&!isInjectionFriday())return false;return(t.days||[0,1,2,3,4,5,6]).includes(day);});}
-function tryAdvanceStreak(){const today=new Date().toDateString();if(streakData.lastDate===today)return;if(!getTodayEssentials().every(t=>history[t.id]===today))return;const yesterday=new Date(Date.now()-86400000).toDateString();streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:1;streakData.best=Math.max(streakData.best,streakData.current);streakData.lastDate=today;const ms={1:'First full day done! 🌸',3:'3 days in a row! 🔥',7:'A whole week!! ⭐',14:'Two week streak! 💪',30:'30 DAYS! 🎉'};if(ms[streakData.current])setTimeout(()=>setStatus(ms[streakData.current],7000),800);scheduleSave();renderStreak();checkAchievements();}
+function tryAdvanceStreak(){
+    const today=new Date().toDateString();
+    if(streakData.lastDate===today)return;
+    const essentials=getTodayEssentials();
+    if(!essentials.every(t=>history[t.id]===today))return;
+    const yesterday=new Date(Date.now()-86400000).toDateString();
+    streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:1;
+    streakData.best=Math.max(streakData.best,streakData.current);
+    streakData.lastDate=today;
+    const ms={1:'First full day done! 🌸',3:'3 days in a row! 🔥',7:'A whole week!! ⭐',14:'Two week streak! 💪',30:'30 DAYS! 🎉'};
+    if(ms[streakData.current])setTimeout(()=>setStatus(ms[streakData.current],7000),800);
+    scheduleSave();renderStreak();checkAchievements();
+}
 function renderStreak(){const n=streakData.current;document.getElementById('streak-flame').textContent=n>=14?'🏆':n>=7?'⭐':n>=3?'🔥':'✨';document.getElementById('streak-count').textContent=n===0?'No streak yet':`${n} day streak!`;document.getElementById('streak-sub').textContent=n===0?'Complete all essential tasks to start your streak!':`Personal best: ${streakData.best} day${streakData.best!==1?'s':''}`;}
 
 // ── Achievements ──────────────────────────────────────────────────────────────
@@ -674,7 +690,7 @@ const coreTasks=[
     {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:'Until 10AM',   isEssential:true,  check:h=>h<10},
     {id:'Breakfast', name:'Have Breakfast',               type:'stamina', anim:'eating',     timeLabel:'Until 12PM',   isEssential:true,  check:h=>h<12},
     {id:'Tablet',    name:'Take Experimental Tablet',     type:'guts',    anim:'giggle',     timeLabel:'Before 12PM',  isEssential:true,  isTablet:true, idealEnd:12, check:h=>h<24},
-    {id:'Water',     name:'Drink Glass Of Water',         type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',   isEssential:true,  check:h=>h>=8&&h<24&&h%2===0},
+    {id:'Water',     name:'Drink Glass Of Water',         type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',   isEssential:false,  check:h=>h>=8&&h<24&&h%2===0},
     {id:'Lunch',     name:'Eat Lunch',                    type:'stamina', anim:'eating',     timeLabel:'12PM – 3PM',   isEssential:true,  check:h=>h>=12&&h<15},
     {id:'Snack',     name:'Share A Snack With Tachyon',   type:'stamina', anim:'snack',      timeLabel:'3PM – 5PM',    isEssential:false, check:h=>h>=15&&h<17},
     {id:'Walk',      name:'Go For A Walk with Tachyon',   type:'power',   anim:'super_dash', timeLabel:'After 3PM',    isEssential:false, check:h=>h>=15&&h<19},

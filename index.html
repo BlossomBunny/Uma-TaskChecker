@@ -138,7 +138,7 @@
         @keyframes confettiFall { 0%{transform:translateY(-10px) rotate(0deg);opacity:1} 100%{transform:translateY(100vh) rotate(720deg);opacity:0} }
         @keyframes hudFlash { 0%,100%{box-shadow:0 5px 15px rgba(0,0,0,0.05)} 50%{box-shadow:0 0 30px rgba(248,165,194,0.6)} }
         #hud.flashing { animation: hudFlash 0.4s ease 4; }
-        /* ── Version popup ── */
+        /* -- Version popup -- */
 
         #update-banner {
     position: fixed !important;
@@ -305,7 +305,7 @@
 </div>
 
 <script>
-// ── Version system ────────────────────────────────────────────────────────────
+// -- Version system --
 const CURRENT_VERSION = '1.4.9';
 
 const CHANGELOG = [
@@ -376,7 +376,7 @@ async function closeUpdateModal() {
     }
 }
 
-// ── Deploy polling — shows banner if a new version is deployed while app is open ──
+// -- Deploy polling — shows banner if a new version is deployed while app is open --
 function doUpdateReload() {
     setStatus('Reloading for the latest update... 🌸', 4000);
     setTimeout(async () => {
@@ -408,7 +408,7 @@ setTimeout(() => { checkForNewDeploy(); setInterval(checkForNewDeploy, 5 * 60 * 
 
 
 
-// ── XP / Rank ─────────────────────────────────────────────────────────────────
+// -- XP / Rank --
 const RANK_THRESHOLDS = [0, 100, 300, 600, 1100, 2100, 4100];
 const RANK_NAMES = ['F','E','D','C','B','A','S'];
 const RANK_BADGES = { F:'🔰', E:'🥉', D:'🥈', C:'🥇', B:'💎', A:'👑', S:'🌟' };
@@ -431,7 +431,7 @@ function getRankProgress(xp) {
     return { pct: Math.round(((xp - low) / (high - low)) * 100), label: `${xp - low}/${high - low}` };
 }
 
-// ── Rank-up celebration ───────────────────────────────────────────────────────
+// -- Rank-up celebration --
 function showRankUp(stat, newRankIdx) {
     const rankName = RANK_NAMES[newRankIdx];
     const badge = RANK_BADGES[rankName] || '⭐';
@@ -484,7 +484,7 @@ function spawnConfetti() {
     }
 }
 
-// ── Task sprites ──────────────────────────────────────────────────────────────
+// -- Task sprites --
 const TASK_SPRITES = {
     Breakfast:{ atlas:'snack',    frame:'80_pancakes_dish' },
     Water:    { atlas:'drink',    frame:'water' },
@@ -529,7 +529,7 @@ const TASK_REMINDERS = {
     Injection:'Time for your injection. You\'ve got this! 🧪',
 };
 
-// ── Supabase ──────────────────────────────────────────────────────────────────
+// -- Supabase --
 const SUPA_URL = 'https://iusspgrnigizjsvkpiug.supabase.co';
 const SUPA_KEY = 'sb_publishable_Ad0oD2l3laFTst4tG0qw3A_2k7Fwa36';
 async function supaFetch(path, method='GET', body=null) {
@@ -540,7 +540,7 @@ async function supaFetch(path, method='GET', body=null) {
     return res.status===204 ? null : res.json();
 }
 
-// ── Session ───────────────────────────────────────────────────────────────────
+// -- Session --
 function hashPin(u,p){let h=0;const s=u.toLowerCase()+':'+p+':tachyon-salt-2025';for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return 'ph_'+Math.abs(h).toString(36);}
 function saveSession(u,ph){localStorage.setItem('tachyonSession',JSON.stringify({username:u,pinHash:ph}));}
 function clearSession(){localStorage.removeItem('tachyonSession');}
@@ -548,18 +548,18 @@ function getSession(){try{return JSON.parse(localStorage.getItem('tachyonSession
 function getLegacyData(){const s=JSON.parse(localStorage.getItem('agnesStats')||'null');if(!s||(s.power===0&&s.stamina===0&&s.guts===0&&s.wit===0))return null;return{stats:s,history:JSON.parse(localStorage.getItem('agnesHistory')||'{}'),dismissed:JSON.parse(localStorage.getItem('agnesDismissed')||'{}'),custom_tasks:JSON.parse(localStorage.getItem('agnesCustomTasks')||'[]')};}
 function clearLegacy(){['agnesStats','agnesHistory','agnesDismissed','agnesCustomTasks'].forEach(k=>localStorage.removeItem(k));}
 
-// ── Holiday mode ──────────────────────────────────────────────────────────────
+// -- Holiday mode --
 let holidayMode = JSON.parse(localStorage.getItem('holidayMode') || 'false');
 function toggleHoliday(){holidayMode=!holidayMode;localStorage.setItem('holidayMode',JSON.stringify(holidayMode));syncHolidayBtn();updateUI();}
 function syncHolidayBtn(){const b=document.getElementById('holiday-btn');if(b)b.classList.toggle('on',holidayMode);const n=document.getElementById('holiday-notice');if(n)n.style.display=holidayMode?'block':'none';}
 
-// ── Data state ────────────────────────────────────────────────────────────────
+// -- Data state --
 let stats={power:0,stamina:0,guts:0,wit:0},history={},dismissed={},customTasksRaw=[],coreTaskOverrides={};
 let streakData={current:0,best:0,lastDate:''},achievements={},taskCounts={},customTasks=[];
 let currentUser=null;
 function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};customTasks=hydrateCustomTasks(customTasksRaw);}
 
-// ── Auto login ────────────────────────────────────────────────────────────────
+// -- Auto login --
 window.addEventListener('DOMContentLoaded', async () => {
     syncHolidayBtn();
     const session=getSession();
@@ -611,13 +611,13 @@ function showApp(){
 }
 function logout(){clearSession();currentUser=null;loginIsRegister=false;document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';['login-username','login-pin'].forEach(id=>document.getElementById(id).value='');document.getElementById('login-error').textContent='';document.getElementById('login-mode-label').textContent='Sign In';document.getElementById('login-toggle').textContent="Don't have an account? Create one!";document.getElementById('login-migrate-notice').style.display=getLegacyData()?'block':'none';}
 
-// ── Cloud save ────────────────────────────────────────────────────────────────
+// -- Cloud save --
 let saveDebounce=null;
 function scheduleSave(){if(saveDebounce)clearTimeout(saveDebounce);saveDebounce=setTimeout(cloudSave,900);}
 async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','Saving… 🌸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed — retrying…');saveDebounce=setTimeout(cloudSave,6000);}}
 function setSyncStatus(state,msg){const el=document.getElementById('sync-status');el.className=state;el.textContent=msg;}
 
-// ── Streak ────────────────────────────────────────────────────────────────────
+// -- Streak --
 function getTodayEssentials(){const day=new Date().getDay();return coreTasks.filter(t=>{if(!t.isEssential)return false;if(t.isInjection&&!isInjectionFriday())return false;return(t.days||[0,1,2,3,4,5,6]).includes(day);});}
 function tryAdvanceStreak(){
     const today=new Date().toDateString();
@@ -634,7 +634,7 @@ function tryAdvanceStreak(){
 }
 function renderStreak(){const n=streakData.current;document.getElementById('streak-flame').textContent=n>=14?'🏆':n>=7?'⭐':n>=3?'🔥':'✨';document.getElementById('streak-count').textContent=n===0?'No streak yet':`${n} day streak!`;document.getElementById('streak-sub').textContent=n===0?'Complete all essential tasks to start your streak!':`Personal best: ${streakData.best} day${streakData.best!==1?'s':''}`;}
 
-// ── Achievements ──────────────────────────────────────────────────────────────
+// -- Achievements --
 const ACH_DEFS=[
     {id:'first_task',   icon:'🌱',name:'First Steps',       desc:'Complete your first task',              check:()=>Object.keys(history).length>=1},
     {id:'streak_3',     icon:'🔥',name:'On a Roll',         desc:'Reach a 3-day streak',                  check:()=>streakData.best>=3},
@@ -681,11 +681,11 @@ function achProgress(def){
 }
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
 
-// ── Injection Friday ──────────────────────────────────────────────────────────
+// -- Injection Friday --
 const INJECTION_REF=new Date(2025,4,9);
 function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return false;const diff=Math.round((now-INJECTION_REF)/86400000);return diff>=0&&diff%14===0;}
 
-// ── Core tasks ────────────────────────────────────────────────────────────────
+// -- Core tasks --
 const coreTasks=[
     {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:'Until 10AM',   isEssential:true,  check:h=>h<10},
     {id:'Breakfast', name:'Have Breakfast',               type:'stamina', anim:'eating',     timeLabel:'Until 12PM',   isEssential:true,  check:h=>h<12},
@@ -714,14 +714,14 @@ const coreTasks=[
 
 function getEffectiveTask(task){const ov=coreTaskOverrides[task.id];if(!ov)return task;return Object.assign({},task,{name:ov.name||task.name,type:ov.type||task.type,timeLabel:ov.timeLabel||task.timeLabel,days:ov.days||task.days,check:h=>{if(ov.fromH!==undefined&&ov.toH!==undefined)return ov.fromH<=ov.toH?h>=ov.fromH&&h<ov.toH:h>=ov.fromH||h<ov.toH;return task.check(h);}});}
 
-// ── Menu / Tabs ───────────────────────────────────────────────────────────────
+// -- Menu / Tabs --
 const STAT_ICONS={power:'💪',stamina:'✨',guts:'🔥',wit:'📚'};
 const DAY_NAMES=['Su','Mo','Tu','We','Th','Fr','Sa'];
 let activeTab='custom';
 function switchTab(tab){activeTab=tab;['custom','core','achievements'].forEach((t,i)=>{document.querySelectorAll('.tp-tab')[i].classList.toggle('active',t===tab);document.getElementById('tab-'+t).classList.toggle('active',t===tab);});if(tab==='core')renderCoreTaskEditor();if(tab==='achievements')renderAchievements();}
 function toggleMenu(){const panel=document.getElementById('task-panel');const open=panel.style.display==='block';panel.style.display=open?'none':'block';if(!open){syncHolidayBtn();renderCustomTasks();if(activeTab==='core')renderCoreTaskEditor();if(activeTab==='achievements')renderAchievements();}}
 
-// ── Core task editor ──────────────────────────────────────────────────────────
+// -- Core task editor --
 function renderCoreTaskEditor(){
     const list=document.getElementById('core-task-edit-list');
     const essentials=coreTasks.filter(t=>t.isEssential||t.isInjection);
@@ -736,7 +736,7 @@ function editCoreTask(id){const task=coreTasks.find(t=>t.id===id);if(!task)retur
 function saveCoreTask(id){const task=coreTasks.find(t=>t.id===id);if(!task)return;const name=document.getElementById(`ce-name-${id}`).value.trim();const type=document.getElementById(`ce-type-${id}`).value;const fromVal=document.getElementById(`ce-from-${id}`).value;const toVal=document.getElementById(`ce-to-${id}`).value;const days=Array.from(document.querySelectorAll(`#ce-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};let timeLabel=task.timeLabel,fromH,toH;if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} – ${fmt(toVal)}`;}else if(fromVal){fromH=parseInt(fromVal.split(':')[0]);timeLabel=`From ${fmt(fromVal)}`;}coreTaskOverrides[id]={name,type,days,timeLabel};if(fromH!==undefined)coreTaskOverrides[id].fromH=fromH;if(toH!==undefined)coreTaskOverrides[id].toH=toH;scheduleSave();renderCoreTaskEditor();updateUI();setStatus('Task updated! ✨',2000);}
 function resetCoreTask(id){delete coreTaskOverrides[id];scheduleSave();renderCoreTaskEditor();updateUI();}
 
-// ── Custom tasks ──────────────────────────────────────────────────────────────
+// -- Custom tasks --
 const STAT_ANIMS={power:['super_dash','dash','cheer'],stamina:['eating','snack','wave'],guts:['giggle','cheer','sudden_stop'],wit:['sit_down','say','giggle']};
 function pickAnim(type){const p=STAT_ANIMS[type]||['cheer'];return p[Math.floor(Math.random()*p.length)];}
 function hydrateCustomTasks(raw){return raw.map(t=>Object.assign({},t,{anim:t.anim||'cheer',check:h=>{if(t.fromH!==undefined&&t.toH!==undefined)return t.fromH<=t.toH?h>=t.fromH&&h<t.toH:h>=t.fromH||h<t.toH;return true;}}));}
@@ -748,7 +748,7 @@ function editCustomTask(id){const t=customTasksRaw.find(t=>t.id===id);if(!t)retu
 function saveCustomTask(id){const name=document.getElementById(`edit-name-${id}`).value.trim();const type=document.getElementById(`edit-type-${id}`).value;const fromVal=document.getElementById(`edit-from-${id}`).value;const toVal=document.getElementById(`edit-to-${id}`).value;const days=Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}const idx=customTasksRaw.findIndex(t=>t.id===id);if(idx===-1)return;customTasksRaw[idx]=buildRaw(id,name,type,days,fromVal,toVal);customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();setStatus('Task updated! ✨',2000);}
 function renderCustomTasks(){const list=document.getElementById('custom-task-list');if(!customTasksRaw.length){list.innerHTML='';return;}list.innerHTML='<hr class="tp-divider">'+customTasksRaw.map(t=>{const dayStr=t.days.map(d=>DAY_NAMES[d]).join(' · ');return`<div class="ct-item" data-id="${t.id}"><div class="ct-info"><div class="ct-name">${t.name}</div><div class="ct-meta">${STAT_ICONS[t.type]||''} ${t.type} · ${dayStr} · ${t.timeLabel}</div></div><div class="ct-btns"><button class="btn-dupe" onclick="duplicateCustomTask('${t.id}')" title="Duplicate">⧉</button><button class="btn-edit" onclick="editCustomTask('${t.id}')" title="Edit">✎</button><button class="btn-del" onclick="deleteCustomTask('${t.id}')" title="Delete">✕</button></div></div>`;}).join('');}
 
-// ── Nag system ────────────────────────────────────────────────────────────────
+// -- Nag system --
 const INJECTION_NAGS=["I NEED this data on time!! Please do the injection! 🔬","Late injection data skews the whole experiment... 😤","This is for SCIENCE!! 🧪","Tachyon is not impressed. The injection window was 3PM–5PM! 😤","The research won't wait forever... 🌸"];
 const TABLET_NAGS=["Have you taken your tablet yet today? It's important! 💊","The tablet needs to be taken before 12PM! 🌸","I'm watching the tablet situation closely... 😤","Your health matters! Please take your tablet! 💊"];
 let injNagIdx=0,tabNagIdx=0,injNagInterval=null,tabNagInterval=null,_naggingInj=false,_naggingTab=false;
@@ -758,13 +758,13 @@ function stopInjNag(){clearInterval(injNagInterval);injNagInterval=null;}
 function startTabNag(){if(tabNagInterval)return;tabNagInterval=setInterval(()=>{if(!isTaskActive('Tablet'))return;setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.anger,null);},90000);if(isTaskActive('Tablet')){setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.urgent,null);}}
 function stopTabNag(){clearInterval(tabNagInterval);tabNagInterval=null;}
 
-// ── Hint system ───────────────────────────────────────────────────────────────
+// -- Hint system --
 let hintInterval=null;
 function getActiveTaskIds(){const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();return[...coreTasks.map(getEffectiveTask),...customTasks].filter(task=>{const taskDays=task.days||[0,1,2,3,4,5,6];return taskDays.includes(day)&&task.check(h)&&history[task.id]!==today&&dismissed[task.id]!==today;}).map(t=>t.id);}
 function doHint(){const active=getActiveTaskIds();if(!active.length)return;const id=active[Math.floor(Math.random()*active.length)];const base=coreTasks.find(t=>t.id===id);const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));const reminder=TASK_REMINDERS[id]||(base?`Don't forget — ${(base.name||'').toLowerCase()}!`:null);if(reminder)setStatus(reminder,5000);showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);}
 function startHintCycle(){if(hintInterval)return;setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);}
 
-// ── UI update ─────────────────────────────────────────────────────────────────
+// -- UI update --
 let _lastVisible=new Set();
 function updateUI(){
     ['power','stamina','guts','wit'].forEach(s=>{const v=stats[s]||0;const rank=getRank(v);const{pct,label}=getRankProgress(v);const bar=document.getElementById('bar-'+s);if(bar)bar.style.width=pct+'%';const rnk=document.getElementById('rank-'+s);if(rnk)rnk.textContent=RANK_NAMES[rank];const xpEl=document.getElementById('xp-'+s);if(xpEl)xpEl.textContent=rank>=6?'MAX':label;});
@@ -807,7 +807,7 @@ function updateUI(){
     renderStreak();
 }
 
-// ── Completion messages ───────────────────────────────────────────────────────
+// -- Completion messages --
 const INJ_ONTIME=["Ehehe~ more data for me! 🧪✨","Perfect timing! 🔬🌸","Excellent! Right on schedule! 🧪"];
 const INJ_LATE=["Tachyon is not impressed... late data! 😤","Better late than never! 😤","Please be on time next time! 😤"];
 const TAB_ONTIME=["Tablet on time — Tachyon approves! 💊🌸","Well done! Health first! 💊✨","Tablet done! 💊"];
@@ -842,7 +842,7 @@ const GENERIC_COMPLETE_MSGS={
 const CLASS_COMPLETE_MSGS=["Class attended! Brain cells activated! 📚✨","Learning complete! Tachyon finds academia fascinating! 📚🌸","Class done! Knowledge is the best experiment! 📚","Education logged! A well-rounded test subject! 📚✨"];
 function getCompletionMessage(id,type,isInj,isTab,isClass){if(isInj)return randFrom(INJ_ONTIME);if(isTab)return randFrom(TAB_ONTIME);if(isClass)return randFrom(CLASS_COMPLETE_MSGS);const s=TASK_COMPLETE_MSGS[id];if(s)return randFrom(s);return randFrom(GENERIC_COMPLETE_MSGS[type]||GENERIC_COMPLETE_MSGS.power);}
 
-// ── Complete / dismiss ────────────────────────────────────────────────────────
+// -- Complete / dismiss --
 const RANK_UP_MSGS={power:"Tachyon feels Stronger! 💪",stamina:"Tachyon has more energy! ✨",guts:"Tachyon is tougher now! 🔥",wit:"Tachyon feels Smarter! 📚"};
 
 function complete(id,anim,type,isInjection,isTablet,h){
@@ -881,7 +881,7 @@ function complete(id,anim,type,isInjection,isTablet,h){
 
 function dismiss(id){dismissed[id]=new Date().toDateString();scheduleSave();setStatus('Okay, skipping that one... 😤',3000);updateUI();}
 
-// ── Status / bored ────────────────────────────────────────────────────────────
+// -- Status / bored --
 let statusTimeout=null,boredTimeout=null;
 const DEFAULT_MSGS=["Tachyon is here! 🌸","Ready for today?","What's on the schedule?"];
 const BORED_MSGS=["Tachyon is bored... 😴","Hmm... nothing to do?","Tachyon is waiting patiently...","Is anyone there...? 🌸"];
@@ -890,11 +890,11 @@ function resetBoredTimer(){if(boredTimeout)clearTimeout(boredTimeout);boredTimeo
 function say(text){setStatus(text,4000);if(agnes)agnes.play('say');}
 resetBoredTimer();
 
-// ── Clock ─────────────────────────────────────────────────────────────────────
+// -- Clock --
 function updateClock(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
 updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();},60000);
 
-// ── Phaser ────────────────────────────────────────────────────────────────────
+// -- Phaser --
 let agnes=null,gameBooted=false,phaserScene=null;
 window._rankUpCelebrating=false;
 
@@ -936,7 +936,7 @@ function create(){
     A('say',      ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'],4,0);
     A('sit_down', ['agtc320_00','agtc320_01','agtc320_02','agtc320_03','agtc320_04','agtc320_06','agtc320_04','agtc320_06','agtc320_04','agtc320_06'],2,0);
 
-    // ── spawnHint: item sprites spread around Tachyon + emote bubble ──────────
+    // -- spawnHint: item sprites spread around Tachyon + emote bubble --
     sc.spawnHint=function(taskId,emoteFrame,isCompletion){
         if(taskId){
             const mapping=TASK_SPRITES[taskId];
@@ -978,7 +978,7 @@ function create(){
         }
     };
 
-    // ── Movement ──────────────────────────────────────────────────────────────
+    // -- Movement --
     let vx=0,vy=0,mode='none',fAngle=0,wallBounce=false,interrupted=false;
     const HX=Math.round(W/2),HY=90,WL=20,WR=W-20,SDL=10,SDR=W-10;
 
@@ -989,7 +989,7 @@ function create(){
     const pool=['idle1','idle1','idle1','idle1','idle1','idle1','walk_left','dash','super_dash','float','giggle','wave','cheer'];
     let idleTimer=null;
 
-    // ── FIX: Separate idle-timer cancel from interrupted flag ─────────────────
+    // -- FIX: Separate idle-timer cancel from interrupted flag --
     // cancelIdleTimer — stops the next idle from firing, but does NOT set interrupted
     //   so task-completion anims finish cleanly and animationcomplete parks Agnes
     // cancelCurrent — full interrupt (used only when tapping Agnes directly)

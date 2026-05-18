@@ -215,20 +215,20 @@
     <div id="holiday-notice">🏖️ Holiday Mode is on — class tasks are hidden. Toggle it off in ⚙️ to restore them.</div>
 
     <div id="streak-tooltip-backdrop" onclick="closeStreakTooltip()"></div>
-    <div id="streak-tooltip">
+        <div id="streak-tooltip">
         <button class="tt-close" onclick="closeStreakTooltip()">&#x2715;</button>
-        <h4>🔥 How Streaks Work</h4>
-        <p>Complete <strong>all essential tasks</strong> on the same day to earn a streak day. Your streak grows each consecutive day you do this.</p>
-        <ul id="streak-essentials-list"><li>Loading...</li></ul>
-        <p class="tt-note">⚠️ Missing a day resets your streak to 1. The injection only counts on its scheduled biweekly Fridays.</p>
+        <h4>🔥 Today's Streak Progress</h4>
+        <div id="streak-tt-progress" style="margin-bottom:8px;"></div>
+        <ul id="streak-essentials-list" style="list-style:none;padding:0;margin:0 0 8px;"></ul>
+        <p class="tt-note">⚠️ Missing a day resets your streak to 0. The injection only counts on its scheduled biweekly Fridays.</p>
     </div>
-    <div id="streak-bar">
+    <div id="streak-bar" onclick="openStreakTooltip(event)" style="cursor:pointer;user-select:none;" title="Tap to see streak progress">
         <div id="streak-flame">✨</div>
         <div id="streak-info">
             <div id="streak-count">No streak yet</div>
             <div id="streak-sub">Complete all essential tasks to start your streak!</div>
         </div>
-        <button id="streak-info-btn" onclick="openStreakTooltip(event)" title="How do streaks work?">ℹ️</button>
+        <button id="streak-info-btn" title="Streak progress">ℹ️</button>
     </div>
 
     <div id="task-panel">
@@ -306,9 +306,14 @@
 
 <script>
 // -- Version system --
-const CURRENT_VERSION = '1.4.9';
+const CURRENT_VERSION = '1.4.10';
 
 const CHANGELOG = [
+    { version: '1.4.10', changes: [
+        '🔥 Tap the streak bar to see a checklist of today\'s essential tasks with ✅/❌ status',
+        '⏰ Streak now auto-advances every 60 seconds, not just on task taps',
+        '🔄 Losing your streak now correctly resets to 0 instead of 1',
+    ]},
     { version: '1.4.9', changes: [
         '🔥 Streak system is now much more reliable — fixed issues with streaks not advancing or resetting unexpectedly',
         '💧 Water is no longer an essential task so it wont block your streak',
@@ -625,7 +630,7 @@ function tryAdvanceStreak(){
     const essentials=getTodayEssentials();
     if(!essentials.every(t=>history[t.id]===today))return;
     const yesterday=new Date(Date.now()-86400000).toDateString();
-    streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:1;
+    streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:0;
     streakData.best=Math.max(streakData.best,streakData.current);
     streakData.lastDate=today;
     const ms={1:'First full day done! 🌸',3:'3 days in a row! 🔥',7:'A whole week!! ⭐',14:'Two week streak! 💪',30:'30 DAYS! 🎉'};
@@ -892,7 +897,7 @@ resetBoredTimer();
 
 // -- Clock --
 function updateClock(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
-updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();},60000);
+updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();tryAdvanceStreak();},60000);
 
 // -- Phaser --
 let agnes=null,gameBooted=false,phaserScene=null;
@@ -1063,18 +1068,29 @@ function create(){
 
 // -- Streak tooltip --
 function openStreakTooltip(e) {
-    e.stopPropagation();
-    const list = document.getElementById('streak-essentials-list');
-    list.innerHTML = coreTasks.filter(t => t.isEssential).map(t => {
-        const note = t.isInjection ? ' <span style="color:#a5b1c2">(biweekly Fri only)</span>' : '';
-        return '<li>' + t.name + note + '</li>';
+    if (e) e.stopPropagation();
+    const today = new Date().toDateString();
+    const essentials = getTodayEssentials();
+    const doneCount = essentials.filter(t => history[t.id] === today).length;
+    const total = essentials.length;
+    const allDone = doneCount === total;
+    document.getElementById('streak-tt-progress').innerHTML = allDone
+        ? '<span style="color:#00b894;font-weight:bold;">✅ All done! Your streak will count for today.</span>'
+        : '<span style="color:var(--accent);font-weight:bold;">' + doneCount + ' / ' + total + ' done — ' + (total - doneCount) + ' still needed</span>';
+    document.getElementById('streak-essentials-list').innerHTML = essentials.map(t => {
+        const isDone = history[t.id] === today;
+        const note = t.isInjection ? ' <span style="color:#a5b1c2;font-size:0.85em">(biweekly Fri)</span>' : '';
+        return '<li style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f5f5f5;">'
+            + '<span>' + (isDone ? '✅' : '❌') + '</span>'
+            + '<span style="flex:1;' + (isDone ? 'color:#00b894;' : 'color:#ff7675;font-weight:bold;') + '">'
+            + t.name + note + '</span></li>';
     }).join('');
-    const btn = e.currentTarget;
-    const rect = btn.getBoundingClientRect();
+    const bar = document.getElementById('streak-bar');
+    const rect = bar.getBoundingClientRect();
     const tt = document.getElementById('streak-tooltip');
     tt.classList.add('show');
     document.getElementById('streak-tooltip-backdrop').classList.add('show');
-    const ttH = tt.offsetHeight || 260;
+    const ttH = tt.offsetHeight || 300;
     let top = rect.bottom + 8;
     if (top + ttH > window.innerHeight - 8) top = rect.top - ttH - 8;
     tt.style.top = Math.max(8, top) + 'px';

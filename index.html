@@ -2,7 +2,194 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js">
+// -- Field Mission System --
+const FIELD_MISSIONS = [
+    "Find a pink flower \u2014 what species is it? Report back to Tachyon!",
+    "Spot a bird and identify the breed for Tachyon's records!",
+    "Find a dog outside \u2014 what breed is it? Tachyon needs the data!",
+    "Go cloud gazing and learn one fun fact about a type of cloud you see.",
+    "Find a tree and identify the species. Tachyon is watching.",
+    "Spot an insect and identify it for the research files!",
+    "Find something blue in nature \u2014 what is it exactly?",
+    "Find a seed or berry and identify the plant it came from.",
+    "Find a feather outside \u2014 what bird might it belong to?",
+    "Go somewhere within walking distance you've never been before.",
+    "Find interesting architecture nearby and sketch or photograph it.",
+    "Find a cat outside \u2014 what colour and markings does it have?",
+    "Spot a cloud that looks like something \u2014 what does it resemble?",
+    "Find a puddle or body of water \u2014 what's living in or around it?",
+    "Find something man-made being reclaimed by nature.",
+    "Spot 3 different types of plant on a single walk.",
+    "Find an interesting rock or stone \u2014 what type might it be?",
+    "Draw something you find outside today for Tachyon's files.",
+    "Find evidence of an animal (tracks, burrow, nest) \u2014 what made it?",
+    "Find a flower that isn't pink \u2014 identify it for Tachyon!",
+    "Photograph something that made you smile outside today.",
+    "Find a plant with an interesting smell \u2014 identify it!",
+    "Spot something in nature that comes in pairs or symmetrical patterns.",
+    "Find the oldest-looking thing outside \u2014 what is it?",
+];
+
+const MISSION_SKIP_MSGS = [
+    "I'll let it slide this once. No slacking off! \U0001f928",
+    "Hmm. Very well. But Tachyon expects better tomorrow! \U0001f9ea",
+    "The research suffers, but I suppose it can't be helped... \U0001f928",
+    "One miss is forgivable. Two is a pattern. \U0001f52c",
+];
+
+function getTodayMission() {
+    const now = new Date();
+    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    return { text: FIELD_MISSIONS[dayOfYear % FIELD_MISSIONS.length], id: dayOfYear % FIELD_MISSIONS.length };
+}
+
+function getMissionState() {
+    const today = new Date().toDateString();
+    const s = missionData || {};
+    if (s.date !== today) return { date: today, seen: false, completed: false, skipped: false };
+    return s;
+}
+
+function saveMissionState(state) {
+    missionData = state;
+    scheduleSave();
+}
+
+function getMissionTimeRemaining() {
+    const now = new Date();
+    const end = new Date(now); end.setHours(18, 0, 0, 0);
+    const diff = end - now;
+    if (diff <= 0) return null;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    return { h, m, diff, text: h > 0 ? h + 'h ' + m + 'm left' : m + 'm left' };
+}
+
+function updateMissionCard() {
+    if (!holidayMode) {
+        document.getElementById('field-mission').classList.remove('summer-active');
+        return;
+    }
+    const h = new Date().getHours();
+    if (h < 10 || h >= 18) {
+        // Outside mission hours
+        const card = document.getElementById('field-mission');
+        const state = getMissionState();
+        if (h >= 18 && !state.completed && !state.skipped && state.seen) {
+            // Show expired
+            card.classList.add('summer-active');
+            document.getElementById('fm-mission-text').innerHTML = '<strong>' + getTodayMission().text + '</strong>';
+            document.getElementById('fm-btns').style.display = 'none';
+            document.getElementById('fm-expired').style.display = 'block';
+            document.getElementById('fm-timer').textContent = '\u23f0 Expired';
+            document.getElementById('fm-timer').className = 'critical';
+            // Fade out after 60s
+            setTimeout(() => card.classList.remove('summer-active'), 60000);
+        } else {
+            card.classList.remove('summer-active');
+        }
+        return;
+    }
+
+    const state = getMissionState();
+    if (state.completed || state.skipped) {
+        document.getElementById('field-mission').classList.remove('summer-active');
+        return;
+    }
+
+    // Show mission card
+    const mission = getTodayMission();
+    const card = document.getElementById('field-mission');
+    card.classList.add('summer-active');
+    document.getElementById('fm-mission-text').innerHTML = '<strong>\U0001f9ea Mission:</strong> ' + mission.text;
+    document.getElementById('fm-btns').style.display = 'flex';
+    document.getElementById('fm-expired').style.display = 'none';
+
+    // Update timer
+    const remaining = getMissionTimeRemaining();
+    const timerEl = document.getElementById('fm-timer');
+    if (remaining) {
+        timerEl.textContent = remaining.text;
+        timerEl.className = remaining.diff < 1800000 ? 'critical' : remaining.diff < 7200000 ? 'urgent' : '';
+    }
+
+    // Show announcement if not seen yet
+    if (!state.seen) {
+        state.seen = true;
+        saveMissionState(state);
+        showMissionAnnouncement(mission.text);
+    }
+}
+
+function showMissionAnnouncement(text) {
+    document.getElementById('mission-announce-text').textContent = text;
+    const overlay = document.getElementById('mission-announce');
+    overlay.classList.add('show');
+    if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
+    setStatus('\U0001f4cb New field mission from Tachyon! Check it out! \U0001f52c', 6000);
+}
+
+function acceptMission() {
+    document.getElementById('mission-announce').classList.remove('show');
+}
+
+function completeMission() {
+    const state = getMissionState();
+    state.completed = true;
+    state.completedAt = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    saveMissionState(state);
+
+    // XP reward — 30 wit
+    stats['wit'] = (stats['wit'] || 0) + 30;
+    missionCounts.completed = (missionCounts.completed || 0) + 1;
+
+    // Mission streak
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    const lastMission = missionCounts.lastCompleted || '';
+    missionCounts.missionStreak = (lastMission === yesterday) ? (missionCounts.missionStreak || 0) + 1 : 1;
+    missionCounts.lastCompleted = new Date().toDateString();
+
+    scheduleSave();
+    updateMissionCard();
+    updateUI();
+
+    const msgs = [
+        'Excellent field data! Tachyon is very pleased! \U0001f52c\U0001f338',
+        'Outstanding research! The experiment advances! \U0001f9ea\u2728',
+        'Field data logged! Tachyon approves greatly! \U0001f52c',
+        'Remarkable work out there! Science marches on! \U0001f338\U0001f9ea',
+    ];
+    setStatus(msgs[Math.floor(Math.random() * msgs.length)], 6000);
+    if (agnes) { agnes.setFlipX(false); agnes.play('cheer'); }
+    showEmoteAndItem(null, EMOTE.science, true);
+    checkAchievements();
+
+    // Check speed scout (completed within 1hr of 10AM)
+    const now = new Date();
+    const missionStart = new Date(); missionStart.setHours(10, 0, 0, 0);
+    if (now - missionStart < 3600000) {
+        window._speedScoutToday = true;
+        missionCounts.speedScout = true;
+        scheduleSave();
+    }
+    checkAchievements();
+}
+
+function skipMission() {
+    const state = getMissionState();
+    state.skipped = true;
+    saveMissionState(state);
+    missionCounts.skipped = (missionCounts.skipped || 0) + 1;
+    missionCounts.missionStreak = 0;
+    scheduleSave();
+    updateMissionCard();
+    const msg = MISSION_SKIP_MSGS[Math.floor(Math.random() * MISSION_SKIP_MSGS.length)];
+    setStatus(msg, 6000);
+    if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
+}
+
+</script>
     <style>
         :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; --dismiss: #b2bec3; }
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 10px; box-sizing: border-box; }
@@ -133,6 +320,29 @@
         #streak-tooltip li { margin-bottom:2px; }
         #streak-tooltip .tt-note { font-size:0.88em; color:#a5b1c2; margin:6px 0 0; }
         #streak-tooltip .tt-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#b2bec3; font-size:1em; cursor:pointer; line-height:1; padding:2px; }
+
+        /* -- Field Mission -- */
+        #field-mission { display:none; width:95%; max-width:400px; background:white; border-radius:20px; margin-bottom:15px; box-shadow:0 5px 15px rgba(162,155,254,0.2); overflow:hidden; border:2px solid #a29bfe; box-sizing:border-box; }
+        #field-mission.summer-active { display:block; }
+        #fm-header { background:linear-gradient(135deg,#a29bfe,#6c5ce7); color:white; padding:10px 14px; font-weight:bold; font-size:0.82em; display:flex; justify-content:space-between; align-items:center; }
+        #fm-timer { font-size:0.78em; font-weight:bold; opacity:0.9; }
+        #fm-timer.urgent { color:#fdcb6e; }
+        #fm-timer.critical { color:#ff7675; animation:timerPulse 1s ease infinite; }
+        @keyframes timerPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        #fm-body { padding:12px 14px 14px; }
+        #fm-mission-text { font-size:0.82em; color:#596275; line-height:1.5; margin-bottom:12px; font-style:italic; }
+        #fm-mission-text strong { color:#6c5ce7; font-style:normal; }
+        .fm-btn-complete { background:linear-gradient(135deg,#a29bfe,#6c5ce7); color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:bold; font-size:0.82em; cursor:pointer; font-family:inherit; flex:1; }
+        .fm-btn-skip { background:#f0f0f0; color:#a5b1c2; border:none; padding:9px 12px; border-radius:10px; font-size:0.78em; cursor:pointer; font-family:inherit; }
+        #fm-expired { font-size:0.78em; color:#b2bec3; text-align:center; padding:4px 0 2px; }
+        /* Mission announcement overlay */
+        #mission-announce { position:fixed; inset:0; z-index:77777; display:none; align-items:flex-end; justify-content:center; padding-bottom:20px; pointer-events:none; }
+        #mission-announce.show { display:flex; pointer-events:auto; }
+        #mission-card { background:white; border:2px solid #a29bfe; border-radius:20px; padding:16px 18px 14px; width:min(380px,92vw); box-shadow:0 12px 40px rgba(108,92,231,0.25); transform:translateY(120px); transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1); }
+        #mission-announce.show #mission-card { transform:translateY(0); }
+        #mission-card h4 { margin:0 0 6px; color:#6c5ce7; font-size:0.95em; }
+        #mission-card p { font-size:0.8em; color:#596275; margin:0 0 12px; line-height:1.5; }
+        #mission-accept-btn { width:100%; padding:10px; background:linear-gradient(135deg,#a29bfe,#6c5ce7); color:white; border:none; border-radius:10px; font-weight:bold; font-size:0.85em; cursor:pointer; font-family:inherit; }
         /* -- Rank-up celebration overlay -- */
         #rankup-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
         #rankup-overlay.show { opacity: 1; pointer-events: auto; }
@@ -219,8 +429,33 @@
     </header>
     <div id="sync-status"></div>
     <div id="clock">Loading time...</div>
-    <div id="holiday-notice">🏖️ Holiday Mode is on — class tasks are hidden. Toggle it off in ⚙️ to restore them.</div>
+    <div id="holiday-notice">☀️ Summer Mode is on — field missions and summer tasks are active! Classes hidden.</div>
 
+
+    <!-- MISSION ANNOUNCEMENT -->
+    <div id="mission-announce">
+        <div id="mission-card">
+            <h4>📋 Tachyon has a Field Mission for you!</h4>
+            <p id="mission-announce-text">Loading mission...</p>
+            <button id="mission-accept-btn" onclick="acceptMission()">🔬 Accept Mission!</button>
+        </div>
+    </div>
+
+    <!-- FIELD MISSION CARD -->
+    <div id="field-mission">
+        <div id="fm-header">
+            <span>🔬 Field Mission</span>
+            <span id="fm-timer">Due by 6PM</span>
+        </div>
+        <div id="fm-body">
+            <div id="fm-mission-text">Loading...</div>
+            <div id="fm-expired" style="display:none;">⏰ Mission expired for today.</div>
+            <div id="fm-btns" style="display:flex;gap:8px;">
+                <button class="fm-btn-complete" onclick="completeMission()">✅ Mission Complete!</button>
+                <button class="fm-btn-skip" onclick="skipMission()">❌ Unable to Complete</button>
+            </div>
+        </div>
+    </div>
     <div id="streak-tooltip-backdrop" onclick="closeStreakTooltip()"></div>
     <div id="streak-tooltip">
         <button class="tt-close" onclick="closeStreakTooltip()">&#x2715;</button>
@@ -228,6 +463,31 @@
         <p>Complete <strong>all essential tasks</strong> on the same day to earn a streak day. Your streak grows each consecutive day you do this.</p>
         <ul id="streak-essentials-list"><li>Loading...</li></ul>
         <p class="tt-note">⚠️ Missing a day resets your streak to 1. The injection only counts on its scheduled biweekly Fridays.</p>
+    </div>
+
+    <!-- MISSION ANNOUNCEMENT -->
+    <div id="mission-announce">
+        <div id="mission-card">
+            <h4>📋 Tachyon has a Field Mission for you!</h4>
+            <p id="mission-announce-text">Loading mission...</p>
+            <button id="mission-accept-btn" onclick="acceptMission()">🔬 Accept Mission!</button>
+        </div>
+    </div>
+
+    <!-- FIELD MISSION CARD -->
+    <div id="field-mission">
+        <div id="fm-header">
+            <span>🔬 Field Mission</span>
+            <span id="fm-timer">Due by 6PM</span>
+        </div>
+        <div id="fm-body">
+            <div id="fm-mission-text">Loading...</div>
+            <div id="fm-expired" style="display:none;">⏰ Mission expired for today.</div>
+            <div id="fm-btns" style="display:flex;gap:8px;">
+                <button class="fm-btn-complete" onclick="completeMission()">✅ Mission Complete!</button>
+                <button class="fm-btn-skip" onclick="skipMission()">❌ Unable to Complete</button>
+            </div>
+        </div>
     </div>
     <div id="streak-tooltip-backdrop" onclick="closeStreakTooltip()"></div>
     <div id="streak-tooltip">
@@ -321,14 +581,46 @@
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.4.11';
+const CURRENT_VERSION = '1.5.0';
 
 const CHANGELOG = [
+    { version: '1.5.0', changes: [
+        '☀️ Summer Mode! Holiday mode now activates summer tasks and daily Field Missions',
+        '🔬 Tachyon\'s Field Missions — a daily outdoor research task with live countdown timer',
+        '🏆 6 new Field Mission achievements to unlock',
+        '🌿 Evening Stretch added as a permanent essential task (8PM-11PM)',
+        '🚶 Walk window widens to 10AM-8PM in Summer Mode',
+    ]},
     { version: '1.4.11', changes: [
         '🔥 Fixed streak bug: completing tasks after a break now correctly shows day 1 instead of \"No streak\"',
         '🔄 Streak display now correctly shows 0 when broken and not yet restarted',
         '✅ Tap the streak bar to see which essential tasks you have done today',
         '⏰ Streak auto-advances every 60 seconds in the background',
+    ]},
+    { version: '1.4.6', changes: [
+        '🔥 Streak system is now much more reliable — fixed random resets and missing advances',
+        '💧 Water is no longer an essential task, so it won\'t block your streak',
+    ]},
+    { version: '1.4.5', changes: [
+        '🦷 "Brush Your Teeth" is now two separate tasks — morning (7–9AM) and evening (7PM+) — so doing one no longer blocks the other!',
+    ]},
+    { version: '1.4.4', changes: [
+        '🔔 Live update banner — see when a new version is deployed while you\'re in the app',
+        '🐛 Fixed login screen showing again after login (duplicate HTML bug)',
+        '🛠️ Version popup now saves to Supabase so it only shows once per account',
+    ]},
+    { version: '1.4.0', changes: [
+        '🎉 Rank-up now shows a full celebration overlay with confetti!',
+        '🖼️ Task item sprites spread around Tachyon and no longer overlap',
+        '🔧 Fixed animation freeze after completing tasks',
+        '📋 Version update popup — shows what changed since you last played',
+        '💬 Rich completion messages per task',
+        '🏖️ Holiday mode for class schedule',
+        '📚 Class schedule added (Psych, MH, Social Psych)',
+        '📈 Exponential XP curve — ranks now take much longer to earn',
+    ]},
+    { version: '1.3.3', changes: ['🐛 Fixed Achievements display bug'] },
+    { version: '1.3.0', changes: ['🏆 Added new achievements', '📊 Rank display fixes'] },
 ];
 
 function semverGt(a, b) {
@@ -482,6 +774,8 @@ const TASK_SPRITES = {
     Tidy2:    { atlas:'cleaning', frame:'bathroom_cleaner' },
     Shop:     { atlas:'snack',    frame:'15_burger' },
     Laundry:  { atlas:'cleaning', frame:'detergent' },
+    Draw:     { atlas:'snack',    frame:'28_cookies' },
+    Origami:  { atlas:'snack',    frame:'28_cookies' },
 };
 
 // Spread positions around Tachyon — rotated through so multiple items don't overlap
@@ -512,6 +806,9 @@ const TASK_REMINDERS = {
     Teeth_AM:'Brush those teeth before heading out! ✨', Teeth_PM:'Evening brush time! Keep those teeth sparkling! ✨',
     Tidy2:'Cleaning time!', Shop:'Time to go shopping! 🛒', Laundry:"Don't forget the laundry! 🧺",
     Injection:'Time for your injection. You\'ve got this! 🧪',
+    Stretch_PM:'Time for your evening stretch! Wind down properly 🌸',
+    Draw:'Time to get creative! Draw something — anything counts 🖊️',
+    Origami:'New origami time! Tachyon wants to see what you make 🦢',
 };
 
 // -- Supabase ------------------------------------------------------------------
@@ -540,9 +837,10 @@ function syncHolidayBtn(){const b=document.getElementById('holiday-btn');if(b)b.
 
 // -- Data state ----------------------------------------------------------------
 let stats={power:0,stamina:0,guts:0,wit:0},history={},dismissed={},customTasksRaw=[],coreTaskOverrides={};
+let missionData={},missionCounts={completed:0,skipped:0,missionStreak:0,lastCompleted:''};
 let streakData={current:0,best:0,lastDate:''},achievements={},taskCounts={},customTasks=[];
 let currentUser=null;
-function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};customTasks=hydrateCustomTasks(customTasksRaw);}
+function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};missionData=row.mission_data||{};missionCounts=row.mission_counts||{completed:0,skipped:0,missionStreak:0,lastCompleted:''};customTasks=hydrateCustomTasks(customTasksRaw);}
 
 // -- Auto login ----------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', async () => {
@@ -591,15 +889,15 @@ function showApp(){
     document.getElementById('welcome-name').textContent='Hi, '+currentUser.username+'! 🌸';
     syncHolidayBtn();renderStreak();updateUI();
     if(!gameBooted)bootGame();
-    // Show version popup after a short delay so the app settles
     setTimeout(checkVersionModal, 1200);
+    setTimeout(updateMissionCard, 1500);
 }
 function logout(){clearSession();currentUser=null;loginIsRegister=false;document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';['login-username','login-pin'].forEach(id=>document.getElementById(id).value='');document.getElementById('login-error').textContent='';document.getElementById('login-mode-label').textContent='Sign In';document.getElementById('login-toggle').textContent="Don't have an account? Create one!";document.getElementById('login-migrate-notice').style.display=getLegacyData()?'block':'none';}
 
 // -- Cloud save ----------------------------------------------------------------
 let saveDebounce=null;
 function scheduleSave(){if(saveDebounce)clearTimeout(saveDebounce);saveDebounce=setTimeout(cloudSave,900);}
-async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','Saving… 🌸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed — retrying…');saveDebounce=setTimeout(cloudSave,6000);}}
+async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','Saving… 🌸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,mission_data:missionData,mission_counts:missionCounts,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed — retrying…');saveDebounce=setTimeout(cloudSave,6000);}}
 function setSyncStatus(state,msg){const el=document.getElementById('sync-status');el.className=state;el.textContent=msg;}
 
 // -- Streak --------------------------------------------------------------------
@@ -665,6 +963,12 @@ const ACH_DEFS=[
     {id:'habit_100',    icon:'⚙️',name:'Habit Machine',     desc:'Complete 100 total tasks',              check:()=>Object.values(taskCounts).reduce((a,b)=>a+b,0)>=100},
     {id:'explorer',     icon:'🗺️',name:'Explorer',          desc:'Complete 5 different types of tasks',   check:()=>Object.keys(taskCounts).length>=5},
     {id:'no_days_off',  icon:'📅',name:'Consistency',       desc:'14-day streak',                         check:()=>streakData.best>=14},
+    {id:'mission_1',    icon:'🔬',name:'Field Rookie',       desc:'Complete your first field mission',      check:()=>(missionCounts.completed||0)>=1},
+    {id:'mission_5',    icon:'🌿',name:'Naturalist',         desc:'Complete 5 field missions',              check:()=>(missionCounts.completed||0)>=5},
+    {id:'mission_10',   icon:'📋',name:"Tachyon's Field Agent",desc:'Complete 10 field missions',           check:()=>(missionCounts.completed||0)>=10},
+    {id:'mission_20',   icon:'🌟',name:'Star Researcher',    desc:'Complete 20 field missions',             check:()=>(missionCounts.completed||0)>=20},
+    {id:'mission_fast', icon:'⚡',name:'Speed Scout',         desc:'Complete a mission within 1 hour of it appearing', check:()=>!!(window._speedScoutToday||(missionCounts.speedScout))},
+    {id:'mission_streak5',icon:'📅',name:'Dedicated Researcher',desc:'Complete 5 missions without skipping', check:()=>(missionCounts.missionStreak||0)>=5},
 ];
 function checkAchievements(){const nu=ACH_DEFS.filter(d=>!achievements[d.id]&&d.check());if(!nu.length)return;nu.forEach(d=>{achievements[d.id]=new Date().toISOString();});scheduleSave();let delay=200;nu.forEach(d=>{setTimeout(()=>showAchToast(d),delay);delay+=3600;});if(document.getElementById('tab-achievements').classList.contains('active'))renderAchievements();}
 let toastTimer=null;
@@ -688,6 +992,12 @@ function achProgress(def){
     if(def.id==='rank_s_all')return`${Object.values(stats).filter(v=>getRank(v)>=6).length}/4 S-Ranked`;
     if(def.id==='habit_100')return`${total}/100 tasks`;
     if(def.id==='explorer')return`${Object.keys(c).length}/5 types`;
+    if(def.id==='mission_1')return`${missionCounts.completed||0}/1 missions`;
+    if(def.id==='mission_5')return`${missionCounts.completed||0}/5 missions`;
+    if(def.id==='mission_10')return`${missionCounts.completed||0}/10 missions`;
+    if(def.id==='mission_20')return`${missionCounts.completed||0}/20 missions`;
+    if(def.id==='mission_fast')return'Complete a mission before 11AM';
+    if(def.id==='mission_streak5')return`${missionCounts.missionStreak||0}/5 in a row`;
     return'🔒 Locked';
 }
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
@@ -699,12 +1009,13 @@ function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return fal
 // -- Core tasks ----------------------------------------------------------------
 const coreTasks=[
     {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:'Until 10AM',   isEssential:true,  check:h=>h<10},
+    {id:'Stretch_PM', name:'Evening Stretch',               type:'power',   anim:'cheer',      timeLabel:'8PM - 11PM',   isEssential:true,  check:h=>h>=20&&h<23},
     {id:'Breakfast', name:'Have Breakfast',               type:'stamina', anim:'eating',     timeLabel:'Until 12PM',   isEssential:true,  check:h=>h<12},
     {id:'Tablet',    name:'Take Experimental Tablet',     type:'guts',    anim:'giggle',     timeLabel:'Before 12PM',  isEssential:true,  isTablet:true, idealEnd:12, check:h=>h<24},
     {id:'Water',     name:'Drink Glass Of Water',         type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',   isEssential:false, check:h=>h>=8&&h<24&&h%2===0},
     {id:'Lunch',     name:'Eat Lunch',                    type:'stamina', anim:'eating',     timeLabel:'12PM – 3PM',   isEssential:true,  check:h=>h>=12&&h<15},
     {id:'Snack',     name:'Share A Snack With Tachyon',   type:'stamina', anim:'snack',      timeLabel:'3PM – 5PM',    isEssential:false, check:h=>h>=15&&h<17},
-    {id:'Walk',      name:'Go For A Walk with Tachyon',   type:'power',   anim:'super_dash', timeLabel:'After 3PM',    isEssential:false, check:h=>h>=15&&h<19},
+    {id:'Walk',      name:'Go For A Walk with Tachyon',   type:'power',   anim:'super_dash', timeLabel:'After 3PM',    isEssential:false, check:h=>holidayMode?h>=10&&h<20:h>=15&&h<19, timeLabel:holidayMode?'10AM - 8PM':'After 3PM'},
     {id:'Read',      name:'Read/Study',                   type:'wit',     anim:'sit_down',   timeLabel:'From 5PM',     isEssential:false, check:h=>h>=17},
     {id:'Cranes',    name:'Create 3 Paper Cranes',        type:'wit',     anim:'say',        timeLabel:'After 5PM',    isEssential:false, days:[0,1,3,5], check:h=>h>=17},
     {id:'Dinner',    name:'Have Dinner With Tachyon',     type:'stamina', anim:'eating',     timeLabel:'6PM – 10PM',   isEssential:true,  check:h=>h>=18&&h<22},
@@ -714,6 +1025,8 @@ const coreTasks=[
     {id:'Tidy2',     name:'Scrub The Bathroom',           type:'power',   anim:'dash',       timeLabel:'Sun & Wed',    isEssential:false, days:[0,3], check:h=>h<18},
     {id:'Shop',      name:'Go Food Shopping With Tachyon',type:'power',   anim:'dash',       timeLabel:'Saturdays',    isEssential:false, days:[6],   check:h=>h<20},
     {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',   anim:'dash',       timeLabel:'Sundays',      isEssential:false, days:[0],   check:h=>h<18},
+    {id:'Draw',      name:'Draw Something',               type:'wit',     anim:'sit_down',   timeLabel:'2PM - 8PM',    isEssential:false, isSummer:true, check:h=>h>=14&&h<20},
+    {id:'Origami',   name:'Learn New Origami',             type:'wit',     anim:'say',        timeLabel:'After 4PM',    isEssential:false, isSummer:true, days:[1,2,4,6], check:h=>h>=16},
     {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:'3PM – 5PM',    isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&h>=15},
     {id:'Class_PsychMon',    name:'Psych Class',         type:'wit', anim:'sit_down', timeLabel:'10AM – 11AM',   isEssential:false, isClass:true, days:[1], check:h=>h>=10&&h<11},
     {id:'Class_MHWed',       name:'Mental Health Class', type:'wit', anim:'sit_down', timeLabel:'11:30AM – 1PM', isEssential:false, isClass:true, days:[3], check:h=>h>=11&&h<13},
@@ -787,6 +1100,7 @@ function updateUI(){
     allTasks.forEach(task=>{
         const base=coreTasks.find(t=>t.id===task.id)||task;
         if(base.isClass&&holidayMode)return;
+        if(base.isSummer&&!holidayMode)return;
         const taskDays=task.days||[0,1,2,3,4,5,6];
         const eligible=taskDays.includes(day)&&task.check(h);
         const done=history[task.id]===today,skipped=dismissed[task.id]===today;
@@ -842,6 +1156,9 @@ const TASK_COMPLETE_MSGS={
     Tidy2:    ["Bathroom sparkles! Tachyon is impressed! ✨","Tachyon appreciates the hygiene effort! 🌸","Even experiment spaces need maintenance! 🧴✨"],
     Shop:     ["Supplies acquired! 🛒","Tachyon has analysed the nutritional value of your choices! 🌸","The experiment continues well-provisioned! ✨"],
     Laundry:  ["Tachyon notes improved textile hygiene! 🧺","Fresh and clean, like a newly scrubbed test tube! 🌸","Even lab coats need washing occasionally! ✨"],
+    Stretch_PM: ["Evening stretch done! Sleep well 🌸","Body wound down properly! Tachyon approves 🌸","Perfect end to the day! ✨"],
+    Draw:     ["Creative data logged! Tachyon is impressed 🖊️","Art created! Every sketch counts 🌸","Tachyon adds it to the research files ✨"],
+    Origami:  ["Beautiful! Tachyon has catalogued it 🦢","New fold mastered! The experiment continues 🌸","Origami complete! Patience and precision ✨"],
     Injection:["Tachyon is delighted with this data point! 🧪","Tachyon's research advances! 🔬🌸","The experiment proceeds exactly as planned! 🧪✨"],
 };
 const GENERIC_COMPLETE_MSGS={
@@ -903,7 +1220,7 @@ resetBoredTimer();
 
 // -- Clock ---------------------------------------------------------------------
 function updateClock(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
-updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();tryAdvanceStreak();},60000);
+updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();tryAdvanceStreak();updateMissionCard();},60000);
 
 // -- Phaser --------------------------------------------------------------------
 let agnes=null,gameBooted=false,phaserScene=null;
@@ -1095,6 +1412,193 @@ function closeStreakTooltip() {
     document.getElementById('streak-tooltip').classList.remove('show');
     document.getElementById('streak-tooltip-backdrop').classList.remove('show');
 }
+
+// -- Field Mission System --
+const FIELD_MISSIONS = [
+    "Find a pink flower \u2014 what species is it? Report back to Tachyon!",
+    "Spot a bird and identify the breed for Tachyon's records!",
+    "Find a dog outside \u2014 what breed is it? Tachyon needs the data!",
+    "Go cloud gazing and learn one fun fact about a type of cloud you see.",
+    "Find a tree and identify the species. Tachyon is watching.",
+    "Spot an insect and identify it for the research files!",
+    "Find something blue in nature \u2014 what is it exactly?",
+    "Find a seed or berry and identify the plant it came from.",
+    "Find a feather outside \u2014 what bird might it belong to?",
+    "Go somewhere within walking distance you've never been before.",
+    "Find interesting architecture nearby and sketch or photograph it.",
+    "Find a cat outside \u2014 what colour and markings does it have?",
+    "Spot a cloud that looks like something \u2014 what does it resemble?",
+    "Find a puddle or body of water \u2014 what's living in or around it?",
+    "Find something man-made being reclaimed by nature.",
+    "Spot 3 different types of plant on a single walk.",
+    "Find an interesting rock or stone \u2014 what type might it be?",
+    "Draw something you find outside today for Tachyon's files.",
+    "Find evidence of an animal (tracks, burrow, nest) \u2014 what made it?",
+    "Find a flower that isn't pink \u2014 identify it for Tachyon!",
+    "Photograph something that made you smile outside today.",
+    "Find a plant with an interesting smell \u2014 identify it!",
+    "Spot something in nature that comes in pairs or symmetrical patterns.",
+    "Find the oldest-looking thing outside \u2014 what is it?",
+];
+
+const MISSION_SKIP_MSGS = [
+    "I'll let it slide this once. No slacking off! \U0001f928",
+    "Hmm. Very well. But Tachyon expects better tomorrow! \U0001f9ea",
+    "The research suffers, but I suppose it can't be helped... \U0001f928",
+    "One miss is forgivable. Two is a pattern. \U0001f52c",
+];
+
+function getTodayMission() {
+    const now = new Date();
+    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    return { text: FIELD_MISSIONS[dayOfYear % FIELD_MISSIONS.length], id: dayOfYear % FIELD_MISSIONS.length };
+}
+
+function getMissionState() {
+    const today = new Date().toDateString();
+    const s = missionData || {};
+    if (s.date !== today) return { date: today, seen: false, completed: false, skipped: false };
+    return s;
+}
+
+function saveMissionState(state) {
+    missionData = state;
+    scheduleSave();
+}
+
+function getMissionTimeRemaining() {
+    const now = new Date();
+    const end = new Date(now); end.setHours(18, 0, 0, 0);
+    const diff = end - now;
+    if (diff <= 0) return null;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    return { h, m, diff, text: h > 0 ? h + 'h ' + m + 'm left' : m + 'm left' };
+}
+
+function updateMissionCard() {
+    if (!holidayMode) {
+        document.getElementById('field-mission').classList.remove('summer-active');
+        return;
+    }
+    const h = new Date().getHours();
+    if (h < 10 || h >= 18) {
+        // Outside mission hours
+        const card = document.getElementById('field-mission');
+        const state = getMissionState();
+        if (h >= 18 && !state.completed && !state.skipped && state.seen) {
+            // Show expired
+            card.classList.add('summer-active');
+            document.getElementById('fm-mission-text').innerHTML = '<strong>' + getTodayMission().text + '</strong>';
+            document.getElementById('fm-btns').style.display = 'none';
+            document.getElementById('fm-expired').style.display = 'block';
+            document.getElementById('fm-timer').textContent = '\u23f0 Expired';
+            document.getElementById('fm-timer').className = 'critical';
+            // Fade out after 60s
+            setTimeout(() => card.classList.remove('summer-active'), 60000);
+        } else {
+            card.classList.remove('summer-active');
+        }
+        return;
+    }
+
+    const state = getMissionState();
+    if (state.completed || state.skipped) {
+        document.getElementById('field-mission').classList.remove('summer-active');
+        return;
+    }
+
+    // Show mission card
+    const mission = getTodayMission();
+    const card = document.getElementById('field-mission');
+    card.classList.add('summer-active');
+    document.getElementById('fm-mission-text').innerHTML = '<strong>\U0001f9ea Mission:</strong> ' + mission.text;
+    document.getElementById('fm-btns').style.display = 'flex';
+    document.getElementById('fm-expired').style.display = 'none';
+
+    // Update timer
+    const remaining = getMissionTimeRemaining();
+    const timerEl = document.getElementById('fm-timer');
+    if (remaining) {
+        timerEl.textContent = remaining.text;
+        timerEl.className = remaining.diff < 1800000 ? 'critical' : remaining.diff < 7200000 ? 'urgent' : '';
+    }
+
+    // Show announcement if not seen yet
+    if (!state.seen) {
+        state.seen = true;
+        saveMissionState(state);
+        showMissionAnnouncement(mission.text);
+    }
+}
+
+function showMissionAnnouncement(text) {
+    document.getElementById('mission-announce-text').textContent = text;
+    const overlay = document.getElementById('mission-announce');
+    overlay.classList.add('show');
+    if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
+    setStatus('\U0001f4cb New field mission from Tachyon! Check it out! \U0001f52c', 6000);
+}
+
+function acceptMission() {
+    document.getElementById('mission-announce').classList.remove('show');
+}
+
+function completeMission() {
+    const state = getMissionState();
+    state.completed = true;
+    state.completedAt = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    saveMissionState(state);
+
+    // XP reward — 30 wit
+    stats['wit'] = (stats['wit'] || 0) + 30;
+    missionCounts.completed = (missionCounts.completed || 0) + 1;
+
+    // Mission streak
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    const lastMission = missionCounts.lastCompleted || '';
+    missionCounts.missionStreak = (lastMission === yesterday) ? (missionCounts.missionStreak || 0) + 1 : 1;
+    missionCounts.lastCompleted = new Date().toDateString();
+
+    scheduleSave();
+    updateMissionCard();
+    updateUI();
+
+    const msgs = [
+        'Excellent field data! Tachyon is very pleased! \U0001f52c\U0001f338',
+        'Outstanding research! The experiment advances! \U0001f9ea\u2728',
+        'Field data logged! Tachyon approves greatly! \U0001f52c',
+        'Remarkable work out there! Science marches on! \U0001f338\U0001f9ea',
+    ];
+    setStatus(msgs[Math.floor(Math.random() * msgs.length)], 6000);
+    if (agnes) { agnes.setFlipX(false); agnes.play('cheer'); }
+    showEmoteAndItem(null, EMOTE.science, true);
+    checkAchievements();
+
+    // Check speed scout (completed within 1hr of 10AM)
+    const now = new Date();
+    const missionStart = new Date(); missionStart.setHours(10, 0, 0, 0);
+    if (now - missionStart < 3600000) {
+        window._speedScoutToday = true;
+        missionCounts.speedScout = true;
+        scheduleSave();
+    }
+    checkAchievements();
+}
+
+function skipMission() {
+    const state = getMissionState();
+    state.skipped = true;
+    saveMissionState(state);
+    missionCounts.skipped = (missionCounts.skipped || 0) + 1;
+    missionCounts.missionStreak = 0;
+    scheduleSave();
+    updateMissionCard();
+    const msg = MISSION_SKIP_MSGS[Math.floor(Math.random() * MISSION_SKIP_MSGS.length)];
+    setStatus(msg, 6000);
+    if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
+}
+
 </script>
 </body>
 </html>

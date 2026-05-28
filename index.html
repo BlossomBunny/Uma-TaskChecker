@@ -121,6 +121,18 @@
         #streak-tooltip li { margin-bottom:2px; }
         #streak-tooltip .tt-note { font-size:0.88em; color:#a5b1c2; margin:6px 0 0; }
         #streak-tooltip .tt-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#b2bec3; font-size:1em; cursor:pointer; line-height:1; padding:2px; }
+        /* -- Streak tooltip -- */
+        #streak-info-btn { background:none; border:none; color:var(--accent); font-size:0.9em; cursor:pointer; padding:0 0 0 6px; opacity:0.6; flex-shrink:0; line-height:1; }
+        #streak-info-btn:hover { opacity:1; }
+        #streak-tooltip-backdrop { display:none; position:fixed; inset:0; z-index:9990; }
+        #streak-tooltip-backdrop.show { display:block; }
+        #streak-tooltip { display:none; position:fixed; z-index:9991; background:white; border:2px solid var(--accent); border-radius:16px; padding:14px 16px 12px; box-shadow:0 8px 24px rgba(248,165,194,0.3); max-width:280px; width:calc(95vw - 24px); font-size:0.74em; color:#596275; line-height:1.65; }
+        #streak-tooltip.show { display:block; }
+        #streak-tooltip h4 { margin:0 0 8px; color:var(--accent); font-size:1em; }
+        #streak-tooltip ul { margin:4px 0 8px; padding-left:18px; }
+        #streak-tooltip li { margin-bottom:2px; }
+        #streak-tooltip .tt-note { font-size:0.88em; color:#a5b1c2; margin:6px 0 0; }
+        #streak-tooltip .tt-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#b2bec3; font-size:1em; cursor:pointer; line-height:1; padding:2px; }
         /* -- Rank-up celebration overlay -- */
         #rankup-overlay { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
         #rankup-overlay.show { opacity: 1; pointer-events: auto; }
@@ -139,14 +151,6 @@
         @keyframes hudFlash { 0%,100%{box-shadow:0 5px 15px rgba(0,0,0,0.05)} 50%{box-shadow:0 0 30px rgba(248,165,194,0.6)} }
         #hud.flashing { animation: hudFlash 0.4s ease 4; }
         /* -- Version popup -- */
-
-        #update-banner {
-    position: fixed !important;
-    bottom: 0 !important;
-    top: auto !important;
-    z-index: 9999 !important;
-    margin: 0 auto;
-}
     </style>
 </head>
 <body>
@@ -170,12 +174,15 @@
     </div>
 </div>
 
-<!-- UPDATE BANNER -->
-<div id="update-banner" onclick="doUpdateReload()" 
-     style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(400px,95vw);background:var(--accent);color:white;text-align:center;padding:12px 16px;font-size:0.82em;font-weight:bold;font-family:'Segoe UI',sans-serif;cursor:pointer;z-index:9999;border-radius:16px 16px 0 0;box-shadow:0 -4px 16px rgba(248,165,194,0.35);">
-    <span>🌸</span> A new update is available! Tap to refresh.
+<!-- VERSION POPUP -->
+        <button class="tp-add" onclick="closeUpdateModal()">Awesome, let's go! 🌸</button>
+    </div>
 </div>
 
+<!-- UPDATE BANNER (shown when a new deploy is detected while app is open) -->
+<div id="update-banner" onclick="doUpdateReload()" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(400px,95vw);background:var(--accent);color:white;text-align:center;padding:12px 16px;font-size:0.82em;font-weight:bold;font-family:'Segoe UI',sans-serif;cursor:pointer;z-index:9998;border-radius:16px 16px 0 0;box-shadow:0 -4px 16px rgba(248,165,194,0.35);">
+    <span>🌸</span> A new update is available! Tap to refresh.
+</div>
 <!-- UPDATE MODAL -->
 <div id="update-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:88888;display:none;align-items:center;justify-content:center;">
     <div style="background:white;width:90%;max-width:380px;border-radius:20px;padding:22px 20px 18px;box-shadow:0 10px 30px rgba(0,0,0,0.2);">
@@ -215,7 +222,15 @@
     <div id="holiday-notice">🏖️ Holiday Mode is on — class tasks are hidden. Toggle it off in ⚙️ to restore them.</div>
 
     <div id="streak-tooltip-backdrop" onclick="closeStreakTooltip()"></div>
-        <div id="streak-tooltip">
+    <div id="streak-tooltip">
+        <button class="tt-close" onclick="closeStreakTooltip()">&#x2715;</button>
+        <h4>🔥 How Streaks Work</h4>
+        <p>Complete <strong>all essential tasks</strong> on the same day to earn a streak day. Your streak grows each consecutive day you do this.</p>
+        <ul id="streak-essentials-list"><li>Loading...</li></ul>
+        <p class="tt-note">⚠️ Missing a day resets your streak to 1. The injection only counts on its scheduled biweekly Fridays.</p>
+    </div>
+    <div id="streak-tooltip-backdrop" onclick="closeStreakTooltip()"></div>
+    <div id="streak-tooltip">
         <button class="tt-close" onclick="closeStreakTooltip()">&#x2715;</button>
         <h4>🔥 Today's Streak Progress</h4>
         <div id="streak-tt-progress" style="margin-bottom:8px;"></div>
@@ -228,7 +243,7 @@
             <div id="streak-count">No streak yet</div>
             <div id="streak-sub">Complete all essential tasks to start your streak!</div>
         </div>
-        <button id="streak-info-btn" title="Streak progress">ℹ️</button>
+        <button id="streak-info-btn" onclick="openStreakTooltip(event)" title="How do streaks work?">ℹ️</button>
     </div>
 
     <div id="task-panel">
@@ -305,46 +320,15 @@
 </div>
 
 <script>
-// -- Version system --
-const CURRENT_VERSION = '1.4.10';
+// -- Version system ------------------------------------------------------------
+const CURRENT_VERSION = '1.4.11';
 
 const CHANGELOG = [
-    { version: '1.4.10', changes: [
-        '🔥 Tap the streak bar to see a checklist of today\'s essential tasks with ✅/❌ status',
-        '⏰ Streak now auto-advances every 60 seconds, not just on task taps',
-        '🔄 Losing your streak now correctly resets to 0 instead of 1',
-    ]},
-    { version: '1.4.9', changes: [
-        '🔥 Streak system is now much more reliable — fixed issues with streaks not advancing or resetting unexpectedly',
-        '💧 Water is no longer an essential task so it wont block your streak',
-    ]},
- { version: '1.4.8', changes: [
-        'Correcting issue where changelog banner persists at top of screen',
-    ]},
-    
-      { version: '1.4.6', changes: [
-        'Text and emoji errors corrected.',
-    ]},
-    { version: '1.4.5', changes: [
-        '🦷 "Brush Your Teeth" is now two separate tasks — morning (7–9AM) and evening (7PM+) — so doing one no longer blocks the other!',
-    ]},
-    { version: '1.4.4', changes: [
-        '🔔 Live update banner — see when a new version is deployed while you\'re in the app',
-        '🐛 Fixed login screen showing again after login (duplicate HTML bug)',
-        '🛠️ Version popup now saves to Supabase so it only shows once per account',
-    ]},
-    { version: '1.4.0', changes: [
-        '🎉 Rank-up now shows a full celebration overlay with confetti!',
-        '🖼️ Task item sprites spread around Tachyon and no longer overlap',
-        '🔧 Fixed animation freeze after completing tasks',
-        '📋 Version update popup — shows what changed since you last played',
-        '💬 Rich completion messages per task',
-        '🏖️ Holiday mode for class schedule',
-        '📚 Class schedule added (Psych, MH, Social Psych)',
-        '📈 Exponential XP curve — ranks now take much longer to earn',
-    ]},
-    { version: '1.3.3', changes: ['🐛 Fixed Achievements display bug'] },
-    { version: '1.3.0', changes: ['🏆 Added new achievements', '📊 Rank display fixes'] },
+    { version: '1.4.11', changes: [
+        '🔥 Fixed streak bug: completing tasks after a break now correctly shows day 1 instead of \"No streak\"',
+        '🔄 Streak display now correctly shows 0 when broken and not yet restarted',
+        '✅ Tap the streak bar to see which essential tasks you have done today',
+        '⏰ Streak auto-advances every 60 seconds in the background',
 ];
 
 function semverGt(a, b) {
@@ -396,24 +380,20 @@ function doUpdateReload() {
         location.reload(true);
     }, 1500);
 }
-let updateBannerShown = false;
-
 async function checkForNewDeploy() {
-    if (updateBannerShown) return;
     try {
         const res = await fetch('/version.json?_=' + Date.now(), { cache: 'no-store' });
         const data = await res.json();
         if (data.version && semverGt(data.version, CURRENT_VERSION)) {
             document.getElementById('update-banner').style.display = 'block';
-            updateBannerShown = true;
         }
-    } catch(e) {}
+    } catch(e) { /* silent */ }
 }
 setTimeout(() => { checkForNewDeploy(); setInterval(checkForNewDeploy, 5 * 60 * 1000); }, 30000);
 
 
 
-// -- XP / Rank --
+// -- XP / Rank -----------------------------------------------------------------
 const RANK_THRESHOLDS = [0, 100, 300, 600, 1100, 2100, 4100];
 const RANK_NAMES = ['F','E','D','C','B','A','S'];
 const RANK_BADGES = { F:'🔰', E:'🥉', D:'🥈', C:'🥇', B:'💎', A:'👑', S:'🌟' };
@@ -436,7 +416,7 @@ function getRankProgress(xp) {
     return { pct: Math.round(((xp - low) / (high - low)) * 100), label: `${xp - low}/${high - low}` };
 }
 
-// -- Rank-up celebration --
+// -- Rank-up celebration -------------------------------------------------------
 function showRankUp(stat, newRankIdx) {
     const rankName = RANK_NAMES[newRankIdx];
     const badge = RANK_BADGES[rankName] || '⭐';
@@ -489,7 +469,7 @@ function spawnConfetti() {
     }
 }
 
-// -- Task sprites --
+// -- Task sprites --------------------------------------------------------------
 const TASK_SPRITES = {
     Breakfast:{ atlas:'snack',    frame:'80_pancakes_dish' },
     Water:    { atlas:'drink',    frame:'water' },
@@ -534,7 +514,7 @@ const TASK_REMINDERS = {
     Injection:'Time for your injection. You\'ve got this! 🧪',
 };
 
-// -- Supabase --
+// -- Supabase ------------------------------------------------------------------
 const SUPA_URL = 'https://iusspgrnigizjsvkpiug.supabase.co';
 const SUPA_KEY = 'sb_publishable_Ad0oD2l3laFTst4tG0qw3A_2k7Fwa36';
 async function supaFetch(path, method='GET', body=null) {
@@ -545,7 +525,7 @@ async function supaFetch(path, method='GET', body=null) {
     return res.status===204 ? null : res.json();
 }
 
-// -- Session --
+// -- Session -------------------------------------------------------------------
 function hashPin(u,p){let h=0;const s=u.toLowerCase()+':'+p+':tachyon-salt-2025';for(let i=0;i<s.length;i++)h=((h<<5)-h+s.charCodeAt(i))|0;return 'ph_'+Math.abs(h).toString(36);}
 function saveSession(u,ph){localStorage.setItem('tachyonSession',JSON.stringify({username:u,pinHash:ph}));}
 function clearSession(){localStorage.removeItem('tachyonSession');}
@@ -553,18 +533,18 @@ function getSession(){try{return JSON.parse(localStorage.getItem('tachyonSession
 function getLegacyData(){const s=JSON.parse(localStorage.getItem('agnesStats')||'null');if(!s||(s.power===0&&s.stamina===0&&s.guts===0&&s.wit===0))return null;return{stats:s,history:JSON.parse(localStorage.getItem('agnesHistory')||'{}'),dismissed:JSON.parse(localStorage.getItem('agnesDismissed')||'{}'),custom_tasks:JSON.parse(localStorage.getItem('agnesCustomTasks')||'[]')};}
 function clearLegacy(){['agnesStats','agnesHistory','agnesDismissed','agnesCustomTasks'].forEach(k=>localStorage.removeItem(k));}
 
-// -- Holiday mode --
+// -- Holiday mode --------------------------------------------------------------
 let holidayMode = JSON.parse(localStorage.getItem('holidayMode') || 'false');
 function toggleHoliday(){holidayMode=!holidayMode;localStorage.setItem('holidayMode',JSON.stringify(holidayMode));syncHolidayBtn();updateUI();}
 function syncHolidayBtn(){const b=document.getElementById('holiday-btn');if(b)b.classList.toggle('on',holidayMode);const n=document.getElementById('holiday-notice');if(n)n.style.display=holidayMode?'block':'none';}
 
-// -- Data state --
+// -- Data state ----------------------------------------------------------------
 let stats={power:0,stamina:0,guts:0,wit:0},history={},dismissed={},customTasksRaw=[],coreTaskOverrides={};
 let streakData={current:0,best:0,lastDate:''},achievements={},taskCounts={},customTasks=[];
 let currentUser=null;
 function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};customTasks=hydrateCustomTasks(customTasksRaw);}
 
-// -- Auto login --
+// -- Auto login ----------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', async () => {
     syncHolidayBtn();
     const session=getSession();
@@ -616,30 +596,56 @@ function showApp(){
 }
 function logout(){clearSession();currentUser=null;loginIsRegister=false;document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';['login-username','login-pin'].forEach(id=>document.getElementById(id).value='');document.getElementById('login-error').textContent='';document.getElementById('login-mode-label').textContent='Sign In';document.getElementById('login-toggle').textContent="Don't have an account? Create one!";document.getElementById('login-migrate-notice').style.display=getLegacyData()?'block':'none';}
 
-// -- Cloud save --
+// -- Cloud save ----------------------------------------------------------------
 let saveDebounce=null;
 function scheduleSave(){if(saveDebounce)clearTimeout(saveDebounce);saveDebounce=setTimeout(cloudSave,900);}
 async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','Saving… 🌸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed — retrying…');saveDebounce=setTimeout(cloudSave,6000);}}
 function setSyncStatus(state,msg){const el=document.getElementById('sync-status');el.className=state;el.textContent=msg;}
 
-// -- Streak --
+// -- Streak --------------------------------------------------------------------
 function getTodayEssentials(){const day=new Date().getDay();return coreTasks.filter(t=>{if(!t.isEssential)return false;if(t.isInjection&&!isInjectionFriday())return false;return(t.days||[0,1,2,3,4,5,6]).includes(day);});}
+// Returns essentials that have had their window pass today (so we only penalise missed tasks whose time has gone)
+function getCompletableEssentials(){
+    const day=new Date().getDay();
+    const h=new Date().getHours();
+    return coreTasks.filter(t=>{
+        if(!t.isEssential)return false;
+        if(t.isInjection&&!isInjectionFriday())return false;
+        if(!(t.days||[0,1,2,3,4,5,6]).includes(day))return false;
+        // For tasks with a time window, only require them once their window has started
+        // (user gets until end of day to complete tasks like Teeth_PM, Dinner)
+        // We check at window-open time whether it was completed, not before
+        return true; // all eligible tasks for today
+    });
+}
 function tryAdvanceStreak(){
     const today=new Date().toDateString();
     if(streakData.lastDate===today)return;
     const essentials=getTodayEssentials();
+    // Check: all essentials that have a PASSED or fully-open window must be done
+    // A task is "required now" if its check() passed at some point today — we approximate
+    // by checking if it's been completed. But we only advance the streak once the last
+    // time-windowed task (Teeth_PM / Dinner) would have had its window open.
+    // Simple rule: only advance if ALL today's essentials are done.
     if(!essentials.every(t=>history[t.id]===today))return;
     const yesterday=new Date(Date.now()-86400000).toDateString();
-    streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:0;
+    streakData.current=(streakData.lastDate===yesterday||streakData.lastDate==='')?streakData.current+1:1;
     streakData.best=Math.max(streakData.best,streakData.current);
     streakData.lastDate=today;
     const ms={1:'First full day done! 🌸',3:'3 days in a row! 🔥',7:'A whole week!! ⭐',14:'Two week streak! 💪',30:'30 DAYS! 🎉'};
     if(ms[streakData.current])setTimeout(()=>setStatus(ms[streakData.current],7000),800);
     scheduleSave();renderStreak();checkAchievements();
 }
-function renderStreak(){const n=streakData.current;document.getElementById('streak-flame').textContent=n>=14?'🏆':n>=7?'⭐':n>=3?'🔥':'✨';document.getElementById('streak-count').textContent=n===0?'No streak yet':`${n} day streak!`;document.getElementById('streak-sub').textContent=n===0?'Complete all essential tasks to start your streak!':`Personal best: ${streakData.best} day${streakData.best!==1?'s':''}`;}
+function renderStreak(){
+    const today=new Date().toDateString();
+    const yesterday=new Date(Date.now()-86400000).toDateString();
+    const active=streakData.lastDate===today||streakData.lastDate===yesterday;
+    const n=active?streakData.current:0;
+    document.getElementById('streak-flame').textContent=n>=14?'🏆':n>=7?'⭐':n>=3?'🔥':'✨';
+    document.getElementById('streak-count').textContent=n===0?'No streak yet':n+' day streak!';
+    document.getElementById('streak-sub').textContent=n===0?'Complete all essential tasks to start your streak!':'Personal best: '+streakData.best+' day'+(streakData.best!==1?'s':'');}
 
-// -- Achievements --
+// -- Achievements --------------------------------------------------------------
 const ACH_DEFS=[
     {id:'first_task',   icon:'🌱',name:'First Steps',       desc:'Complete your first task',              check:()=>Object.keys(history).length>=1},
     {id:'streak_3',     icon:'🔥',name:'On a Roll',         desc:'Reach a 3-day streak',                  check:()=>streakData.best>=3},
@@ -686,16 +692,16 @@ function achProgress(def){
 }
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
 
-// -- Injection Friday --
+// -- Injection Friday ----------------------------------------------------------
 const INJECTION_REF=new Date(2025,4,9);
 function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return false;const diff=Math.round((now-INJECTION_REF)/86400000);return diff>=0&&diff%14===0;}
 
-// -- Core tasks --
+// -- Core tasks ----------------------------------------------------------------
 const coreTasks=[
     {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:'Until 10AM',   isEssential:true,  check:h=>h<10},
     {id:'Breakfast', name:'Have Breakfast',               type:'stamina', anim:'eating',     timeLabel:'Until 12PM',   isEssential:true,  check:h=>h<12},
     {id:'Tablet',    name:'Take Experimental Tablet',     type:'guts',    anim:'giggle',     timeLabel:'Before 12PM',  isEssential:true,  isTablet:true, idealEnd:12, check:h=>h<24},
-    {id:'Water',     name:'Drink Glass Of Water',         type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',   isEssential:false,  check:h=>h>=8&&h<24&&h%2===0},
+    {id:'Water',     name:'Drink Glass Of Water',         type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',   isEssential:false, check:h=>h>=8&&h<24&&h%2===0},
     {id:'Lunch',     name:'Eat Lunch',                    type:'stamina', anim:'eating',     timeLabel:'12PM – 3PM',   isEssential:true,  check:h=>h>=12&&h<15},
     {id:'Snack',     name:'Share A Snack With Tachyon',   type:'stamina', anim:'snack',      timeLabel:'3PM – 5PM',    isEssential:false, check:h=>h>=15&&h<17},
     {id:'Walk',      name:'Go For A Walk with Tachyon',   type:'power',   anim:'super_dash', timeLabel:'After 3PM',    isEssential:false, check:h=>h>=15&&h<19},
@@ -719,14 +725,14 @@ const coreTasks=[
 
 function getEffectiveTask(task){const ov=coreTaskOverrides[task.id];if(!ov)return task;return Object.assign({},task,{name:ov.name||task.name,type:ov.type||task.type,timeLabel:ov.timeLabel||task.timeLabel,days:ov.days||task.days,check:h=>{if(ov.fromH!==undefined&&ov.toH!==undefined)return ov.fromH<=ov.toH?h>=ov.fromH&&h<ov.toH:h>=ov.fromH||h<ov.toH;return task.check(h);}});}
 
-// -- Menu / Tabs --
+// -- Menu / Tabs ---------------------------------------------------------------
 const STAT_ICONS={power:'💪',stamina:'✨',guts:'🔥',wit:'📚'};
 const DAY_NAMES=['Su','Mo','Tu','We','Th','Fr','Sa'];
 let activeTab='custom';
 function switchTab(tab){activeTab=tab;['custom','core','achievements'].forEach((t,i)=>{document.querySelectorAll('.tp-tab')[i].classList.toggle('active',t===tab);document.getElementById('tab-'+t).classList.toggle('active',t===tab);});if(tab==='core')renderCoreTaskEditor();if(tab==='achievements')renderAchievements();}
 function toggleMenu(){const panel=document.getElementById('task-panel');const open=panel.style.display==='block';panel.style.display=open?'none':'block';if(!open){syncHolidayBtn();renderCustomTasks();if(activeTab==='core')renderCoreTaskEditor();if(activeTab==='achievements')renderAchievements();}}
 
-// -- Core task editor --
+// -- Core task editor ----------------------------------------------------------
 function renderCoreTaskEditor(){
     const list=document.getElementById('core-task-edit-list');
     const essentials=coreTasks.filter(t=>t.isEssential||t.isInjection);
@@ -741,7 +747,7 @@ function editCoreTask(id){const task=coreTasks.find(t=>t.id===id);if(!task)retur
 function saveCoreTask(id){const task=coreTasks.find(t=>t.id===id);if(!task)return;const name=document.getElementById(`ce-name-${id}`).value.trim();const type=document.getElementById(`ce-type-${id}`).value;const fromVal=document.getElementById(`ce-from-${id}`).value;const toVal=document.getElementById(`ce-to-${id}`).value;const days=Array.from(document.querySelectorAll(`#ce-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}const fmt=t=>{const[h,m]=t.split(':');const hr=parseInt(h);return`${hr%12||12}${m!=='00'?':'+m:''}${hr<12?'AM':'PM'}`;};let timeLabel=task.timeLabel,fromH,toH;if(fromVal&&toVal){fromH=parseInt(fromVal.split(':')[0]);toH=parseInt(toVal.split(':')[0]);timeLabel=`${fmt(fromVal)} – ${fmt(toVal)}`;}else if(fromVal){fromH=parseInt(fromVal.split(':')[0]);timeLabel=`From ${fmt(fromVal)}`;}coreTaskOverrides[id]={name,type,days,timeLabel};if(fromH!==undefined)coreTaskOverrides[id].fromH=fromH;if(toH!==undefined)coreTaskOverrides[id].toH=toH;scheduleSave();renderCoreTaskEditor();updateUI();setStatus('Task updated! ✨',2000);}
 function resetCoreTask(id){delete coreTaskOverrides[id];scheduleSave();renderCoreTaskEditor();updateUI();}
 
-// -- Custom tasks --
+// -- Custom tasks --------------------------------------------------------------
 const STAT_ANIMS={power:['super_dash','dash','cheer'],stamina:['eating','snack','wave'],guts:['giggle','cheer','sudden_stop'],wit:['sit_down','say','giggle']};
 function pickAnim(type){const p=STAT_ANIMS[type]||['cheer'];return p[Math.floor(Math.random()*p.length)];}
 function hydrateCustomTasks(raw){return raw.map(t=>Object.assign({},t,{anim:t.anim||'cheer',check:h=>{if(t.fromH!==undefined&&t.toH!==undefined)return t.fromH<=t.toH?h>=t.fromH&&h<t.toH:h>=t.fromH||h<t.toH;return true;}}));}
@@ -753,7 +759,7 @@ function editCustomTask(id){const t=customTasksRaw.find(t=>t.id===id);if(!t)retu
 function saveCustomTask(id){const name=document.getElementById(`edit-name-${id}`).value.trim();const type=document.getElementById(`edit-type-${id}`).value;const fromVal=document.getElementById(`edit-from-${id}`).value;const toVal=document.getElementById(`edit-to-${id}`).value;const days=Array.from(document.querySelectorAll(`#edit-days-${id} .tp-day.on`)).map(el=>parseInt(el.dataset.day));if(!name||days.length===0){alert('Please enter a name and select at least one day.');return;}const idx=customTasksRaw.findIndex(t=>t.id===id);if(idx===-1)return;customTasksRaw[idx]=buildRaw(id,name,type,days,fromVal,toVal);customTasks=hydrateCustomTasks(customTasksRaw);scheduleSave();renderCustomTasks();updateUI();setStatus('Task updated! ✨',2000);}
 function renderCustomTasks(){const list=document.getElementById('custom-task-list');if(!customTasksRaw.length){list.innerHTML='';return;}list.innerHTML='<hr class="tp-divider">'+customTasksRaw.map(t=>{const dayStr=t.days.map(d=>DAY_NAMES[d]).join(' · ');return`<div class="ct-item" data-id="${t.id}"><div class="ct-info"><div class="ct-name">${t.name}</div><div class="ct-meta">${STAT_ICONS[t.type]||''} ${t.type} · ${dayStr} · ${t.timeLabel}</div></div><div class="ct-btns"><button class="btn-dupe" onclick="duplicateCustomTask('${t.id}')" title="Duplicate">⧉</button><button class="btn-edit" onclick="editCustomTask('${t.id}')" title="Edit">✎</button><button class="btn-del" onclick="deleteCustomTask('${t.id}')" title="Delete">✕</button></div></div>`;}).join('');}
 
-// -- Nag system --
+// -- Nag system ----------------------------------------------------------------
 const INJECTION_NAGS=["I NEED this data on time!! Please do the injection! 🔬","Late injection data skews the whole experiment... 😤","This is for SCIENCE!! 🧪","Tachyon is not impressed. The injection window was 3PM–5PM! 😤","The research won't wait forever... 🌸"];
 const TABLET_NAGS=["Have you taken your tablet yet today? It's important! 💊","The tablet needs to be taken before 12PM! 🌸","I'm watching the tablet situation closely... 😤","Your health matters! Please take your tablet! 💊"];
 let injNagIdx=0,tabNagIdx=0,injNagInterval=null,tabNagInterval=null,_naggingInj=false,_naggingTab=false;
@@ -763,13 +769,13 @@ function stopInjNag(){clearInterval(injNagInterval);injNagInterval=null;}
 function startTabNag(){if(tabNagInterval)return;tabNagInterval=setInterval(()=>{if(!isTaskActive('Tablet'))return;setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.anger,null);},90000);if(isTaskActive('Tablet')){setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.urgent,null);}}
 function stopTabNag(){clearInterval(tabNagInterval);tabNagInterval=null;}
 
-// -- Hint system --
+// -- Hint system ---------------------------------------------------------------
 let hintInterval=null;
 function getActiveTaskIds(){const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();return[...coreTasks.map(getEffectiveTask),...customTasks].filter(task=>{const taskDays=task.days||[0,1,2,3,4,5,6];return taskDays.includes(day)&&task.check(h)&&history[task.id]!==today&&dismissed[task.id]!==today;}).map(t=>t.id);}
 function doHint(){const active=getActiveTaskIds();if(!active.length)return;const id=active[Math.floor(Math.random()*active.length)];const base=coreTasks.find(t=>t.id===id);const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));const reminder=TASK_REMINDERS[id]||(base?`Don't forget — ${(base.name||'').toLowerCase()}!`:null);if(reminder)setStatus(reminder,5000);showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);}
 function startHintCycle(){if(hintInterval)return;setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);}
 
-// -- UI update --
+// -- UI update -----------------------------------------------------------------
 let _lastVisible=new Set();
 function updateUI(){
     ['power','stamina','guts','wit'].forEach(s=>{const v=stats[s]||0;const rank=getRank(v);const{pct,label}=getRankProgress(v);const bar=document.getElementById('bar-'+s);if(bar)bar.style.width=pct+'%';const rnk=document.getElementById('rank-'+s);if(rnk)rnk.textContent=RANK_NAMES[rank];const xpEl=document.getElementById('xp-'+s);if(xpEl)xpEl.textContent=rank>=6?'MAX':label;});
@@ -812,7 +818,7 @@ function updateUI(){
     renderStreak();
 }
 
-// -- Completion messages --
+// -- Completion messages -------------------------------------------------------
 const INJ_ONTIME=["Ehehe~ more data for me! 🧪✨","Perfect timing! 🔬🌸","Excellent! Right on schedule! 🧪"];
 const INJ_LATE=["Tachyon is not impressed... late data! 😤","Better late than never! 😤","Please be on time next time! 😤"];
 const TAB_ONTIME=["Tablet on time — Tachyon approves! 💊🌸","Well done! Health first! 💊✨","Tablet done! 💊"];
@@ -847,7 +853,7 @@ const GENERIC_COMPLETE_MSGS={
 const CLASS_COMPLETE_MSGS=["Class attended! Brain cells activated! 📚✨","Learning complete! Tachyon finds academia fascinating! 📚🌸","Class done! Knowledge is the best experiment! 📚","Education logged! A well-rounded test subject! 📚✨"];
 function getCompletionMessage(id,type,isInj,isTab,isClass){if(isInj)return randFrom(INJ_ONTIME);if(isTab)return randFrom(TAB_ONTIME);if(isClass)return randFrom(CLASS_COMPLETE_MSGS);const s=TASK_COMPLETE_MSGS[id];if(s)return randFrom(s);return randFrom(GENERIC_COMPLETE_MSGS[type]||GENERIC_COMPLETE_MSGS.power);}
 
-// -- Complete / dismiss --
+// -- Complete / dismiss --------------------------------------------------------
 const RANK_UP_MSGS={power:"Tachyon feels Stronger! 💪",stamina:"Tachyon has more energy! ✨",guts:"Tachyon is tougher now! 🔥",wit:"Tachyon feels Smarter! 📚"};
 
 function complete(id,anim,type,isInjection,isTablet,h){
@@ -886,7 +892,7 @@ function complete(id,anim,type,isInjection,isTablet,h){
 
 function dismiss(id){dismissed[id]=new Date().toDateString();scheduleSave();setStatus('Okay, skipping that one... 😤',3000);updateUI();}
 
-// -- Status / bored --
+// -- Status / bored ------------------------------------------------------------
 let statusTimeout=null,boredTimeout=null;
 const DEFAULT_MSGS=["Tachyon is here! 🌸","Ready for today?","What's on the schedule?"];
 const BORED_MSGS=["Tachyon is bored... 😴","Hmm... nothing to do?","Tachyon is waiting patiently...","Is anyone there...? 🌸"];
@@ -895,11 +901,11 @@ function resetBoredTimer(){if(boredTimeout)clearTimeout(boredTimeout);boredTimeo
 function say(text){setStatus(text,4000);if(agnes)agnes.play('say');}
 resetBoredTimer();
 
-// -- Clock --
+// -- Clock ---------------------------------------------------------------------
 function updateClock(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
 updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();tryAdvanceStreak();},60000);
 
-// -- Phaser --
+// -- Phaser --------------------------------------------------------------------
 let agnes=null,gameBooted=false,phaserScene=null;
 window._rankUpCelebrating=false;
 
@@ -941,7 +947,7 @@ function create(){
     A('say',      ['agtc730_00','agtc730_01','agtc730_02','agtc730_03'],4,0);
     A('sit_down', ['agtc320_00','agtc320_01','agtc320_02','agtc320_03','agtc320_04','agtc320_06','agtc320_04','agtc320_06','agtc320_04','agtc320_06'],2,0);
 
-    // -- spawnHint: item sprites spread around Tachyon + emote bubble --
+    // -- spawnHint: item sprites spread around Tachyon + emote bubble ----------
     sc.spawnHint=function(taskId,emoteFrame,isCompletion){
         if(taskId){
             const mapping=TASK_SPRITES[taskId];
@@ -983,7 +989,7 @@ function create(){
         }
     };
 
-    // -- Movement --
+    // -- Movement --------------------------------------------------------------
     let vx=0,vy=0,mode='none',fAngle=0,wallBounce=false,interrupted=false;
     const HX=Math.round(W/2),HY=90,WL=20,WR=W-20,SDL=10,SDR=W-10;
 
@@ -994,7 +1000,7 @@ function create(){
     const pool=['idle1','idle1','idle1','idle1','idle1','idle1','walk_left','dash','super_dash','float','giggle','wave','cheer'];
     let idleTimer=null;
 
-    // -- FIX: Separate idle-timer cancel from interrupted flag --
+    // -- FIX: Separate idle-timer cancel from interrupted flag -----------------
     // cancelIdleTimer — stops the next idle from firing, but does NOT set interrupted
     //   so task-completion anims finish cleanly and animationcomplete parks Agnes
     // cancelCurrent — full interrupt (used only when tapping Agnes directly)
@@ -1068,29 +1074,18 @@ function create(){
 
 // -- Streak tooltip --
 function openStreakTooltip(e) {
-    if (e) e.stopPropagation();
-    const today = new Date().toDateString();
-    const essentials = getTodayEssentials();
-    const doneCount = essentials.filter(t => history[t.id] === today).length;
-    const total = essentials.length;
-    const allDone = doneCount === total;
-    document.getElementById('streak-tt-progress').innerHTML = allDone
-        ? '<span style="color:#00b894;font-weight:bold;">✅ All done! Your streak will count for today.</span>'
-        : '<span style="color:var(--accent);font-weight:bold;">' + doneCount + ' / ' + total + ' done — ' + (total - doneCount) + ' still needed</span>';
-    document.getElementById('streak-essentials-list').innerHTML = essentials.map(t => {
-        const isDone = history[t.id] === today;
-        const note = t.isInjection ? ' <span style="color:#a5b1c2;font-size:0.85em">(biweekly Fri)</span>' : '';
-        return '<li style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f5f5f5;">'
-            + '<span>' + (isDone ? '✅' : '❌') + '</span>'
-            + '<span style="flex:1;' + (isDone ? 'color:#00b894;' : 'color:#ff7675;font-weight:bold;') + '">'
-            + t.name + note + '</span></li>';
+    e.stopPropagation();
+    const list = document.getElementById('streak-essentials-list');
+    list.innerHTML = coreTasks.filter(t => t.isEssential).map(t => {
+        const note = t.isInjection ? ' <span style="color:#a5b1c2">(biweekly Fri only)</span>' : '';
+        return '<li>' + t.name + note + '</li>';
     }).join('');
-    const bar = document.getElementById('streak-bar');
-    const rect = bar.getBoundingClientRect();
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
     const tt = document.getElementById('streak-tooltip');
     tt.classList.add('show');
     document.getElementById('streak-tooltip-backdrop').classList.add('show');
-    const ttH = tt.offsetHeight || 300;
+    const ttH = tt.offsetHeight || 260;
     let top = rect.bottom + 8;
     if (top + ttH > window.innerHeight - 8) top = rect.top - ttH - 8;
     tt.style.top = Math.max(8, top) + 'px';

@@ -5,37 +5,37 @@
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js">
 // -- Field Mission System --
 const FIELD_MISSIONS = [
-    "Find a pink flower \u2014 what species is it? Report back to Tachyon!",
+    "Find a pink flower — what species is it? Report back to Tachyon!",
     "Spot a bird and identify the breed for Tachyon's records!",
-    "Find a dog outside \u2014 what breed is it? Tachyon needs the data!",
+    "Find a dog outside — what breed is it? Tachyon needs the data!",
     "Go cloud gazing and learn one fun fact about a type of cloud you see.",
     "Find a tree and identify the species. Tachyon is watching.",
     "Spot an insect and identify it for the research files!",
-    "Find something blue in nature \u2014 what is it exactly?",
+    "Find something blue in nature — what is it exactly?",
     "Find a seed or berry and identify the plant it came from.",
-    "Find a feather outside \u2014 what bird might it belong to?",
+    "Find a feather outside — what bird might it belong to?",
     "Go somewhere within walking distance you've never been before.",
     "Find interesting architecture nearby and sketch or photograph it.",
-    "Find a cat outside \u2014 what colour and markings does it have?",
-    "Spot a cloud that looks like something \u2014 what does it resemble?",
-    "Find a puddle or body of water \u2014 what's living in or around it?",
+    "Find a cat outside — what colour and markings does it have?",
+    "Spot a cloud that looks like something — what does it resemble?",
+    "Find a puddle or body of water — what's living in or around it?",
     "Find something man-made being reclaimed by nature.",
     "Spot 3 different types of plant on a single walk.",
-    "Find an interesting rock or stone \u2014 what type might it be?",
+    "Find an interesting rock or stone — what type might it be?",
     "Draw something you find outside today for Tachyon's files.",
-    "Find evidence of an animal (tracks, burrow, nest) \u2014 what made it?",
-    "Find a flower that isn't pink \u2014 identify it for Tachyon!",
+    "Find evidence of an animal (tracks, burrow, nest) — what made it?",
+    "Find a flower that isn't pink — identify it for Tachyon!",
     "Photograph something that made you smile outside today.",
-    "Find a plant with an interesting smell \u2014 identify it!",
+    "Find a plant with an interesting smell — identify it!",
     "Spot something in nature that comes in pairs or symmetrical patterns.",
-    "Find the oldest-looking thing outside \u2014 what is it?",
+    "Find the oldest-looking thing outside — what is it?",
 ];
 
 const MISSION_SKIP_MSGS = [
-    "I'll let it slide this once. No slacking off! \U0001f928",
-    "Hmm. Very well. But Tachyon expects better tomorrow! \U0001f9ea",
-    "The research suffers, but I suppose it can't be helped... \U0001f928",
-    "One miss is forgivable. Two is a pattern. \U0001f52c",
+    "I'll let it slide this once. No slacking off! 🤨",
+    "Hmm. Very well. But Tachyon expects better tomorrow! 🧪",
+    "The research suffers, but I suppose it can't be helped... 🤨",
+    "One miss is forgivable. Two is a pattern. 🔬",
 ];
 
 function getTodayMission() {
@@ -82,7 +82,7 @@ function updateMissionCard() {
             document.getElementById('fm-mission-text').innerHTML = '<strong>' + getTodayMission().text + '</strong>';
             document.getElementById('fm-btns').style.display = 'none';
             document.getElementById('fm-expired').style.display = 'block';
-            document.getElementById('fm-timer').textContent = '\u23f0 Expired';
+            document.getElementById('fm-timer').textContent = '⏰ Expired';
             document.getElementById('fm-timer').className = 'critical';
             // Fade out after 60s
             setTimeout(() => card.classList.remove('summer-active'), 60000);
@@ -102,7 +102,7 @@ function updateMissionCard() {
     const mission = getTodayMission();
     const card = document.getElementById('field-mission');
     card.classList.add('summer-active');
-    document.getElementById('fm-mission-text').innerHTML = '<strong>\U0001f9ea Mission:</strong> ' + mission.text;
+    document.getElementById('fm-mission-text').innerHTML = '<strong>🧪 Mission:</strong> ' + mission.text;
     document.getElementById('fm-btns').style.display = 'flex';
     document.getElementById('fm-expired').style.display = 'none';
 
@@ -127,7 +127,7 @@ function showMissionAnnouncement(text) {
     const overlay = document.getElementById('mission-announce');
     overlay.classList.add('show');
     if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
-    setStatus('\U0001f4cb New field mission from Tachyon! Check it out! \U0001f52c', 6000);
+    setStatus('📋 New field mission from Tachyon! Check it out! 🔬', 10000);
 }
 
 function acceptMission() {
@@ -155,12 +155,12 @@ function completeMission() {
     updateUI();
 
     const msgs = [
-        'Excellent field data! Tachyon is very pleased! \U0001f52c\U0001f338',
-        'Outstanding research! The experiment advances! \U0001f9ea\u2728',
-        'Field data logged! Tachyon approves greatly! \U0001f52c',
-        'Remarkable work out there! Science marches on! \U0001f338\U0001f9ea',
+        'Excellent field data! Tachyon is very pleased! 🔬🌸',
+        'Outstanding research! The experiment advances! 🧪✨',
+        'Field data logged! Tachyon approves greatly! 🔬',
+        'Remarkable work out there! Science marches on! 🌸🧪',
     ];
-    setStatus(msgs[Math.floor(Math.random() * msgs.length)], 6000);
+    setStatus(msgs[Math.floor(Math.random() * msgs.length)], 10000);
     if (agnes) { agnes.setFlipX(false); agnes.play('cheer'); }
     showEmoteAndItem(null, EMOTE.science, true);
     checkAchievements();
@@ -187,6 +187,216 @@ function skipMission() {
     const msg = MISSION_SKIP_MSGS[Math.floor(Math.random() * MISSION_SKIP_MSGS.length)];
     setStatus(msg, 6000);
     if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
+}
+
+
+// -- RaceRank System --
+const RACERANK_PROMOTION_MSGS = {
+    'OP':   { msg: "You've outgrown the preliminaries! The real experiment begins now! 🧪", colour: '#74b9ff' },
+    'GIII': { msg: "You've entered the Grade races! Tachyon is taking this very seriously! 🏅", colour: '#55efc4' },
+    'GII':  { msg: "Grade II! The competition gets fierce from here! Tachyon is proud! 🌟", colour: '#fd79a8' },
+    'GI':   { msg: "Grade I! You're among the elite now! Tachyon is genuinely in awe! 👑", colour: '#fdcb6e' },
+    'EX':   { msg: "EX RANK! You've transcended normal rankings! Tachyon proclaims you her greatest experiment! 🔥", colour: '#e17055' },
+};
+
+function checkRaceRankPromotion() {
+    const thresholds = getRaceThresholds();
+    const sssThreshold = thresholds[thresholds.length - 1];
+    const allSSS = ['power','stamina','guts','wit'].every(s => (stats[s]||0) >= sssThreshold);
+    if (!allSSS) return;
+    const currentIdx = RACE_RANKS.indexOf(raceRankData.current);
+    if (currentIdx >= RACE_RANKS.length - 1) return; // already EX
+    const newRaceRank = RACE_RANKS[currentIdx + 1];
+    const oldRaceRank = raceRankData.current;
+
+    // Save best XP before reset
+    ['power','stamina','guts','wit'].forEach(s => {
+        raceRankData.bestXP[s] = Math.max(raceRankData.bestXP[s]||0, stats[s]||0);
+    });
+
+    // Reset stats to 0 for new rank
+    stats = {power:0, stamina:0, guts:0, wit:0};
+    raceRankData.current = newRaceRank;
+    raceRankData.history = raceRankData.history || [];
+    raceRankData.history.push({rank: oldRaceRank, date: new Date().toISOString()});
+    scheduleSave();
+
+    // Show ceremony
+    showRaceRankUp(oldRaceRank, newRaceRank);
+}
+
+function showRaceRankUp(oldRank, newRank) {
+    const info = RACERANK_PROMOTION_MSGS[newRank] || { msg: 'A new chapter begins!', colour: '#a29bfe' };
+    document.getElementById('racerank-old').textContent = oldRank + ' SSS →';
+    document.getElementById('racerank-badge-big').textContent = RACE_RANK_BADGES[newRank] || '🌟';
+    document.getElementById('racerank-new-name').textContent = newRank;
+    document.getElementById('racerank-new-name').style.color = info.colour;
+    document.getElementById('racerank-msg').textContent = info.msg;
+    document.getElementById('racerank-close').style.background = info.colour;
+    document.getElementById('racerank-card').style.borderColor = info.colour;
+    document.getElementById('racerank-overlay').classList.add('show');
+    // Mega confetti
+    spawnRaceRankConfetti(info.colour);
+    // Agnes extended cheer
+    if (agnes && window.phaserScene) {
+        if (window.cancelCurrent) window.cancelCurrent();
+        agnes.setFlipX(false);
+        agnes.play('cheer');
+        window._rankUpCelebrating = true;
+    }
+    updateHudRaceRank();
+    checkAchievements();
+}
+
+function closeRaceRankUp() {
+    document.getElementById('racerank-overlay').classList.remove('show');
+    window._rankUpCelebrating = false;
+    if (window.phaserSceneNext) window.phaserSceneNext(2000);
+    updateUI();
+}
+
+function spawnRaceRankConfetti(accentColour) {
+    const colors = ['#f8a5c2','#a29bfe','#74b9ff','#55efc4','#fdcb6e','#fd79a8', accentColour];
+    for (let i = 0; i < 120; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.cssText = `
+            left:${Math.random()*100}%;top:-10px;
+            background:${colors[Math.floor(Math.random()*colors.length)]};
+            width:${6+Math.random()*10}px;height:${6+Math.random()*10}px;
+            border-radius:${Math.random()>0.5?'50%':'2px'};
+            animation-duration:${2+Math.random()*3}s;
+            animation-delay:${Math.random()*0.8}s;
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 5000);
+    }
+}
+
+function updateHudRaceRank() {
+    const rr = getCurrentRaceRank();
+    const colour = RACE_RANK_COLOURS[rr] || '#a29bfe';
+    const badge = document.getElementById('hud-racerank-badge');
+    const label = document.getElementById('hud-racerank-label');
+    if (badge) {
+        badge.textContent = RACE_RANK_BADGES[rr] + ' ' + rr;
+        badge.style.background = colour;
+    }
+    if (label) {
+        const thresholds = getRaceThresholds();
+        const sss = thresholds[thresholds.length-1];
+        const allSSS = ['power','stamina','guts','wit'].every(s=>(stats[s]||0)>=sss);
+        label.textContent = allSSS ? '✨ All SSS! Ready to promote!' : '';
+    }
+}
+
+// -- Penalty System --
+const MISSED_MSGS = [
+    "You missed a task! Tachyon is disappointed... 🤨",
+    "No excuses! The data suffers when you slack off! 🤨",
+    "A missed task means lost progress! Don't let it happen again! 🧪",
+    "Tachyon notes the absence. This will reflect in the results! 🔬",
+    "The experiment requires consistency! Tachyon is not pleased. 🤨",
+];
+const DISMISSED_MSGS = [
+    "Skipping tasks isn't free you know... 🤨",
+    "Tachyon will allow it. This time. 🤨",
+    "Fine. But every skip has a cost! 🧪",
+];
+
+function applyPenalty(statType, amount, isMissed) {
+    stats[statType] = Math.max(0, (stats[statType]||0) - amount);
+    scheduleSave();
+    const msgs = isMissed ? MISSED_MSGS : DISMISSED_MSGS;
+    setStatus(msgs[Math.floor(Math.random()*msgs.length)], 10000);
+    showEmoteAndItem(null, EMOTE.anger, false);
+    // Flash the stat row
+    const row = document.querySelector('.stat-row:has(#bar-' + statType + ')');
+    if (row) { row.classList.add('penalty-flash'); setTimeout(()=>row.classList.remove('penalty-flash'), 700); }
+}
+
+function checkMissedTasks() {
+    const today = new Date().toDateString();
+    const h = new Date().getHours();
+    const day = new Date().getDay();
+    // Ensure we have a record for today
+    if (!penaltyData.checked) penaltyData.checked = {};
+    if (!penaltyData.checked[today]) penaltyData.checked[today] = {};
+
+    coreTasks.forEach(task => {
+        const taskDays = task.days || [0,1,2,3,4,5,6];
+        if (!taskDays.includes(day)) return;
+        if (task.isInjection && !isInjectionFriday()) return;
+        // Task was available today but window has now closed
+        const wasActive = task.check(h-1 < 0 ? 0 : h-1); // was it active last hour?
+        const isActive = task.check(h);
+        const windowJustClosed = wasActive && !isActive;
+        if (!windowJustClosed) return;
+        const penaltyKey = task.id + '_' + h;
+        if (penaltyData.checked[today][penaltyKey]) return; // already penalised
+        penaltyData.checked[today][penaltyKey] = true;
+
+        const done = history[task.id] === today;
+        const skipped = dismissed[task.id] === today;
+        if (done) return; // completed, no penalty
+
+        if (skipped) {
+            // Dismissed: flat -5 to task's stat
+            const statType = task.isInjection ? 'guts' : (task.type || 'power');
+            applyPenalty(statType, 5, false);
+            if (task.isInjection) applyPenalty('power', 5, false);
+        } else {
+            // Truly missed: full penalty
+            const amount = task.isInjection ? 25 : 10;
+            const statType = task.isInjection ? 'guts' : (task.type || 'power');
+            applyPenalty(statType, amount, true);
+            if (task.isInjection) applyPenalty('power', amount, true);
+        }
+        scheduleSave();
+    });
+    penaltyData.lastChecked = today + '_' + h;
+}
+
+// Check penalties on app open for any missed windows since last check
+function checkMissedTasksOnOpen() {
+    const today = new Date().toDateString();
+    const now = new Date();
+    const h = now.getHours();
+    const day = now.getDay();
+    if (!penaltyData.checked) penaltyData.checked = {};
+    if (!penaltyData.checked[today]) penaltyData.checked[today] = {};
+
+    coreTasks.forEach(task => {
+        const taskDays = task.days || [0,1,2,3,4,5,6];
+        if (!taskDays.includes(day)) return;
+        if (task.isInjection && !isInjectionFriday()) return;
+
+        // Find all hours today where this task was active and window has since closed
+        for (let ph = 0; ph < h; ph++) {
+            const wasActive = task.check(ph);
+            const stillActive = task.check(ph + 1);
+            if (!wasActive || stillActive) continue; // wasn't a closing window
+            const penaltyKey = task.id + '_' + (ph+1);
+            if (penaltyData.checked[today][penaltyKey]) continue;
+            penaltyData.checked[today][penaltyKey] = true;
+
+            const done = history[task.id] === today;
+            const skipped = dismissed[task.id] === today;
+            if (done) continue;
+
+            if (skipped) {
+                const statType = task.isInjection ? 'guts' : (task.type || 'power');
+                stats[statType] = Math.max(0, (stats[statType]||0) - 5);
+                if (task.isInjection) stats['power'] = Math.max(0, (stats['power']||0) - 5);
+            } else {
+                const amount = task.isInjection ? 25 : 10;
+                const statType = task.isInjection ? 'guts' : (task.type || 'power');
+                stats[statType] = Math.max(0, (stats[statType]||0) - amount);
+                if (task.isInjection) stats['power'] = Math.max(0, (stats['power']||0) - amount);
+            }
+        }
+    });
+    scheduleSave();
 }
 
 </script>
@@ -321,6 +531,25 @@ function skipMission() {
         #streak-tooltip .tt-note { font-size:0.88em; color:#a5b1c2; margin:6px 0 0; }
         #streak-tooltip .tt-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#b2bec3; font-size:1em; cursor:pointer; line-height:1; padding:2px; }
 
+
+        /* -- RaceRank promotion overlay -- */
+        #racerank-overlay { position:fixed; inset:0; z-index:999999; display:flex; align-items:center; justify-content:center; pointer-events:none; opacity:0; transition:opacity 0.4s ease; }
+        #racerank-overlay.show { opacity:1; pointer-events:auto; }
+        #racerank-bg { position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(108,92,231,0.5) 0%, rgba(0,0,0,0.7) 100%); backdrop-filter:blur(4px); }
+        #racerank-card { position:relative; z-index:2; background:white; border-radius:32px; padding:36px 28px 28px; box-shadow:0 24px 80px rgba(0,0,0,0.4); text-align:center; max-width:320px; width:90%; border:4px solid #a29bfe; transform:scale(0.6) translateY(60px); transition:transform 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+        #racerank-overlay.show #racerank-card { transform:scale(1) translateY(0); }
+        #racerank-old { font-size:0.85em; color:#a5b1c2; margin-bottom:6px; }
+        #racerank-arrow { font-size:1.8em; margin:4px 0; }
+        #racerank-badge-big { font-size:4em; line-height:1; display:block; margin:8px 0; animation:badgePop 0.6s ease-out; }
+        #racerank-new-name { font-size:2em; font-weight:bold; margin:4px 0 8px; }
+        #racerank-msg { font-size:0.8em; color:#596275; line-height:1.6; margin:8px 0 16px; }
+        #racerank-close { padding:12px 32px; color:white; border:none; border-radius:12px; font-weight:bold; font-size:0.92em; cursor:pointer; font-family:inherit; }
+        /* HUD RaceRank badge */
+        #hud-racerank { width:95%; max-width:400px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; gap:8px; }
+        #hud-racerank-badge { padding:4px 14px; border-radius:20px; color:white; font-weight:bold; font-size:0.8em; letter-spacing:0.05em; }
+        /* Penalty flash */
+        @keyframes penaltyFlash { 0%,100%{background:white} 25%,75%{background:#fff5f5} 50%{background:#ffe0e0} }
+        .stat-row.penalty-flash { animation:penaltyFlash 0.6s ease; }
         /* -- Field Mission -- */
         #field-mission { display:none; width:95%; max-width:400px; background:white; border-radius:20px; margin-bottom:15px; box-shadow:0 5px 15px rgba(162,155,254,0.2); overflow:hidden; border:2px solid #a29bfe; box-sizing:border-box; }
         #field-mission.summer-active { display:block; }
@@ -384,6 +613,11 @@ function skipMission() {
     </div>
 </div>
 
+<!-- VERSION POPUP -->
+        <button onclick="closeUpdateModal()" style="width:100%;padding:10px;background:var(--accent);color:white;border:none;border-radius:10px;font-weight:bold;font-size:0.85em;cursor:pointer;font-family:inherit;">Awesome, let's go! 🌸</button>
+    </div>
+</div>
+
 <!-- UPDATE BANNER (shown when a new deploy is detected while app is open) -->
 <div id="update-banner" onclick="doUpdateReload()" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(400px,95vw);background:var(--accent);color:white;text-align:center;padding:12px 16px;font-size:0.82em;font-weight:bold;font-family:'Segoe UI',sans-serif;cursor:pointer;z-index:9998;border-radius:16px 16px 0 0;box-shadow:0 -4px 16px rgba(248,165,194,0.35);">
     <span>🌸</span> A new update is available! Tap to refresh.
@@ -427,6 +661,19 @@ function skipMission() {
     <div id="holiday-notice">☀️ Summer Mode is on — field missions and summer tasks are active! Classes hidden.</div>
 
 
+
+    <!-- RACERANK PROMOTION OVERLAY -->
+    <div id="racerank-overlay">
+        <div id="racerank-bg" onclick="closeRaceRankUp()"></div>
+        <div id="racerank-card">
+            <div id="racerank-old">Pre-OP SSS</div>
+            <div id="racerank-arrow">⬇️</div>
+            <span id="racerank-badge-big">💫</span>
+            <div id="racerank-new-name">OP</div>
+            <div id="racerank-msg">The real experiment begins!</div>
+            <button id="racerank-close" onclick="closeRaceRankUp()">Let's go! 🔥</button>
+        </div>
+    </div>
     <!-- MISSION ANNOUNCEMENT -->
     <div id="mission-announce">
         <div id="mission-card">
@@ -460,6 +707,19 @@ function skipMission() {
         <p class="tt-note">⚠️ Missing a day resets your streak to 1. The injection only counts on its scheduled biweekly Fridays.</p>
     </div>
 
+
+    <!-- RACERANK PROMOTION OVERLAY -->
+    <div id="racerank-overlay">
+        <div id="racerank-bg" onclick="closeRaceRankUp()"></div>
+        <div id="racerank-card">
+            <div id="racerank-old">Pre-OP SSS</div>
+            <div id="racerank-arrow">⬇️</div>
+            <span id="racerank-badge-big">💫</span>
+            <div id="racerank-new-name">OP</div>
+            <div id="racerank-msg">The real experiment begins!</div>
+            <button id="racerank-close" onclick="closeRaceRankUp()">Let's go! 🔥</button>
+        </div>
+    </div>
     <!-- MISSION ANNOUNCEMENT -->
     <div id="mission-announce">
         <div id="mission-card">
@@ -556,6 +816,7 @@ function skipMission() {
         </div>
     </div>
 
+    <div id="hud-racerank"><span id="hud-racerank-badge">Pre-OP</span><span id="hud-racerank-label" style="font-size:0.72em;color:#a5b1c2;"></span></div>
     <div id="hud">
         <div class="stat-row"><div class="stat-label">Pwr</div><div class="bar-container"><div id="bar-power" class="bar-fill"></div></div><div id="rank-power" class="rank">F</div><div id="xp-power" class="xp-label"></div></div>
         <div class="stat-row"><div class="stat-label">Stm</div><div class="bar-container"><div id="bar-stamina" class="bar-fill"></div></div><div id="rank-stamina" class="rank">F</div><div id="xp-stamina" class="xp-label"></div></div>
@@ -576,9 +837,16 @@ function skipMission() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.5.0';
+const CURRENT_VERSION = '1.6.0';
 
 const CHANGELOG = [
+    { version: '1.6.0', changes: [
+        '🏁 RaceRank system! Progress through Pre-OP → OP → GIII → GII → GI → EX',
+        '⭐ Get all 4 stats to SSS to promote to the next RaceRank — with a ceremony!',
+        '🏆 New RaceRank achievements and badge in the HUD',
+        '⚠️ Missed tasks now deduct XP! Dismissed tasks cost -5 XP',
+        '🔧 Penalty fires when a task window closes or when you next open the app',
+    ]},
     { version: '1.5.0', changes: [
         '☀️ Summer Mode! Holiday mode now activates summer tasks and daily Field Missions',
         '🔬 Tachyon\'s Field Missions — a daily outdoor research task with live countdown timer',
@@ -681,9 +949,48 @@ setTimeout(() => { checkForNewDeploy(); setInterval(checkForNewDeploy, 5 * 60 * 
 
 
 // -- XP / Rank -----------------------------------------------------------------
-const RANK_THRESHOLDS = [0, 100, 300, 600, 1100, 2100, 4100];
-const RANK_NAMES = ['F','E','D','C','B','A','S'];
-const RANK_BADGES = { F:'🔰', E:'🥉', D:'🥈', C:'🥇', B:'💎', A:'👑', S:'🌟' };
+// -- RaceRank system --
+const RACE_RANKS = ['Pre-OP', 'OP', 'GIII', 'GII', 'GI', 'EX'];
+const RACE_RANK_COLOURS = {
+    'Pre-OP': '#a29bfe', 'OP': '#74b9ff', 'GIII': '#55efc4',
+    'GII': '#fd79a8',    'GI': '#fdcb6e', 'EX':   '#e17055'
+};
+const RACE_RANK_BADGES = {
+    'Pre-OP': '🔰', 'OP': '💫', 'GIII': '🏅',
+    'GII': '🌟',    'GI': '👑', 'EX':   '🔥'
+};
+// XP thresholds within each RaceRank (F=0, E, D, C, B, A, S, SS, SSS)
+const RACE_RANK_THRESHOLDS = {
+    'Pre-OP': [0, 100,  300,   600,  1100,  2100,  4100,  7000, 11000],
+    'OP':     [0, 300,  700,  1300,  2200,  4000,  7000, 11000, 16000],
+    'GIII':   [0, 600, 1400,  2600,  4400,  8000, 14000, 22000, 32000],
+    'GII':    [0,1200, 2800,  5200,  8800, 16000, 28000, 44000, 64000],
+    'GI':     [0,2500, 5500, 10500, 17500, 32000, 56000, 88000,128000],
+    'EX':     [0,5000,11000, 21000, 35000, 64000,112000,176000,256000],
+};
+const RANK_NAMES = ['F','E','D','C','B','A','S','SS','SSS'];
+const RANK_BADGES = { F:'🔰', E:'🥉', D:'🥈', C:'🥇', B:'💎', A:'👑', S:'🌟', SS:'🌟🌟', SSS:'👑🔥' };
+// Keep RANK_THRESHOLDS as Pre-OP thresholds for backward compat
+const RANK_THRESHOLDS = RACE_RANK_THRESHOLDS['Pre-OP'];
+
+function getCurrentRaceRank() { return raceRankData.current || 'Pre-OP'; }
+function getRaceThresholds() { return RACE_RANK_THRESHOLDS[getCurrentRaceRank()]; }
+
+function getRank(xp) {
+    const thresholds = getRaceThresholds();
+    let rank = 0;
+    for (let i = 1; i < thresholds.length; i++) {
+        if (xp >= thresholds[i]) rank = i; else break;
+    }
+    return rank;
+}
+function getRankProgress(xp) {
+    const thresholds = getRaceThresholds();
+    const rank = getRank(xp);
+    if (rank >= RANK_NAMES.length - 1) return { pct: 100, label: 'SSS' };
+    const low = thresholds[rank], high = thresholds[rank + 1];
+    return { pct: Math.round(((xp - low) / (high - low)) * 100), label: `${xp - low}/${high - low}` };
+}
 const RANK_MSGS = {
     power:   { E:'Tachyon notices your improved physique! 💪', D:'Getting stronger! The data is promising! 💪', C:'Impressive power levels! Tachyon is taking notes! 💪', B:'Remarkable strength! A worthy test subject! 💪', A:'Elite power! Tachyon is genuinely impressed! 💪', S:'MAXIMUM POWER! Tachyon\'s experiment is a resounding success! 🌟💪' },
     stamina: { E:'Your energy is improving! ✨', D:'Excellent stamina growth! Tachyon approves! ✨', C:'Outstanding endurance! The research continues! ✨', B:'Incredible vitality! A model test subject! ✨', A:'Peak stamina achieved! Tachyon is delighted! ✨', S:'LEGENDARY STAMINA! Tachyon can barely contain her excitement! 🌟✨' },
@@ -691,17 +998,7 @@ const RANK_MSGS = {
     wit:     { E:'Sharpening that mind! 📚', D:'Excellent intellectual growth! 📚', C:'Remarkable wit! Tachyon\'s favourite kind of subject! 📚', B:'Brilliant! The mind data is extraordinary! 📚', A:'Genius-level wit! Tachyon might be slightly jealous! 📚', S:'SUPREME WIT! Tachyon proclaims you her greatest experiment! 🌟📚' },
 };
 
-function getRank(xp) {
-    let rank = 0;
-    for (let i = 1; i < RANK_THRESHOLDS.length; i++) { if (xp >= RANK_THRESHOLDS[i]) rank = i; else break; }
-    return rank;
-}
-function getRankProgress(xp) {
-    const rank = getRank(xp);
-    if (rank >= RANK_NAMES.length - 1) return { pct: 100, label: 'MAX' };
-    const low = RANK_THRESHOLDS[rank], high = RANK_THRESHOLDS[rank + 1];
-    return { pct: Math.round(((xp - low) / (high - low)) * 100), label: `${xp - low}/${high - low}` };
-}
+// getRank and getRankProgress defined above with RaceRank support
 
 // -- Rank-up celebration -------------------------------------------------------
 function showRankUp(stat, newRankIdx) {
@@ -833,9 +1130,11 @@ function syncHolidayBtn(){const b=document.getElementById('holiday-btn');if(b)b.
 // -- Data state ----------------------------------------------------------------
 let stats={power:0,stamina:0,guts:0,wit:0},history={},dismissed={},customTasksRaw=[],coreTaskOverrides={};
 let missionData={},missionCounts={completed:0,skipped:0,missionStreak:0,lastCompleted:''};
+let raceRankData={current:'Pre-OP',history:[],bestXP:{power:0,stamina:0,guts:0,wit:0}};
+let penaltyData={lastChecked:''};
 let streakData={current:0,best:0,lastDate:''},achievements={},taskCounts={},customTasks=[];
 let currentUser=null;
-function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};missionData=row.mission_data||{};missionCounts=row.mission_counts||{completed:0,skipped:0,missionStreak:0,lastCompleted:''};customTasks=hydrateCustomTasks(customTasksRaw);}
+function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};missionData=row.mission_data||{};missionCounts=row.mission_counts||{completed:0,skipped:0,missionStreak:0,lastCompleted:''};raceRankData=row.race_rank||{current:'Pre-OP',history:[],bestXP:{power:0,stamina:0,guts:0,wit:0}};penaltyData=row.penalty_data||{lastChecked:''};customTasks=hydrateCustomTasks(customTasksRaw);}
 
 // -- Auto login ----------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', async () => {
@@ -886,13 +1185,14 @@ function showApp(){
     if(!gameBooted)bootGame();
     setTimeout(checkVersionModal, 1200);
     setTimeout(updateMissionCard, 1500);
+    setTimeout(()=>{checkMissedTasksOnOpen();updateHudRaceRank();updateUI();}, 800);
 }
 function logout(){clearSession();currentUser=null;loginIsRegister=false;document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';['login-username','login-pin'].forEach(id=>document.getElementById(id).value='');document.getElementById('login-error').textContent='';document.getElementById('login-mode-label').textContent='Sign In';document.getElementById('login-toggle').textContent="Don't have an account? Create one!";document.getElementById('login-migrate-notice').style.display=getLegacyData()?'block':'none';}
 
 // -- Cloud save ----------------------------------------------------------------
 let saveDebounce=null;
 function scheduleSave(){if(saveDebounce)clearTimeout(saveDebounce);saveDebounce=setTimeout(cloudSave,900);}
-async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','Saving… 🌸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,mission_data:missionData,mission_counts:missionCounts,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed — retrying…');saveDebounce=setTimeout(cloudSave,6000);}}
+async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','Saving… 🌸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,mission_data:missionData,mission_counts:missionCounts,race_rank:raceRankData,penalty_data:penaltyData,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed — retrying…');saveDebounce=setTimeout(cloudSave,6000);}}
 function setSyncStatus(state,msg){const el=document.getElementById('sync-status');el.className=state;el.textContent=msg;}
 
 // -- Streak --------------------------------------------------------------------
@@ -926,7 +1226,7 @@ function tryAdvanceStreak(){
     streakData.best=Math.max(streakData.best,streakData.current);
     streakData.lastDate=today;
     const ms={1:'First full day done! 🌸',3:'3 days in a row! 🔥',7:'A whole week!! ⭐',14:'Two week streak! 💪',30:'30 DAYS! 🎉'};
-    if(ms[streakData.current])setTimeout(()=>setStatus(ms[streakData.current],7000),800);
+    if(ms[streakData.current])setTimeout(()=>setStatus(ms[streakData.current],10000),800);
     scheduleSave();renderStreak();checkAchievements();
 }
 function renderStreak(){
@@ -964,10 +1264,17 @@ const ACH_DEFS=[
     {id:'mission_20',   icon:'🌟',name:'Star Researcher',    desc:'Complete 20 field missions',             check:()=>(missionCounts.completed||0)>=20},
     {id:'mission_fast', icon:'⚡',name:'Speed Scout',         desc:'Complete a mission within 1 hour of it appearing', check:()=>!!(window._speedScoutToday||(missionCounts.speedScout))},
     {id:'mission_streak5',icon:'📅',name:'Dedicated Researcher',desc:'Complete 5 missions without skipping', check:()=>(missionCounts.missionStreak||0)>=5},
+    {id:'rr_op',    icon:'💫',name:'Starting Line',      desc:'Promote to OP rank',                    check:()=>RACE_RANKS.indexOf(raceRankData.current)>=1||(raceRankData.history||[]).length>=1},
+    {id:'rr_giii',  icon:'🏅',name:'Grade Racer',         desc:'Promote to GIII rank',                  check:()=>RACE_RANKS.indexOf(raceRankData.current)>=2||(raceRankData.history||[]).some(h=>h.rank==='OP')},
+    {id:'rr_gii',   icon:'🌟',name:'Rising Star',         desc:'Promote to GII rank',                   check:()=>RACE_RANKS.indexOf(raceRankData.current)>=3||(raceRankData.history||[]).some(h=>h.rank==='GIII')},
+    {id:'rr_gi',    icon:'👑',name:'Elite Racer',         desc:'Promote to GI rank',                    check:()=>RACE_RANKS.indexOf(raceRankData.current)>=4||(raceRankData.history||[]).some(h=>h.rank==='GII')},
+    {id:'rr_ex',    icon:'🔥',name:'Legendary',           desc:'Promote to EX rank',                    check:()=>raceRankData.current==='EX'},
+    {id:'rr_ex_sss',icon:'🌌',name:'True Champion',       desc:'Reach SSS in all stats at EX rank',     check:()=>{if(raceRankData.current!=='EX')return false;const t=RACE_RANK_THRESHOLDS['EX'];return['power','stamina','guts','wit'].every(s=>(stats[s]||0)>=t[t.length-1]);}},
+    {id:'rr_first_sss',icon:'🥊',name:"Tachyon's Masterpiece",desc:'Reach SSS in any stat for the first time', check:()=>{const t=getRaceThresholds();return['power','stamina','guts','wit'].some(s=>(stats[s]||0)>=t[t.length-1]);}},
 ];
 function checkAchievements(){const nu=ACH_DEFS.filter(d=>!achievements[d.id]&&d.check());if(!nu.length)return;nu.forEach(d=>{achievements[d.id]=new Date().toISOString();});scheduleSave();let delay=200;nu.forEach(d=>{setTimeout(()=>showAchToast(d),delay);delay+=3600;});if(document.getElementById('tab-achievements').classList.contains('active'))renderAchievements();}
 let toastTimer=null;
-function showAchToast(def){document.getElementById('t-icon').textContent=def.icon;document.getElementById('t-title').textContent='🏆 '+def.name;document.getElementById('t-desc').textContent=def.desc;const t=document.getElementById('ach-toast');t.classList.add('show');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3400);setStatus('Achievement unlocked: '+def.name+'! '+def.icon,5000);}
+function showAchToast(def){document.getElementById('t-icon').textContent=def.icon;document.getElementById('t-title').textContent='🏆 '+def.name;document.getElementById('t-desc').textContent=def.desc;const t=document.getElementById('ach-toast');t.classList.add('show');if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3400);setStatus('Achievement unlocked: '+def.name+'! '+def.icon,10000);}
 function achProgress(def){
     if(achievements[def.id])return'✅ Unlocked!';
     const c=taskCounts,total=Object.values(c).reduce((a,b)=>a+b,0);
@@ -993,6 +1300,13 @@ function achProgress(def){
     if(def.id==='mission_20')return`${missionCounts.completed||0}/20 missions`;
     if(def.id==='mission_fast')return'Complete a mission before 11AM';
     if(def.id==='mission_streak5')return`${missionCounts.missionStreak||0}/5 in a row`;
+    if(def.id==='rr_op')return'Reach SSS in all 4 stats at Pre-OP';
+    if(def.id==='rr_giii')return'Reach SSS in all 4 stats at OP';
+    if(def.id==='rr_gii')return'Reach SSS in all 4 stats at GIII';
+    if(def.id==='rr_gi')return'Reach SSS in all 4 stats at GII';
+    if(def.id==='rr_ex')return'Reach SSS in all 4 stats at GI';
+    if(def.id==='rr_ex_sss'){const t=RACE_RANK_THRESHOLDS['EX'];const done=['power','stamina','guts','wit'].filter(s=>(stats[s]||0)>=t[t.length-1]).length;return done+'/4 stats at SSS';}
+    if(def.id==='rr_first_sss'){const t=getRaceThresholds();const done=['power','stamina','guts','wit'].filter(s=>(stats[s]||0)>=t[t.length-1]).length;return done+'/1 stat at SSS';}
     return'🔒 Locked';
 }
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
@@ -1072,15 +1386,15 @@ const INJECTION_NAGS=["I NEED this data on time!! Please do the injection! 🔬"
 const TABLET_NAGS=["Have you taken your tablet yet today? It's important! 💊","The tablet needs to be taken before 12PM! 🌸","I'm watching the tablet situation closely... 😤","Your health matters! Please take your tablet! 💊"];
 let injNagIdx=0,tabNagIdx=0,injNagInterval=null,tabNagInterval=null,_naggingInj=false,_naggingTab=false;
 function isTaskActive(name){return Array.from(document.querySelectorAll('.task-name')).some(el=>el.textContent.includes(name));}
-function startInjNag(){if(injNagInterval)return;injNagInterval=setInterval(()=>{if(!isTaskActive('Injection'))return;setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);showEmoteAndItem('Injection',EMOTE.anger,null);},90000);if(isTaskActive('Injection')){setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],7000);showEmoteAndItem('Injection',EMOTE.urgent,null);}}
+function startInjNag(){if(injNagInterval)return;injNagInterval=setInterval(()=>{if(!isTaskActive('Injection'))return;setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],9000);showEmoteAndItem('Injection',EMOTE.anger,null);},90000);if(isTaskActive('Injection')){setStatus(INJECTION_NAGS[injNagIdx++%INJECTION_NAGS.length],9000);showEmoteAndItem('Injection',EMOTE.urgent,null);}}
 function stopInjNag(){clearInterval(injNagInterval);injNagInterval=null;}
-function startTabNag(){if(tabNagInterval)return;tabNagInterval=setInterval(()=>{if(!isTaskActive('Tablet'))return;setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.anger,null);},90000);if(isTaskActive('Tablet')){setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],7000);showEmoteAndItem('Tablet',EMOTE.urgent,null);}}
+function startTabNag(){if(tabNagInterval)return;tabNagInterval=setInterval(()=>{if(!isTaskActive('Tablet'))return;setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],9000);showEmoteAndItem('Tablet',EMOTE.anger,null);},90000);if(isTaskActive('Tablet')){setStatus(TABLET_NAGS[tabNagIdx++%TABLET_NAGS.length],9000);showEmoteAndItem('Tablet',EMOTE.urgent,null);}}
 function stopTabNag(){clearInterval(tabNagInterval);tabNagInterval=null;}
 
 // -- Hint system ---------------------------------------------------------------
 let hintInterval=null;
 function getActiveTaskIds(){const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();return[...coreTasks.map(getEffectiveTask),...customTasks].filter(task=>{const taskDays=task.days||[0,1,2,3,4,5,6];return taskDays.includes(day)&&task.check(h)&&history[task.id]!==today&&dismissed[task.id]!==today;}).map(t=>t.id);}
-function doHint(){const active=getActiveTaskIds();if(!active.length)return;const id=active[Math.floor(Math.random()*active.length)];const base=coreTasks.find(t=>t.id===id);const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));const reminder=TASK_REMINDERS[id]||(base?`Don't forget — ${(base.name||'').toLowerCase()}!`:null);if(reminder)setStatus(reminder,5000);showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);}
+function doHint(){const active=getActiveTaskIds();if(!active.length)return;const id=active[Math.floor(Math.random()*active.length)];const base=coreTasks.find(t=>t.id===id);const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));const reminder=TASK_REMINDERS[id]||(base?`Don't forget — ${(base.name||'').toLowerCase()}!`:null);if(reminder)setStatus(reminder,8000);showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);}
 function startHintCycle(){if(hintInterval)return;setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);}
 
 // -- UI update -----------------------------------------------------------------
@@ -1183,12 +1497,12 @@ function complete(id,anim,type,isInjection,isTablet,h){
     if(agnes){agnes.setFlipX(false);agnes.play(anim);}
     if(isInjection){
         const onTime=h>=15&&h<17;
-        setStatus(randFrom(onTime?INJ_ONTIME:INJ_LATE),6000);
+        setStatus(randFrom(onTime?INJ_ONTIME:INJ_LATE),10000);
         showEmoteAndItem(id,onTime?EMOTE.science:EMOTE.anger,true);
         stopInjNag();_naggingInj=false;
     }else if(isTablet){
         const onTime=h<12;
-        setStatus(randFrom(onTime?TAB_ONTIME:TAB_LATE),6000);
+        setStatus(randFrom(onTime?TAB_ONTIME:TAB_LATE),10000);
         showEmoteAndItem(id,onTime?EMOTE.science:EMOTE.anger,true);
         stopTabNag();_naggingTab=false;
     }else if(rankAfter>rankBefore){
@@ -1196,10 +1510,10 @@ function complete(id,anim,type,isInjection,isTablet,h){
         setTimeout(()=>showRankUp(type,rankAfter),600);
         showEmoteAndItem(id,EMOTE.happy,true);
     }else{
-        setStatus(getCompletionMessage(id,type,false,false,isClass),4000);
+        setStatus(getCompletionMessage(id,type,false,false,isClass),10000);
         showEmoteAndItem(id,EMOTE.happy,true);
     }
-    updateUI();tryAdvanceStreak();checkAchievements();
+    updateUI();tryAdvanceStreak();checkAchievements();checkRaceRankPromotion();updateHudRaceRank();
 }
 
 function dismiss(id){dismissed[id]=new Date().toDateString();scheduleSave();setStatus('Okay, skipping that one... 😤',3000);updateUI();}
@@ -1210,12 +1524,12 @@ const DEFAULT_MSGS=["Tachyon is here! 🌸","Ready for today?","What's on the sc
 const BORED_MSGS=["Tachyon is bored... 😴","Hmm... nothing to do?","Tachyon is waiting patiently...","Is anyone there...? 🌸"];
 function setStatus(text,duration){const el=document.getElementById('status-text');if(!el)return;el.style.opacity='0';if(statusTimeout)clearTimeout(statusTimeout);setTimeout(()=>{el.textContent=text;el.style.opacity='1';},300);if(duration)statusTimeout=setTimeout(()=>setStatus(DEFAULT_MSGS[Math.floor(Math.random()*DEFAULT_MSGS.length)],0),duration);resetBoredTimer();}
 function resetBoredTimer(){if(boredTimeout)clearTimeout(boredTimeout);boredTimeout=setTimeout(()=>{setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0);if(agnes)showEmoteAndItem(null,EMOTE.bored,null);boredTimeout=setInterval(()=>setStatus(BORED_MSGS[Math.floor(Math.random()*BORED_MSGS.length)],0),120000);},300000);}
-function say(text){setStatus(text,4000);if(agnes)agnes.play('say');}
+function say(text){setStatus(text,8000);if(agnes)agnes.play('say');}
 resetBoredTimer();
 
 // -- Clock ---------------------------------------------------------------------
 function updateClock(){const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});}
-updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();tryAdvanceStreak();updateMissionCard();},60000);
+updateClock();setInterval(updateClock,1000);setInterval(()=>{updateClock();updateUI();tryAdvanceStreak();updateMissionCard();checkMissedTasks();updateHudRaceRank();},60000);
 
 // -- Phaser --------------------------------------------------------------------
 let agnes=null,gameBooted=false,phaserScene=null;
@@ -1307,7 +1621,7 @@ function create(){
 
     const QUOTES=["Life is an experiment, and we its guinea pigs.","Don't worry about it~","The worst that could happen is your legs would start glowing green!","Isn't that a cute side effect?","Witness me. Watch me run!","Time for science!","Want to be my test subject next?","Let's run together next time!"];
     let lastQ=-1;
-    const maybeQuote=()=>{if(Math.random()<0.2){let i;do{i=Math.floor(Math.random()*QUOTES.length);}while(i===lastQ);lastQ=i;setStatus(QUOTES[i],5000);showEmoteAndItem(null,EMOTE.hint,null);}};
+    const maybeQuote=()=>{if(Math.random()<0.2){let i;do{i=Math.floor(Math.random()*QUOTES.length);}while(i===lastQ);lastQ=i;setStatus(QUOTES[i],8000);showEmoteAndItem(null,EMOTE.hint,null);}};
 
     const pool=['idle1','idle1','idle1','idle1','idle1','idle1','walk_left','dash','super_dash','float','giggle','wave','cheer'];
     let idleTimer=null;
@@ -1410,37 +1724,37 @@ function closeStreakTooltip() {
 
 // -- Field Mission System --
 const FIELD_MISSIONS = [
-    "Find a pink flower \u2014 what species is it? Report back to Tachyon!",
+    "Find a pink flower — what species is it? Report back to Tachyon!",
     "Spot a bird and identify the breed for Tachyon's records!",
-    "Find a dog outside \u2014 what breed is it? Tachyon needs the data!",
+    "Find a dog outside — what breed is it? Tachyon needs the data!",
     "Go cloud gazing and learn one fun fact about a type of cloud you see.",
     "Find a tree and identify the species. Tachyon is watching.",
     "Spot an insect and identify it for the research files!",
-    "Find something blue in nature \u2014 what is it exactly?",
+    "Find something blue in nature — what is it exactly?",
     "Find a seed or berry and identify the plant it came from.",
-    "Find a feather outside \u2014 what bird might it belong to?",
+    "Find a feather outside — what bird might it belong to?",
     "Go somewhere within walking distance you've never been before.",
     "Find interesting architecture nearby and sketch or photograph it.",
-    "Find a cat outside \u2014 what colour and markings does it have?",
-    "Spot a cloud that looks like something \u2014 what does it resemble?",
-    "Find a puddle or body of water \u2014 what's living in or around it?",
+    "Find a cat outside — what colour and markings does it have?",
+    "Spot a cloud that looks like something — what does it resemble?",
+    "Find a puddle or body of water — what's living in or around it?",
     "Find something man-made being reclaimed by nature.",
     "Spot 3 different types of plant on a single walk.",
-    "Find an interesting rock or stone \u2014 what type might it be?",
+    "Find an interesting rock or stone — what type might it be?",
     "Draw something you find outside today for Tachyon's files.",
-    "Find evidence of an animal (tracks, burrow, nest) \u2014 what made it?",
-    "Find a flower that isn't pink \u2014 identify it for Tachyon!",
+    "Find evidence of an animal (tracks, burrow, nest) — what made it?",
+    "Find a flower that isn't pink — identify it for Tachyon!",
     "Photograph something that made you smile outside today.",
-    "Find a plant with an interesting smell \u2014 identify it!",
+    "Find a plant with an interesting smell — identify it!",
     "Spot something in nature that comes in pairs or symmetrical patterns.",
-    "Find the oldest-looking thing outside \u2014 what is it?",
+    "Find the oldest-looking thing outside — what is it?",
 ];
 
 const MISSION_SKIP_MSGS = [
-    "I'll let it slide this once. No slacking off! \U0001f928",
-    "Hmm. Very well. But Tachyon expects better tomorrow! \U0001f9ea",
-    "The research suffers, but I suppose it can't be helped... \U0001f928",
-    "One miss is forgivable. Two is a pattern. \U0001f52c",
+    "I'll let it slide this once. No slacking off! 🤨",
+    "Hmm. Very well. But Tachyon expects better tomorrow! 🧪",
+    "The research suffers, but I suppose it can't be helped... 🤨",
+    "One miss is forgivable. Two is a pattern. 🔬",
 ];
 
 function getTodayMission() {
@@ -1487,7 +1801,7 @@ function updateMissionCard() {
             document.getElementById('fm-mission-text').innerHTML = '<strong>' + getTodayMission().text + '</strong>';
             document.getElementById('fm-btns').style.display = 'none';
             document.getElementById('fm-expired').style.display = 'block';
-            document.getElementById('fm-timer').textContent = '\u23f0 Expired';
+            document.getElementById('fm-timer').textContent = '⏰ Expired';
             document.getElementById('fm-timer').className = 'critical';
             // Fade out after 60s
             setTimeout(() => card.classList.remove('summer-active'), 60000);
@@ -1507,7 +1821,7 @@ function updateMissionCard() {
     const mission = getTodayMission();
     const card = document.getElementById('field-mission');
     card.classList.add('summer-active');
-    document.getElementById('fm-mission-text').innerHTML = '<strong>\U0001f9ea Mission:</strong> ' + mission.text;
+    document.getElementById('fm-mission-text').innerHTML = '<strong>🧪 Mission:</strong> ' + mission.text;
     document.getElementById('fm-btns').style.display = 'flex';
     document.getElementById('fm-expired').style.display = 'none';
 
@@ -1532,7 +1846,7 @@ function showMissionAnnouncement(text) {
     const overlay = document.getElementById('mission-announce');
     overlay.classList.add('show');
     if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
-    setStatus('\U0001f4cb New field mission from Tachyon! Check it out! \U0001f52c', 6000);
+    setStatus('📋 New field mission from Tachyon! Check it out! 🔬', 10000);
 }
 
 function acceptMission() {
@@ -1560,12 +1874,12 @@ function completeMission() {
     updateUI();
 
     const msgs = [
-        'Excellent field data! Tachyon is very pleased! \U0001f52c\U0001f338',
-        'Outstanding research! The experiment advances! \U0001f9ea\u2728',
-        'Field data logged! Tachyon approves greatly! \U0001f52c',
-        'Remarkable work out there! Science marches on! \U0001f338\U0001f9ea',
+        'Excellent field data! Tachyon is very pleased! 🔬🌸',
+        'Outstanding research! The experiment advances! 🧪✨',
+        'Field data logged! Tachyon approves greatly! 🔬',
+        'Remarkable work out there! Science marches on! 🌸🧪',
     ];
-    setStatus(msgs[Math.floor(Math.random() * msgs.length)], 6000);
+    setStatus(msgs[Math.floor(Math.random() * msgs.length)], 10000);
     if (agnes) { agnes.setFlipX(false); agnes.play('cheer'); }
     showEmoteAndItem(null, EMOTE.science, true);
     checkAchievements();
@@ -1592,6 +1906,216 @@ function skipMission() {
     const msg = MISSION_SKIP_MSGS[Math.floor(Math.random() * MISSION_SKIP_MSGS.length)];
     setStatus(msg, 6000);
     if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
+}
+
+
+// -- RaceRank System --
+const RACERANK_PROMOTION_MSGS = {
+    'OP':   { msg: "You've outgrown the preliminaries! The real experiment begins now! 🧪", colour: '#74b9ff' },
+    'GIII': { msg: "You've entered the Grade races! Tachyon is taking this very seriously! 🏅", colour: '#55efc4' },
+    'GII':  { msg: "Grade II! The competition gets fierce from here! Tachyon is proud! 🌟", colour: '#fd79a8' },
+    'GI':   { msg: "Grade I! You're among the elite now! Tachyon is genuinely in awe! 👑", colour: '#fdcb6e' },
+    'EX':   { msg: "EX RANK! You've transcended normal rankings! Tachyon proclaims you her greatest experiment! 🔥", colour: '#e17055' },
+};
+
+function checkRaceRankPromotion() {
+    const thresholds = getRaceThresholds();
+    const sssThreshold = thresholds[thresholds.length - 1];
+    const allSSS = ['power','stamina','guts','wit'].every(s => (stats[s]||0) >= sssThreshold);
+    if (!allSSS) return;
+    const currentIdx = RACE_RANKS.indexOf(raceRankData.current);
+    if (currentIdx >= RACE_RANKS.length - 1) return; // already EX
+    const newRaceRank = RACE_RANKS[currentIdx + 1];
+    const oldRaceRank = raceRankData.current;
+
+    // Save best XP before reset
+    ['power','stamina','guts','wit'].forEach(s => {
+        raceRankData.bestXP[s] = Math.max(raceRankData.bestXP[s]||0, stats[s]||0);
+    });
+
+    // Reset stats to 0 for new rank
+    stats = {power:0, stamina:0, guts:0, wit:0};
+    raceRankData.current = newRaceRank;
+    raceRankData.history = raceRankData.history || [];
+    raceRankData.history.push({rank: oldRaceRank, date: new Date().toISOString()});
+    scheduleSave();
+
+    // Show ceremony
+    showRaceRankUp(oldRaceRank, newRaceRank);
+}
+
+function showRaceRankUp(oldRank, newRank) {
+    const info = RACERANK_PROMOTION_MSGS[newRank] || { msg: 'A new chapter begins!', colour: '#a29bfe' };
+    document.getElementById('racerank-old').textContent = oldRank + ' SSS →';
+    document.getElementById('racerank-badge-big').textContent = RACE_RANK_BADGES[newRank] || '🌟';
+    document.getElementById('racerank-new-name').textContent = newRank;
+    document.getElementById('racerank-new-name').style.color = info.colour;
+    document.getElementById('racerank-msg').textContent = info.msg;
+    document.getElementById('racerank-close').style.background = info.colour;
+    document.getElementById('racerank-card').style.borderColor = info.colour;
+    document.getElementById('racerank-overlay').classList.add('show');
+    // Mega confetti
+    spawnRaceRankConfetti(info.colour);
+    // Agnes extended cheer
+    if (agnes && window.phaserScene) {
+        if (window.cancelCurrent) window.cancelCurrent();
+        agnes.setFlipX(false);
+        agnes.play('cheer');
+        window._rankUpCelebrating = true;
+    }
+    updateHudRaceRank();
+    checkAchievements();
+}
+
+function closeRaceRankUp() {
+    document.getElementById('racerank-overlay').classList.remove('show');
+    window._rankUpCelebrating = false;
+    if (window.phaserSceneNext) window.phaserSceneNext(2000);
+    updateUI();
+}
+
+function spawnRaceRankConfetti(accentColour) {
+    const colors = ['#f8a5c2','#a29bfe','#74b9ff','#55efc4','#fdcb6e','#fd79a8', accentColour];
+    for (let i = 0; i < 120; i++) {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.cssText = `
+            left:${Math.random()*100}%;top:-10px;
+            background:${colors[Math.floor(Math.random()*colors.length)]};
+            width:${6+Math.random()*10}px;height:${6+Math.random()*10}px;
+            border-radius:${Math.random()>0.5?'50%':'2px'};
+            animation-duration:${2+Math.random()*3}s;
+            animation-delay:${Math.random()*0.8}s;
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 5000);
+    }
+}
+
+function updateHudRaceRank() {
+    const rr = getCurrentRaceRank();
+    const colour = RACE_RANK_COLOURS[rr] || '#a29bfe';
+    const badge = document.getElementById('hud-racerank-badge');
+    const label = document.getElementById('hud-racerank-label');
+    if (badge) {
+        badge.textContent = RACE_RANK_BADGES[rr] + ' ' + rr;
+        badge.style.background = colour;
+    }
+    if (label) {
+        const thresholds = getRaceThresholds();
+        const sss = thresholds[thresholds.length-1];
+        const allSSS = ['power','stamina','guts','wit'].every(s=>(stats[s]||0)>=sss);
+        label.textContent = allSSS ? '✨ All SSS! Ready to promote!' : '';
+    }
+}
+
+// -- Penalty System --
+const MISSED_MSGS = [
+    "You missed a task! Tachyon is disappointed... 🤨",
+    "No excuses! The data suffers when you slack off! 🤨",
+    "A missed task means lost progress! Don't let it happen again! 🧪",
+    "Tachyon notes the absence. This will reflect in the results! 🔬",
+    "The experiment requires consistency! Tachyon is not pleased. 🤨",
+];
+const DISMISSED_MSGS = [
+    "Skipping tasks isn't free you know... 🤨",
+    "Tachyon will allow it. This time. 🤨",
+    "Fine. But every skip has a cost! 🧪",
+];
+
+function applyPenalty(statType, amount, isMissed) {
+    stats[statType] = Math.max(0, (stats[statType]||0) - amount);
+    scheduleSave();
+    const msgs = isMissed ? MISSED_MSGS : DISMISSED_MSGS;
+    setStatus(msgs[Math.floor(Math.random()*msgs.length)], 10000);
+    showEmoteAndItem(null, EMOTE.anger, false);
+    // Flash the stat row
+    const row = document.querySelector('.stat-row:has(#bar-' + statType + ')');
+    if (row) { row.classList.add('penalty-flash'); setTimeout(()=>row.classList.remove('penalty-flash'), 700); }
+}
+
+function checkMissedTasks() {
+    const today = new Date().toDateString();
+    const h = new Date().getHours();
+    const day = new Date().getDay();
+    // Ensure we have a record for today
+    if (!penaltyData.checked) penaltyData.checked = {};
+    if (!penaltyData.checked[today]) penaltyData.checked[today] = {};
+
+    coreTasks.forEach(task => {
+        const taskDays = task.days || [0,1,2,3,4,5,6];
+        if (!taskDays.includes(day)) return;
+        if (task.isInjection && !isInjectionFriday()) return;
+        // Task was available today but window has now closed
+        const wasActive = task.check(h-1 < 0 ? 0 : h-1); // was it active last hour?
+        const isActive = task.check(h);
+        const windowJustClosed = wasActive && !isActive;
+        if (!windowJustClosed) return;
+        const penaltyKey = task.id + '_' + h;
+        if (penaltyData.checked[today][penaltyKey]) return; // already penalised
+        penaltyData.checked[today][penaltyKey] = true;
+
+        const done = history[task.id] === today;
+        const skipped = dismissed[task.id] === today;
+        if (done) return; // completed, no penalty
+
+        if (skipped) {
+            // Dismissed: flat -5 to task's stat
+            const statType = task.isInjection ? 'guts' : (task.type || 'power');
+            applyPenalty(statType, 5, false);
+            if (task.isInjection) applyPenalty('power', 5, false);
+        } else {
+            // Truly missed: full penalty
+            const amount = task.isInjection ? 25 : 10;
+            const statType = task.isInjection ? 'guts' : (task.type || 'power');
+            applyPenalty(statType, amount, true);
+            if (task.isInjection) applyPenalty('power', amount, true);
+        }
+        scheduleSave();
+    });
+    penaltyData.lastChecked = today + '_' + h;
+}
+
+// Check penalties on app open for any missed windows since last check
+function checkMissedTasksOnOpen() {
+    const today = new Date().toDateString();
+    const now = new Date();
+    const h = now.getHours();
+    const day = now.getDay();
+    if (!penaltyData.checked) penaltyData.checked = {};
+    if (!penaltyData.checked[today]) penaltyData.checked[today] = {};
+
+    coreTasks.forEach(task => {
+        const taskDays = task.days || [0,1,2,3,4,5,6];
+        if (!taskDays.includes(day)) return;
+        if (task.isInjection && !isInjectionFriday()) return;
+
+        // Find all hours today where this task was active and window has since closed
+        for (let ph = 0; ph < h; ph++) {
+            const wasActive = task.check(ph);
+            const stillActive = task.check(ph + 1);
+            if (!wasActive || stillActive) continue; // wasn't a closing window
+            const penaltyKey = task.id + '_' + (ph+1);
+            if (penaltyData.checked[today][penaltyKey]) continue;
+            penaltyData.checked[today][penaltyKey] = true;
+
+            const done = history[task.id] === today;
+            const skipped = dismissed[task.id] === today;
+            if (done) continue;
+
+            if (skipped) {
+                const statType = task.isInjection ? 'guts' : (task.type || 'power');
+                stats[statType] = Math.max(0, (stats[statType]||0) - 5);
+                if (task.isInjection) stats['power'] = Math.max(0, (stats['power']||0) - 5);
+            } else {
+                const amount = task.isInjection ? 25 : 10;
+                const statType = task.isInjection ? 'guts' : (task.type || 'power');
+                stats[statType] = Math.max(0, (stats[statType]||0) - amount);
+                if (task.isInjection) stats['power'] = Math.max(0, (stats['power']||0) - amount);
+            }
+        }
+    });
+    scheduleSave();
 }
 
 </script>

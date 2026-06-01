@@ -1431,6 +1431,11 @@ function wasTaskActiveEarlierToday(task, currentHour) {
     }
     return false;
 }
+    function closeStreakTooltip() {
+    document.getElementById('streak-tooltip').classList.remove('show');
+    document.getElementById('streak-tooltip-backdrop').classList.remove('show');
+}
+4. Update penalty functions to record missed tasks:
 
     
 // -- Injection Friday ----------------------------------------------------------

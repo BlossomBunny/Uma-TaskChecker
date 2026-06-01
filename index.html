@@ -1202,30 +1202,31 @@ function logout(){clearSession();currentUser=null;loginIsRegister=false;document
 // -- Cloud save ----------------------------------------------------------------
 let saveDebounce=null;
 function scheduleSave(){if(saveDebounce)clearTimeout(saveDebounce);saveDebounce=setTimeout(cloudSave,900);}
-async function cloudSave(){
-    if(!currentUser) return;
-    setSyncStatus('syncing','Saving… 🌸');
-    try{
-        await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{
+async function cloudSave() {
+    if (!currentUser) return;
+    setSyncStatus('syncing', 'Saving… 🌸');
+    try {
+        await supaFetch(`agnes_saves?id=eq.${currentUser.id}`, 'PATCH', {
             stats,
             history,
             dismissed,
-            missed,                   
-            custom_tasks:customTasksRaw,
-            core_task_overrides:coreTaskOverrides,
-            streaks:streakData,
+            missed,                    // Now safe to send
+            custom_tasks: customTasksRaw,
+            core_task_overrides: coreTaskOverrides,
+            streaks: streakData,
             achievements,
-            task_counts:taskCounts,
-            mission_data:missionData,
-            mission_counts:missionCounts,
-            race_rank:raceRankData,
-            penalty_data:penaltyData,
-            updated_at:new Date().toISOString()
+            task_counts: taskCounts,
+            mission_data: missionData,
+            mission_counts: missionCounts,
+            race_rank: raceRankData,
+            penalty_data: penaltyData,
+            updated_at: new Date().toISOString()
         });
-        setSyncStatus('ok','');
-    }catch(e){
-        setSyncStatus('error','Save failed — retrying…');
-        saveDebounce=setTimeout(cloudSave,6000);
+        setSyncStatus('ok', '');
+    } catch (e) {
+        console.error("Save error:", e);
+        setSyncStatus('error', 'Save failed — retrying…');
+        saveDebounce = setTimeout(cloudSave, 6000);
     }
 }
     

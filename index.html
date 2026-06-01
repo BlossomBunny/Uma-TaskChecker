@@ -518,20 +518,7 @@ function checkMissedTasksOnOpen() {
         #streak-tooltip li { margin-bottom:2px; }
         #streak-tooltip .tt-note { font-size:0.88em; color:#a5b1c2; margin:6px 0 0; }
         #streak-tooltip .tt-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#b2bec3; font-size:1em; cursor:pointer; line-height:1; padding:2px; }
-        /* -- Streak tooltip -- */
-        #streak-info-btn { background:none; border:none; color:var(--accent); font-size:0.9em; cursor:pointer; padding:0 0 0 6px; opacity:0.6; flex-shrink:0; line-height:1; }
-        #streak-info-btn:hover { opacity:1; }
-        #streak-tooltip-backdrop { display:none; position:fixed; inset:0; z-index:9990; }
-        #streak-tooltip-backdrop.show { display:block; }
-        #streak-tooltip { display:none; position:fixed; z-index:9991; background:white; border:2px solid var(--accent); border-radius:16px; padding:14px 16px 12px; box-shadow:0 8px 24px rgba(248,165,194,0.3); max-width:280px; width:calc(95vw - 24px); font-size:0.74em; color:#596275; line-height:1.65; }
-        #streak-tooltip.show { display:block; }
-        #streak-tooltip h4 { margin:0 0 8px; color:var(--accent); font-size:1em; }
-        #streak-tooltip ul { margin:4px 0 8px; padding-left:18px; }
-        #streak-tooltip li { margin-bottom:2px; }
-        #streak-tooltip .tt-note { font-size:0.88em; color:#a5b1c2; margin:6px 0 0; }
-        #streak-tooltip .tt-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#b2bec3; font-size:1em; cursor:pointer; line-height:1; padding:2px; }
-
-
+       
         /* -- RaceRank promotion overlay -- */
         #racerank-overlay { position:fixed; inset:0; z-index:999999; display:flex; align-items:center; justify-content:center; pointer-events:none; opacity:0; transition:opacity 0.4s ease; }
         #racerank-overlay.show { opacity:1; pointer-events:auto; }
@@ -823,9 +810,19 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.2';
+const CURRENT_VERSION = '1.6.3';
 
 const CHANGELOG = [
+
+    { version: '1.6.3', changes: [
+    '🔥 Major Streak Tooltip overhaul',
+    '✅ Now correctly shows previously completed essential tasks',
+    '❌ Automatically missed tasks now show as red X',
+    '❌ Manually dismissed tasks also show as red X',
+    '📊 Added clear legend explaining symbols',
+    '🛠️ Added separate `missed` tracking system',
+    '🐛 Fixed "closeStreakTooltip is not defined" error',
+] },
 
 { version: '1.6.2', changes: [
             '🐛 Tooltip task checker not displaying previously completed tasks',
@@ -1125,13 +1122,13 @@ function toggleHoliday(){holidayMode=!holidayMode;localStorage.setItem('holidayM
 function syncHolidayBtn(){const b=document.getElementById('holiday-btn');if(b)b.classList.toggle('on',holidayMode);const n=document.getElementById('holiday-notice');if(n)n.style.display=holidayMode?'block':'none';}
 
 // -- Data state ----------------------------------------------------------------
-let stats={power:0,stamina:0,guts:0,wit:0},history={},dismissed={},customTasksRaw=[],coreTaskOverrides={};
+let stats={power:0,stamina:0,guts:0,wit:0},history={},dismissed={},missed={},customTasksRaw=[],coreTaskOverrides={};
 let missionData={},missionCounts={completed:0,skipped:0,missionStreak:0,lastCompleted:''};
 let raceRankData={current:'Pre-OP',history:[],bestXP:{power:0,stamina:0,guts:0,wit:0}};
 let penaltyData={lastChecked:''};
 let streakData={current:0,best:0,lastDate:''},achievements={},taskCounts={},customTasks=[];
 let currentUser=null;
-function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};missionData=row.mission_data||{};missionCounts=row.mission_counts||{completed:0,skipped:0,missionStreak:0,lastCompleted:''};raceRankData=row.race_rank||{current:'Pre-OP',history:[],bestXP:{power:0,stamina:0,guts:0,wit:0}};penaltyData=row.penalty_data||{lastChecked:''};customTasks=hydrateCustomTasks(customTasksRaw);}
+function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};missed=row.missed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};missionData=row.mission_data||{};missionCounts=row.mission_counts||{completed:0,skipped:0,missionStreak:0,lastCompleted:''};raceRankData=row.race_rank||{current:'Pre-OP',history:[],bestXP:{power:0,stamina:0,guts:0,wit:0}};penaltyData=row.penalty_data||{lastChecked:''};customTasks=hydrateCustomTasks(customTasksRaw);}
 
 // -- Auto login ----------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', async () => {
@@ -1161,13 +1158,29 @@ async function submitLogin(){
         if(loginIsRegister){
             if(rows.length>0){errEl.textContent='That username is already taken!';return;}
             const legacy=getLegacyData();
-            const payload={username,pin_hash:ph,stats:legacy?.stats||{power:0,stamina:0,guts:0,wit:0},history:legacy?.history||{},dismissed:legacy?.dismissed||{},custom_tasks:legacy?.custom_tasks||[],core_task_overrides:{},streaks:{current:0,best:0,lastDate:''},achievements:{},task_counts:{}};
-            const created=await supaFetch('agnes_saves','POST',payload);currentUser={id:created[0].id,username};loadSaveData(created[0]);
+            const payload={
+                username,
+                pin_hash:ph,
+                stats:legacy?.stats||{power:0,stamina:0,guts:0,wit:0},
+                history:legacy?.history||{},
+                dismissed:legacy?.dismissed||{},
+                missed:legacy?.missed||{},                    // ← NEW
+                custom_tasks:legacy?.custom_tasks||[],
+                core_task_overrides:{},
+                streaks:{current:0,best:0,lastDate:''},
+                achievements:{},
+                task_counts:{},
+                penalty_data:{}
+            };
+            const created=await supaFetch('agnes_saves','POST',payload);
+            currentUser={id:created[0].id,username};
+            loadSaveData(created[0]);
             if(legacy){clearLegacy();setTimeout(()=>setStatus('Your save data was carried over! 🌸',5000),1800);}
         }else{
             if(rows.length===0){errEl.textContent="Hmm, can't find that account!";return;}
             if(rows[0].pin_hash!==ph){errEl.textContent='Wrong PIN! Try again 🌸';return;}
-            currentUser={id:rows[0].id,username};loadSaveData(rows[0]);
+            currentUser={id:rows[0].id,username};
+            loadSaveData(rows[0]);
         }
         saveSession(username,ph);showApp();
     }catch(e){errEl.textContent='Something went wrong: '+e.message;}
@@ -1189,8 +1202,34 @@ function logout(){clearSession();currentUser=null;loginIsRegister=false;document
 // -- Cloud save ----------------------------------------------------------------
 let saveDebounce=null;
 function scheduleSave(){if(saveDebounce)clearTimeout(saveDebounce);saveDebounce=setTimeout(cloudSave,900);}
-async function cloudSave(){if(!currentUser)return;setSyncStatus('syncing','Saving… 🌸');try{await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{stats,history,dismissed,custom_tasks:customTasksRaw,core_task_overrides:coreTaskOverrides,streaks:streakData,achievements,task_counts:taskCounts,mission_data:missionData,mission_counts:missionCounts,race_rank:raceRankData,penalty_data:penaltyData,updated_at:new Date().toISOString()});setSyncStatus('ok','');}catch(e){setSyncStatus('error','Save failed — retrying…');saveDebounce=setTimeout(cloudSave,6000);}}
-function setSyncStatus(state,msg){const el=document.getElementById('sync-status');el.className=state;el.textContent=msg;}
+async function cloudSave(){
+    if(!currentUser) return;
+    setSyncStatus('syncing','Saving… 🌸');
+    try{
+        await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{
+            stats,
+            history,
+            dismissed,
+            missed,                   
+            custom_tasks:customTasksRaw,
+            core_task_overrides:coreTaskOverrides,
+            streaks:streakData,
+            achievements,
+            task_counts:taskCounts,
+            mission_data:missionData,
+            mission_counts:missionCounts,
+            race_rank:raceRankData,
+            penalty_data:penaltyData,
+            updated_at:new Date().toISOString()
+        });
+        setSyncStatus('ok','');
+    }catch(e){
+        setSyncStatus('error','Save failed — retrying…');
+        saveDebounce=setTimeout(cloudSave,6000);
+    }
+}
+    
+    function setSyncStatus(state,msg){const el=document.getElementById('sync-status');el.className=state;el.textContent=msg;}
 
 // -- Streak --------------------------------------------------------------------
 function getTodayEssentials(){const day=new Date().getDay();return coreTasks.filter(t=>{if(!t.isEssential)return false;if(t.isInjection&&!isInjectionFriday())return false;return(t.days||[0,1,2,3,4,5,6]).includes(day);});}
@@ -1308,6 +1347,91 @@ function achProgress(def){
 }
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
 
+// ==================== STREAK TOOLTIP ====================
+// Place this EARLY in the <script> — right after renderStreak() function
+
+function openStreakTooltip(e) {
+    e.stopPropagation();
+    
+    const today = new Date().toDateString();
+    const essentials = coreTasks.filter(t => t.isEssential);
+    
+    const list = document.getElementById('streak-essentials-list');
+    
+    list.innerHTML = essentials.map(t => {
+        const isInjection = t.isInjection;
+        const isInjDay = isInjection && isInjectionFriday();
+        const applicable = !isInjection || isInjDay;
+
+        const done = history[t.id] === today;
+        const manuallyDismissed = dismissed[t.id] === today;
+        const wasMissed = !done && !manuallyDismissed && isTaskWindowClosedToday(t);
+
+        let icon, style, note = '';
+
+        if (!applicable) {
+            icon = '⏭️';
+            style = 'color:#b2bec3';
+            note = ' <span style="color:#a5b1c2;font-size:0.88em">(biweekly Fri only)</span>';
+        } 
+        else if (done) {
+            icon = '✅';
+            style = 'color:#00b894';
+        } 
+        else if (manuallyDismissed || wasMissed) {
+            icon = '❌';
+            style = 'color:#ff7675';
+        } 
+        else {
+            icon = '⏳';
+            style = 'color:#a5b1c2';
+        }
+
+        return `<li style="${style}">${icon} ${t.name}${note}</li>`;
+    }).join('');
+
+    // Progress
+    const applicableEssentials = essentials.filter(t => !t.isInjection || isInjectionFriday());
+    const doneCount = applicableEssentials.filter(t => history[t.id] === today).length;
+    const applicableCount = applicableEssentials.length;
+
+    const progress = document.getElementById('streak-tt-progress');
+    if (progress) {
+        const allDone = applicableCount > 0 && doneCount >= applicableCount;
+        progress.innerHTML = allDone
+            ? '<span style="color:#00b894;font-weight:bold">🔥 All done today!</span>'
+            : `<span style="color:#596275">${doneCount}/${applicableCount} essential tasks done today</span>`;
+    }
+
+    // Position
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const tt = document.getElementById('streak-tooltip');
+    tt.classList.add('show');
+    document.getElementById('streak-tooltip-backdrop').classList.add('show');
+
+    const ttH = tt.offsetHeight || 260;
+    let top = rect.bottom + 8;
+    if (top + ttH > window.innerHeight - 8) top = rect.top - ttH - 8;
+
+    tt.style.top = Math.max(8, top) + 'px';
+    tt.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
+}
+
+function closeStreakTooltip() {
+    document.getElementById('streak-tooltip').classList.remove('show');
+    document.getElementById('streak-tooltip-backdrop').classList.remove('show');
+}
+
+// Helper: Detect if task window has closed today
+function isTaskWindowClosedToday(task) {
+    if (!task.check) return false;
+    const h = new Date().getHours();
+    const wasActiveEarlier = task.check(Math.max(0, h - 1));
+    const stillActive = task.check(h);
+    return wasActiveEarlier && !stillActive;
+}
+    
 // -- Injection Friday ----------------------------------------------------------
 const INJECTION_REF=new Date(2025,4,9);
 function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return false;const diff=Math.round((now-INJECTION_REF)/86400000);return diff>=0&&diff%14===0;}
@@ -1393,85 +1517,6 @@ let hintInterval=null;
 function getActiveTaskIds(){const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();return[...coreTasks.map(getEffectiveTask),...customTasks].filter(task=>{const taskDays=task.days||[0,1,2,3,4,5,6];return taskDays.includes(day)&&task.check(h)&&history[task.id]!==today&&dismissed[task.id]!==today;}).map(t=>t.id);}
 function doHint(){const active=getActiveTaskIds();if(!active.length)return;const id=active[Math.floor(Math.random()*active.length)];const base=coreTasks.find(t=>t.id===id);const isUrgent=base&&((base.isTablet&&new Date().getHours()>=12)||(base.isInjection&&new Date().getHours()>=17));const reminder=TASK_REMINDERS[id]||(base?`Don't forget — ${(base.name||'').toLowerCase()}!`:null);if(reminder)setStatus(reminder,8000);showEmoteAndItem(id,isUrgent?EMOTE.urgent:EMOTE.hint,null);}
 function startHintCycle(){if(hintInterval)return;setTimeout(()=>{doHint();hintInterval=setInterval(doHint,45000);},30000);}
-
-// -- Streak tooltip --
-function openStreakTooltip(e) {
-    e.stopPropagation();
-    
-    const today = new Date().toDateString();
-    const essentials = coreTasks.filter(t => t.isEssential);
-    
-    const list = document.getElementById('streak-essentials-list');
-    
-    list.innerHTML = essentials.map(t => {
-        const isInjection = t.isInjection;
-        const isInjDay = isInjection && isInjectionFriday();
-        const applicable = !isInjection || isInjDay;
-
-        const done = history[t.id] === today;
-        const skipped = dismissed[t.id] === today;
-
-        let icon, style, note = '';
-
-        if (!applicable) {
-            icon = '⏭️';
-            style = 'color:#b2bec3';
-            note = ' <span style="color:#a5b1c2;font-size:0.88em">(biweekly Fri only)</span>';
-        } 
-        else if (done) {
-            icon = '✅';
-            style = 'color:#00b894';
-        } 
-        else if (skipped) {
-            icon = '❌';
-            style = 'color:#ff7675';
-        } 
-        else {
-            icon = '⏳';
-            style = 'color:#a5b1c2';
-        }
-
-        return `<li style="${style}">${icon} ${t.name}${note}</li>`;
-    }).join('');
-
-    // Correct progress calculation
-    const applicableEssentials = essentials.filter(t => 
-        !t.isInjection || isInjectionFriday()
-    );
-    
-    const doneCount = applicableEssentials.filter(t => history[t.id] === today).length;
-    const applicableCount = applicableEssentials.length;
-
-    const progress = document.getElementById('streak-tt-progress');
-    if (progress) {
-        const allDone = applicableCount > 0 && doneCount >= applicableCount;
-        progress.innerHTML = allDone
-            ? '<span style="color:#00b894;font-weight:bold">🔥 All done today!</span>'
-            : `<span style="color:#596275">${doneCount}/${applicableCount} essential tasks done today</span>`;
-    }
-
-    // Position tooltip
-    const btn = e.currentTarget;
-    const rect = btn.getBoundingClientRect();
-    const tt = document.getElementById('streak-tooltip');
-    tt.classList.add('show');
-    document.getElementById('streak-tooltip-backdrop').classList.add('show');
-
-    const ttH = tt.offsetHeight || 260;
-    let top = rect.bottom + 8;
-    if (top + ttH > window.innerHeight - 8) {
-        top = rect.top - ttH - 8;
-    }
-
-    tt.style.top = Math.max(8, top) + 'px';
-    tt.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
-}
-
-function closeStreakTooltip() {
-    document.getElementById('streak-tooltip').classList.remove('show');
-    document.getElementById('streak-tooltip-backdrop').classList.remove('show');
-}
-    
 
     
 // -- UI update -----------------------------------------------------------------
@@ -2092,7 +2137,7 @@ function checkMissedTasks() {
     const today = new Date().toDateString();
     const h = new Date().getHours();
     const day = new Date().getDay();
-    // Ensure we have a record for today
+
     if (!penaltyData.checked) penaltyData.checked = {};
     if (!penaltyData.checked[today]) penaltyData.checked[today] = {};
 
@@ -2100,26 +2145,30 @@ function checkMissedTasks() {
         const taskDays = task.days || [0,1,2,3,4,5,6];
         if (!taskDays.includes(day)) return;
         if (task.isInjection && !isInjectionFriday()) return;
-        // Task was available today but window has now closed
-        const wasActive = task.check(h-1 < 0 ? 0 : h-1); // was it active last hour?
+
+        const wasActive = task.check(h-1 < 0 ? 0 : h-1);
         const isActive = task.check(h);
         const windowJustClosed = wasActive && !isActive;
+
         if (!windowJustClosed) return;
+
         const penaltyKey = task.id + '_' + h;
-        if (penaltyData.checked[today][penaltyKey]) return; // already penalised
+        if (penaltyData.checked[today][penaltyKey]) return;
+
         penaltyData.checked[today][penaltyKey] = true;
 
         const done = history[task.id] === today;
         const skipped = dismissed[task.id] === today;
-        if (done) return; // completed, no penalty
+
+        if (done) return;
 
         if (skipped) {
-            // Dismissed: flat -5 to task's stat
             const statType = task.isInjection ? 'guts' : (task.type || 'power');
             applyPenalty(statType, 5, false);
             if (task.isInjection) applyPenalty('power', 5, false);
         } else {
-            // Truly missed: full penalty
+            // Truly missed
+            missed[task.id] = today;           // ← IMPORTANT
             const amount = task.isInjection ? 25 : 10;
             const statType = task.isInjection ? 'guts' : (task.type || 'power');
             applyPenalty(statType, amount, true);
@@ -2130,12 +2179,12 @@ function checkMissedTasks() {
     penaltyData.lastChecked = today + '_' + h;
 }
 
-// Check penalties on app open for any missed windows since last check
 function checkMissedTasksOnOpen() {
     const today = new Date().toDateString();
     const now = new Date();
     const h = now.getHours();
     const day = now.getDay();
+
     if (!penaltyData.checked) penaltyData.checked = {};
     if (!penaltyData.checked[today]) penaltyData.checked[today] = {};
 
@@ -2144,17 +2193,19 @@ function checkMissedTasksOnOpen() {
         if (!taskDays.includes(day)) return;
         if (task.isInjection && !isInjectionFriday()) return;
 
-        // Find all hours today where this task was active and window has since closed
         for (let ph = 0; ph < h; ph++) {
             const wasActive = task.check(ph);
             const stillActive = task.check(ph + 1);
-            if (!wasActive || stillActive) continue; // wasn't a closing window
+            if (!wasActive || stillActive) continue;
+
             const penaltyKey = task.id + '_' + (ph+1);
             if (penaltyData.checked[today][penaltyKey]) continue;
+
             penaltyData.checked[today][penaltyKey] = true;
 
             const done = history[task.id] === today;
             const skipped = dismissed[task.id] === today;
+
             if (done) continue;
 
             if (skipped) {
@@ -2162,6 +2213,7 @@ function checkMissedTasksOnOpen() {
                 stats[statType] = Math.max(0, (stats[statType]||0) - 5);
                 if (task.isInjection) stats['power'] = Math.max(0, (stats['power']||0) - 5);
             } else {
+                missed[task.id] = today;           // ← IMPORTANT
                 const amount = task.isInjection ? 25 : 10;
                 const statType = task.isInjection ? 'guts' : (task.type || 'power');
                 stats[statType] = Math.max(0, (stats[statType]||0) - amount);

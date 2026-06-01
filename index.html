@@ -1690,35 +1690,54 @@ function create(){
     });
 }
 
-// -- Streak tooltip --
-function openStreakTooltip(e) {
+// Streak TOOL TIP //
+    function openStreakTooltip(e) {
     e.stopPropagation();
+    
     const today = new Date().toDateString();
     const essentials = coreTasks.filter(t => t.isEssential);
+    
     const list = document.getElementById('streak-essentials-list');
+    
     list.innerHTML = essentials.map(t => {
+        const isInjection = t.isInjection;
+        const isInjDay = isInjection && isInjectionFriday();
+        const applicable = !isInjection || isInjDay;
+
         const done = history[t.id] === today;
         const skipped = dismissed[t.id] === today;
-        const isInjDay = t.isInjection && isInjectionFriday();
-        const applicable = !t.isInjection || isInjDay;
-        let icon, style;
+
+        let icon, style, note = '';
+
         if (!applicable) {
-            icon = '⏭️'; style = 'color:#b2bec3';
-        } else if (done) {
-            icon = '✅'; style = 'color:#00b894';
-        } else if (skipped) {
-            icon = '❌'; style = 'color:#ff7675';
-        } else {
-            icon = '⏳'; style = 'color:#a5b1c2';
+            icon = '⏭️';
+            style = 'color:#b2bec3';
+            note = ' <span style="color:#a5b1c2;font-size:0.88em">(biweekly Fri only)</span>';
+        } 
+        else if (done) {
+            icon = '✅';
+            style = 'color:#00b894';
+        } 
+        else if (skipped) {
+            icon = '❌';
+            style = 'color:#ff7675';
+        } 
+        else {
+            icon = '⏳';
+            style = 'color:#a5b1c2';
         }
-        const note = t.isInjection ? ' <span style="color:#a5b1c2;font-size:0.88em">(biweekly Fri only)</span>' : '';
+
         return `<li style="${style}">${icon} ${t.name}${note}</li>`;
     }).join('');
-    const doneCount = essentials.filter(t => {
-        if (t.isInjection && !isInjectionFriday()) return true; // skip non-applicable
-        return history[t.id] === today;
-    }).length;
-    const applicableCount = essentials.filter(t => !t.isInjection || isInjectionFriday()).length;
+
+    // === FIXED PROGRESS CALCULATION ===
+    const applicableEssentials = essentials.filter(t => 
+        !t.isInjection || isInjectionFriday()
+    );
+    
+    const doneCount = applicableEssentials.filter(t => history[t.id] === today).length;
+    const applicableCount = applicableEssentials.length;
+
     const progress = document.getElementById('streak-tt-progress');
     if (progress) {
         const allDone = doneCount >= applicableCount;
@@ -1726,20 +1745,22 @@ function openStreakTooltip(e) {
             ? '<span style="color:#00b894;font-weight:bold">🔥 All done today!</span>'
             : `<span style="color:#596275">${doneCount}/${applicableCount} essential tasks done today</span>`;
     }
+
+    // Position tooltip
     const btn = e.currentTarget;
     const rect = btn.getBoundingClientRect();
     const tt = document.getElementById('streak-tooltip');
     tt.classList.add('show');
     document.getElementById('streak-tooltip-backdrop').classList.add('show');
+
     const ttH = tt.offsetHeight || 260;
     let top = rect.bottom + 8;
-    if (top + ttH > window.innerHeight - 8) top = rect.top - ttH - 8;
+    if (top + ttH > window.innerHeight - 8) {
+        top = rect.top - ttH - 8;
+    }
+
     tt.style.top = Math.max(8, top) + 'px';
     tt.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
-}
-function closeStreakTooltip() {
-    document.getElementById('streak-tooltip').classList.remove('show');
-    document.getElementById('streak-tooltip-backdrop').classList.remove('show');
 }
 
 // -- Field Mission System --

@@ -823,10 +823,15 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.1';
+const CURRENT_VERSION = '1.6.2';
 
 const CHANGELOG = [
 
+{ version: '1.6.', changes: [
+            '🐛 Tooltip task checker not displaying previously completed tasks',
+        
+    ]},
+    
 { version: '1.6.1', changes: [
             '⚠️ Essential tasks now display realtime completions or failure',
         
@@ -1690,8 +1695,8 @@ function create(){
     });
 }
 
-// Streak TOOL TIP //
-    function openStreakTooltip(e) {
+// -- Streak tooltip --
+function openStreakTooltip(e) {
     e.stopPropagation();
     
     const today = new Date().toDateString();
@@ -1699,6 +1704,7 @@ function create(){
     
     const list = document.getElementById('streak-essentials-list');
     
+    // Build the list
     list.innerHTML = essentials.map(t => {
         const isInjection = t.isInjection;
         const isInjDay = isInjection && isInjectionFriday();
@@ -1730,7 +1736,7 @@ function create(){
         return `<li style="${style}">${icon} ${t.name}${note}</li>`;
     }).join('');
 
-    // === FIXED PROGRESS CALCULATION ===
+    // FIXED: Correct doneCount calculation
     const applicableEssentials = essentials.filter(t => 
         !t.isInjection || isInjectionFriday()
     );
@@ -1740,13 +1746,13 @@ function create(){
 
     const progress = document.getElementById('streak-tt-progress');
     if (progress) {
-        const allDone = doneCount >= applicableCount;
+        const allDone = doneCount >= applicableCount && applicableCount > 0;
         progress.innerHTML = allDone
             ? '<span style="color:#00b894;font-weight:bold">🔥 All done today!</span>'
             : `<span style="color:#596275">${doneCount}/${applicableCount} essential tasks done today</span>`;
     }
 
-    // Position tooltip
+    // Position the tooltip
     const btn = e.currentTarget;
     const rect = btn.getBoundingClientRect();
     const tt = document.getElementById('streak-tooltip');
@@ -1762,6 +1768,7 @@ function create(){
     tt.style.top = Math.max(8, top) + 'px';
     tt.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
 }
+ 
 
 // -- Field Mission System --
 const FIELD_MISSIONS = [

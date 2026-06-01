@@ -717,22 +717,18 @@ function checkMissedTasksOnOpen() {
             </div>
         </div>
     </div>
-    <div id="streak-tooltip-backdrop" onclick="closeStreakTooltip()"></div>
-    <div id="streak-tooltip">
-        <button class="tt-close" onclick="closeStreakTooltip()">&#x2715;</button>
-        <h4>🔥 Today's Streak Progress</h4>
-        <div id="streak-tt-progress" style="margin-bottom:8px;"></div>
-        <ul id="streak-essentials-list" style="list-style:none;padding:0;margin:0 0 8px;"></ul>
-        <p class="tt-note">⚠️ Missing a day resets your streak to 0. The injection only counts on its scheduled biweekly Fridays.</p>
+  <div id="streak-tooltip">
+    <button class="tt-close" onclick="closeStreakTooltip()">&#x2715;</button>
+    <h4>🔥 Today's Streak Progress</h4>
+    <div id="streak-tt-progress" style="margin-bottom:8px;"></div>
+    <ul id="streak-essentials-list" style="list-style:none;padding:0;margin:0 0 8px;"></ul>
+    
+    <div style="margin-top:10px;padding:8px;border-top:1px solid #eee;font-size:0.82em;color:#a5b1c2;text-align:center;">
+        ✅ Done &nbsp;&nbsp; ❌ Missed/Dismissed &nbsp;&nbsp; ⏳ Pending
     </div>
-    <div id="streak-bar" onclick="openStreakTooltip(event)" style="cursor:pointer;user-select:none;" title="Tap to see streak progress">
-        <div id="streak-flame">✨</div>
-        <div id="streak-info">
-            <div id="streak-count">No streak yet</div>
-            <div id="streak-sub">Complete all essential tasks to start your streak!</div>
-        </div>
-        <button id="streak-info-btn" onclick="openStreakTooltip(event)" title="How do streaks work?">ℹ️</button>
-    </div>
+    
+    <p class="tt-note">⚠️ Missing a day resets your streak to 0. The injection only counts on its scheduled biweekly Fridays.</p>
+</div>
 
     <div id="task-panel">
         <div id="task-panel-header">
@@ -810,9 +806,19 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.4';
+const CURRENT_VERSION = '1.6.5';
 
 const CHANGELOG = [
+
+     { version: '1.6.5', changes: [
+    '🔥 Major Streak Tooltip overhaul',
+    '✅ Now correctly shows previously completed essential tasks',
+    '❌ Automatically missed tasks now show as red X',
+    '❌ Manually dismissed tasks also show as red X',
+    '📊 Added clear legend explaining symbols',
+    '🛠️ Added separate `missed` tracking system',
+    '🐛 Fixed "closeStreakTooltip is not defined" error',
+] },
 
     { version: '1.6.3', changes: [
     '🔥 Major Streak Tooltip overhaul',
@@ -1348,8 +1354,8 @@ function achProgress(def){
 }
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
 
-// ==================== STREAK TOOLTIP ====================
-// -- Streak tooltip --
+    // ==================== STREAK TOOLTIP (Place this EARLY - after renderStreak()) ====================
+
 function openStreakTooltip(e) {
     e.stopPropagation();
     
@@ -1392,7 +1398,7 @@ function openStreakTooltip(e) {
         return `<li style="${style}">${icon} ${t.name}${note}</li>`;
     }).join('');
 
-    // Progress calculation
+    // Progress
     const applicableEssentials = essentials.filter(t => !t.isInjection || isInjectionFriday());
     const doneCount = applicableEssentials.filter(t => history[t.id] === today).length;
     const applicableCount = applicableEssentials.length;
@@ -1420,24 +1426,20 @@ function openStreakTooltip(e) {
     tt.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
 }
 
-// Improved helper: Check if task was active at any point today but not completed
-function wasTaskActiveEarlierToday(task, currentHour) {
-    if (!task.check) return false;
-    
-    for (let h = 0; h <= currentHour; h++) {
-        if (task.check(h)) {
-            return true;   // Task had an active window today
-        }
-    }
-    return false;
-}
-    function closeStreakTooltip() {
+function closeStreakTooltip() {
     document.getElementById('streak-tooltip').classList.remove('show');
     document.getElementById('streak-tooltip-backdrop').classList.remove('show');
 }
-4. Update penalty functions to record missed tasks:
 
+function wasTaskActiveEarlierToday(task, currentHour) {
+    if (!task.check) return false;
+    for (let h = 0; h <= currentHour; h++) {
+        if (task.check(h)) return true;
+    }
+    return false;
+}
     
+
 // -- Injection Friday ----------------------------------------------------------
 const INJECTION_REF=new Date(2025,4,9);
 function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return false;const diff=Math.round((now-INJECTION_REF)/86400000);return diff>=0&&diff%14===0;}

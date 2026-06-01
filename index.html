@@ -693,15 +693,6 @@ function checkMissedTasksOnOpen() {
             </div>
         </div>
     </div>
-    <div id="streak-tooltip-backdrop" onclick="closeStreakTooltip()"></div>
-    <div id="streak-tooltip">
-        <button class="tt-close" onclick="closeStreakTooltip()">&#x2715;</button>
-        <h4>🔥 How Streaks Work</h4>
-        <p>Complete <strong>all essential tasks</strong> on the same day to earn a streak day. Your streak grows each consecutive day you do this.</p>
-        <ul id="streak-essentials-list"><li>Loading...</li></ul>
-        <p class="tt-note">⚠️ Missing a day resets your streak to 1. The injection only counts on its scheduled biweekly Fridays.</p>
-    </div>
-
 
     <!-- RACERANK PROMOTION OVERLAY -->
     <div id="racerank-overlay">
@@ -832,9 +823,15 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.0';
+const CURRENT_VERSION = '1.6.1';
 
 const CHANGELOG = [
+
+{ version: '1.6.1', changes: [
+            '⚠️ Essential tasks now display realtime completions or failure',
+        
+    ]},
+    
     { version: '1.6.0', changes: [
         '🏁 RaceRank system! Progress through Pre-OP → OP → GIII → GII → GI → EX',
         '⭐ Get all 4 stats to SSS to promote to the next RaceRank — with a ceremony!',
@@ -1319,7 +1316,7 @@ const coreTasks=[
     {id:'Water',     name:'Drink Glass Of Water',         type:'stamina', anim:'snack',      timeLabel:'Every 2hrs',   isEssential:false, check:h=>h>=8&&h<24&&h%2===0},
     {id:'Lunch',     name:'Eat Lunch',                    type:'stamina', anim:'eating',     timeLabel:'12PM – 3PM',   isEssential:true,  check:h=>h>=12&&h<15},
     {id:'Snack',     name:'Share A Snack With Tachyon',   type:'stamina', anim:'snack',      timeLabel:'3PM – 5PM',    isEssential:false, check:h=>h>=15&&h<17},
-    {id:'Walk',      name:'Go For A Walk with Tachyon',   type:'power',   anim:'super_dash', timeLabel:'After 3PM',    isEssential:false, check:h=>holidayMode?h>=10&&h<20:h>=15&&h<19, timeLabel:holidayMode?'10AM - 8PM':'After 3PM'},
+    {id:'Walk',      name:'Go For A Walk with Tachyon',   type:'power',   anim:'super_dash', timeLabel:'After 3PM',    isEssential:false, check:h=>holidayMode?h>=10&&h<20:h>=15&&h<19, timeLabel:holidayMode?'10AM - 8PM':'From 10AM'},
     {id:'Read',      name:'Read/Study',                   type:'wit',     anim:'sit_down',   timeLabel:'From 5PM',     isEssential:false, check:h=>h>=17},
     {id:'Cranes',    name:'Create 3 Paper Cranes',        type:'wit',     anim:'say',        timeLabel:'After 5PM',    isEssential:false, days:[0,1,3,5], check:h=>h>=17},
     {id:'Dinner',    name:'Have Dinner With Tachyon',     type:'stamina', anim:'eating',     timeLabel:'6PM – 10PM',   isEssential:true,  check:h=>h>=18&&h<22},
@@ -1696,11 +1693,39 @@ function create(){
 // -- Streak tooltip --
 function openStreakTooltip(e) {
     e.stopPropagation();
+    const today = new Date().toDateString();
+    const essentials = coreTasks.filter(t => t.isEssential);
     const list = document.getElementById('streak-essentials-list');
-    list.innerHTML = coreTasks.filter(t => t.isEssential).map(t => {
-        const note = t.isInjection ? ' <span style="color:#a5b1c2">(biweekly Fri only)</span>' : '';
-        return '<li>' + t.name + note + '</li>';
+    list.innerHTML = essentials.map(t => {
+        const done = history[t.id] === today;
+        const skipped = dismissed[t.id] === today;
+        const isInjDay = t.isInjection && isInjectionFriday();
+        const applicable = !t.isInjection || isInjDay;
+        let icon, style;
+        if (!applicable) {
+            icon = '⏭️'; style = 'color:#b2bec3';
+        } else if (done) {
+            icon = '✅'; style = 'color:#00b894';
+        } else if (skipped) {
+            icon = '❌'; style = 'color:#ff7675';
+        } else {
+            icon = '⏳'; style = 'color:#a5b1c2';
+        }
+        const note = t.isInjection ? ' <span style="color:#a5b1c2;font-size:0.88em">(biweekly Fri only)</span>' : '';
+        return `<li style="${style}">${icon} ${t.name}${note}</li>`;
     }).join('');
+    const doneCount = essentials.filter(t => {
+        if (t.isInjection && !isInjectionFriday()) return true; // skip non-applicable
+        return history[t.id] === today;
+    }).length;
+    const applicableCount = essentials.filter(t => !t.isInjection || isInjectionFriday()).length;
+    const progress = document.getElementById('streak-tt-progress');
+    if (progress) {
+        const allDone = doneCount >= applicableCount;
+        progress.innerHTML = allDone
+            ? '<span style="color:#00b894;font-weight:bold">🔥 All done today!</span>'
+            : `<span style="color:#596275">${doneCount}/${applicableCount} essential tasks done today</span>`;
+    }
     const btn = e.currentTarget;
     const rect = btn.getBoundingClientRect();
     const tt = document.getElementById('streak-tooltip');

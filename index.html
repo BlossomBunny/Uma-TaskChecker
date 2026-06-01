@@ -810,7 +810,7 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.4';
+const CURRENT_VERSION = '1.6.3';
 
 const CHANGELOG = [
 
@@ -1349,12 +1349,12 @@ function achProgress(def){
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
 
 // ==================== STREAK TOOLTIP ====================
-// -- Streak tooltip --
+// Place this EARLY in the <script> — right after renderStreak() function
+
 function openStreakTooltip(e) {
     e.stopPropagation();
     
     const today = new Date().toDateString();
-    const currentHour = new Date().getHours();
     const essentials = coreTasks.filter(t => t.isEssential);
     
     const list = document.getElementById('streak-essentials-list');
@@ -1366,8 +1366,7 @@ function openStreakTooltip(e) {
 
         const done = history[t.id] === today;
         const manuallyDismissed = dismissed[t.id] === today;
-        const automaticallyMissed = missed[t.id] === today || 
-                                   (!done && !manuallyDismissed && wasTaskActiveEarlierToday(t, currentHour));
+        const wasMissed = !done && !manuallyDismissed && isTaskWindowClosedToday(t);
 
         let icon, style, note = '';
 
@@ -1380,7 +1379,7 @@ function openStreakTooltip(e) {
             icon = '✅';
             style = 'color:#00b894';
         } 
-        else if (manuallyDismissed || automaticallyMissed) {
+        else if (manuallyDismissed || wasMissed) {
             icon = '❌';
             style = 'color:#ff7675';
         } 
@@ -1392,7 +1391,7 @@ function openStreakTooltip(e) {
         return `<li style="${style}">${icon} ${t.name}${note}</li>`;
     }).join('');
 
-    // Progress calculation
+    // Progress
     const applicableEssentials = essentials.filter(t => !t.isInjection || isInjectionFriday());
     const doneCount = applicableEssentials.filter(t => history[t.id] === today).length;
     const applicableCount = applicableEssentials.length;
@@ -1405,7 +1404,7 @@ function openStreakTooltip(e) {
             : `<span style="color:#596275">${doneCount}/${applicableCount} essential tasks done today</span>`;
     }
 
-    // Position tooltip
+    // Position
     const btn = e.currentTarget;
     const rect = btn.getBoundingClientRect();
     const tt = document.getElementById('streak-tooltip');
@@ -1420,23 +1419,19 @@ function openStreakTooltip(e) {
     tt.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 296)) + 'px';
 }
 
-// Improved helper: Check if task was active at any point today but not completed
-function wasTaskActiveEarlierToday(task, currentHour) {
-    if (!task.check) return false;
-    
-    for (let h = 0; h <= currentHour; h++) {
-        if (task.check(h)) {
-            return true;   // Task had an active window today
-        }
-    }
-    return false;
-}
-    function closeStreakTooltip() {
+function closeStreakTooltip() {
     document.getElementById('streak-tooltip').classList.remove('show');
     document.getElementById('streak-tooltip-backdrop').classList.remove('show');
 }
-// Update penalty functions to record missed tasks:
 
+// Helper: Detect if task window has closed today
+function isTaskWindowClosedToday(task) {
+    if (!task.check) return false;
+    const h = new Date().getHours();
+    const wasActiveEarlier = task.check(Math.max(0, h - 1));
+    const stillActive = task.check(h);
+    return wasActiveEarlier && !stillActive;
+}
     
 // -- Injection Friday ----------------------------------------------------------
 const INJECTION_REF=new Date(2025,4,9);

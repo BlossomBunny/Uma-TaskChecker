@@ -810,9 +810,16 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.3';
+const CURRENT_VERSION = '1.6.4';
 
 const CHANGELOG = [
+
+    { version: '1.6.4', changes: [
+   '☀️ Summer Mode task adjustments',
+'🦷 Teeth AM window shifts to 10AM–11AM in Summer Mode',
+'🧘 Morning Stretch extends until 11AM in Summer Mode',
+'🚫 Scrub The Bathroom disabled during Summer Mode',
+] },
 
     { version: '1.6.3', changes: [
     '🔥 Major Streak Tooltip overhaul',
@@ -820,7 +827,7 @@ const CHANGELOG = [
     '❌ Automatically missed tasks now show as red X',
     '❌ Manually dismissed tasks also show as red X',
     '📊 Added clear legend explaining symbols',
-    '🛠️ Added separate `missed` tracking system',
+    '🛠️ Added separate missed tracking system',
     '🐛 Fixed "closeStreakTooltip is not defined" error',
 ] },
 

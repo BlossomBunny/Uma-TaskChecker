@@ -1439,7 +1439,7 @@ function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return fal
 
 // -- Core tasks ----------------------------------------------------------------
 const coreTasks=[
-    {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:'Until 10AM',   isEssential:true,  check:h=>h<10},
+    {id:'Stretch',   name:'Morning Stretch',              type:'power',   anim:'cheer',      timeLabel:holidayMode?'Until 11AM':'Until 10AM',   isEssential:true,  check:h=>holidayMode?h<11:h<10},
     {id:'Stretch_PM', name:'Evening Stretch',               type:'power',   anim:'cheer',      timeLabel:'8PM - 11PM',   isEssential:true,  check:h=>h>=20&&h<23},
     {id:'Breakfast', name:'Have Breakfast',               type:'stamina', anim:'eating',     timeLabel:'Until 12PM',   isEssential:true,  check:h=>h<12},
     {id:'Tablet',    name:'Take Experimental Tablet',     type:'guts',    anim:'giggle',     timeLabel:'Before 12PM',  isEssential:true,  isTablet:true, idealEnd:12, check:h=>h<24},
@@ -1450,10 +1450,10 @@ const coreTasks=[
     {id:'Read',      name:'Read/Study',                   type:'wit',     anim:'sit_down',   timeLabel:'From 5PM',     isEssential:false, check:h=>h>=17},
     {id:'Cranes',    name:'Create 3 Paper Cranes',        type:'wit',     anim:'say',        timeLabel:'After 5PM',    isEssential:false, days:[0,1,3,5], check:h=>h>=17},
     {id:'Dinner',    name:'Have Dinner With Tachyon',     type:'stamina', anim:'eating',     timeLabel:'6PM – 10PM',   isEssential:true,  check:h=>h>=18&&h<22},
-    {id:'Teeth_AM',  name:'Brush Your Teeth (Morning)',     type:'guts',    anim:'giggle',     timeLabel:'7AM – 9AM',    isEssential:true,  check:h=>h>=7&&h<9},
+    {id:'Teeth_AM',  name:'Brush Your Teeth (Morning)',     type:'guts',    anim:'giggle',     timeLabel:holidayMode?'10AM – 11AM':'7AM – 9AM',    isEssential:true,  check:h=>holidayMode?h>=10&&h<11:h>=7&&h<9},
     {id:'Teeth_PM',  name:'Brush Your Teeth (Evening)',     type:'guts',    anim:'giggle',     timeLabel:'After 7PM',    isEssential:true,  check:h=>h>=19&&h<24},
     {id:'Tidy',      name:'Tidy Up Room',                 type:'power',   anim:'float',      timeLabel:'Wed & Sun',    isEssential:false, days:[0,3], check:h=>h<18},
-    {id:'Tidy2',     name:'Scrub The Bathroom',           type:'power',   anim:'dash',       timeLabel:'Sun & Wed',    isEssential:false, days:[0,3], check:h=>h<18},
+    {id:'Tidy2',     name:'Scrub The Bathroom',           type:'power',   anim:'dash',       timeLabel:'Sun & Wed',    isEssential:false, days:[0,3], check:h=>!holidayMode&&h<18},
     {id:'Shop',      name:'Go Food Shopping With Tachyon',type:'power',   anim:'dash',       timeLabel:'Saturdays',    isEssential:false, days:[6],   check:h=>h<20},
     {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',   anim:'dash',       timeLabel:'Sundays',      isEssential:false, days:[0],   check:h=>h<18},
     {id:'Draw',      name:'Draw Something',               type:'wit',     anim:'sit_down',   timeLabel:'2PM - 8PM',    isEssential:false, isSummer:true, check:h=>h>=14&&h<20},

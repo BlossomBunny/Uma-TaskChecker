@@ -811,7 +811,7 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.6';
+const CURRENT_VERSION = '1.6.7';
 
 const CHANGELOG = [
 
@@ -1148,7 +1148,10 @@ async function toggleNotifications(){
             setStatus('Push notifications not supported on this browser 😔', 4000);
             return;
         }
-        const reg = await navigator.serviceWorker.ready;
+        const reg = await Promise.race([
+            navigator.serviceWorker.ready,
+            new Promise((_,reject) => setTimeout(() => reject(new Error('Service worker timed out — try closing and reopening the app')), 6000))
+        ]);
         const existing = await reg.pushManager.getSubscription();
         if(existing){
             await existing.unsubscribe();
@@ -1268,7 +1271,10 @@ async function subscribeToPush() {
     try {
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') return;
-        const reg = await navigator.serviceWorker.ready;
+        const reg = await Promise.race([
+            navigator.serviceWorker.ready,
+            new Promise((_,reject) => setTimeout(() => reject(new Error('Service worker timed out — try closing and reopening the app')), 6000))
+        ]);
         const existing = await reg.pushManager.getSubscription();
         if (existing) {
             // Already subscribed — save in case it changed

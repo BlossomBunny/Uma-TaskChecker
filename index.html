@@ -10,8 +10,7 @@ const FIELD_MISSIONS = [
     "Find a dog outside — what breed is it? Tachyon needs the data!",
     "Go cloud gazing and learn one fun fact about a type of cloud you see.",
     "Find a tree and identify the species. Tachyon is watching.",
-    "Spot an insect and identify it for the research files!",Ftasks
-    
+    "Spot an insect and identify it for the research files!",
     "Find something blue in nature — what is it exactly?",
     "Find a seed or berry and identify the plant it came from.",
     "Find a feather outside — what bird might it belong to?",
@@ -811,15 +810,23 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.5';
+const CURRENT_VERSION = '1.6.4';
 
 const CHANGELOG = [
 
+    { version: '1.6.5', changes: [
+    '🔔 Push notifications now supported on mobile!',
+    '✅ Get notified when each essential task becomes available',
+    '⏰ 15-minute warning if a task isnt done before its window closes',
+    '🔬 Field Mission notifications in Summer Mode',
+    '☀️ Summer Mode setting now syncs across devices',
+] },
+
     { version: '1.6.4', changes: [
-   '☀️ Summer Mode task adjustments',
-'🦷 Teeth AM window shifts to 10AM–11AM in Summer Mode',
-'🧘 Morning Stretch extends until 11AM in Summer Mode',
-'🚫 Scrub The Bathroom disabled during Summer Mode',
+    '☀️ Summer Mode task adjustments',
+    '🦷 Teeth AM window shifts to 10AM–11AM in Summer Mode',
+    '🧘 Morning Stretch extends until 11AM in Summer Mode',
+    '🚫 Scrub The Bathroom disabled during Summer Mode',
 ] },
 
     { version: '1.6.3', changes: [
@@ -828,7 +835,7 @@ const CHANGELOG = [
     '❌ Automatically missed tasks now show as red X',
     '❌ Manually dismissed tasks also show as red X',
     '📊 Added clear legend explaining symbols',
-    '🛠️ Added separate missed tracking system',
+    '🛠️ Added separate `missed` tracking system',
     '🐛 Fixed "closeStreakTooltip is not defined" error',
 ] },
 
@@ -1108,6 +1115,7 @@ const TASK_REMINDERS = {
 // -- Supabase ------------------------------------------------------------------
 const SUPA_URL = 'https://iusspgrnigizjsvkpiug.supabase.co';
 const SUPA_KEY = 'sb_publishable_Ad0oD2l3laFTst4tG0qw3A_2k7Fwa36';
+const VAPID_PUBLIC_KEY = 'BFjNc9KMwrDru1V_4VZekZTTwVxjaX2EwRE7Ok0ePDpzOXl71GXazy6PYmhb_nbY7gV4NYolg7D9_of9thPN-58';
 async function supaFetch(path, method='GET', body=null) {
     const opts = { method, headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY, 'Content-Type': 'application/json', 'Prefer': method==='POST'?'return=representation':'' } };
     if (body) opts.body = JSON.stringify(body);
@@ -1126,7 +1134,7 @@ function clearLegacy(){['agnesStats','agnesHistory','agnesDismissed','agnesCusto
 
 // -- Holiday mode --------------------------------------------------------------
 let holidayMode = JSON.parse(localStorage.getItem('holidayMode') || 'false');
-function toggleHoliday(){holidayMode=!holidayMode;localStorage.setItem('holidayMode',JSON.stringify(holidayMode));syncHolidayBtn();updateUI();}
+function toggleHoliday(){holidayMode=!holidayMode;localStorage.setItem('holidayMode',JSON.stringify(holidayMode));syncHolidayBtn();updateUI();if(currentUser)supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{holiday_mode:holidayMode}).catch(()=>{});}
 function syncHolidayBtn(){const b=document.getElementById('holiday-btn');if(b)b.classList.toggle('on',holidayMode);const n=document.getElementById('holiday-notice');if(n)n.style.display=holidayMode?'block':'none';}
 
 // -- Data state ----------------------------------------------------------------
@@ -1136,7 +1144,7 @@ let raceRankData={current:'Pre-OP',history:[],bestXP:{power:0,stamina:0,guts:0,w
 let penaltyData={lastChecked:''};
 let streakData={current:0,best:0,lastDate:''},achievements={},taskCounts={},customTasks=[];
 let currentUser=null;
-function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};missed=row.missed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};missionData=row.mission_data||{};missionCounts=row.mission_counts||{completed:0,skipped:0,missionStreak:0,lastCompleted:''};raceRankData=row.race_rank||{current:'Pre-OP',history:[],bestXP:{power:0,stamina:0,guts:0,wit:0}};penaltyData=row.penalty_data||{lastChecked:''};customTasks=hydrateCustomTasks(customTasksRaw);}
+function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};history=row.history||{};dismissed=row.dismissed||{};missed=row.missed||{};customTasksRaw=row.custom_tasks||[];coreTaskOverrides=row.core_task_overrides||{};streakData=row.streaks||{current:0,best:0,lastDate:''};achievements=row.achievements||{};taskCounts=row.task_counts||{};missionData=row.mission_data||{};missionCounts=row.mission_counts||{completed:0,skipped:0,missionStreak:0,lastCompleted:''};raceRankData=row.race_rank||{current:'Pre-OP',history:[],bestXP:{power:0,stamina:0,guts:0,wit:0}};penaltyData=row.penalty_data||{lastChecked:''};customTasks=hydrateCustomTasks(customTasksRaw);if(row.holiday_mode!==undefined&&row.holiday_mode!==null){holidayMode=row.holiday_mode;localStorage.setItem('holidayMode',JSON.stringify(holidayMode));}}
 
 // -- Auto login ----------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', async () => {
@@ -1195,12 +1203,53 @@ async function submitLogin(){
     finally{btn.disabled=false;btn.textContent=loginIsRegister?'Create Account 🌸':"Let's Go! 🌸";}
 }
 
+
+// -- Push Notifications --------------------------------------------------------
+async function subscribeToPush() {
+    if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    try {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') return;
+        const reg = await navigator.serviceWorker.ready;
+        const existing = await reg.pushManager.getSubscription();
+        if (existing) {
+            // Already subscribed — save in case it changed
+            await savePushSubscription(existing);
+            return;
+        }
+        const sub = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+        await savePushSubscription(sub);
+    } catch (e) {
+        console.warn('Push subscription failed:', e);
+    }
+}
+
+async function savePushSubscription(sub) {
+    if (!currentUser) return;
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    await supaFetch(`agnes_saves?id=eq.${currentUser.id}`, 'PATCH', {
+        push_subscription: sub.toJSON(),
+        timezone: tz
+    });
+}
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = atob(base64);
+    return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+}
+
 function showApp(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
     document.getElementById('welcome-name').textContent='Hi, '+currentUser.username+'! 🌸';
     syncHolidayBtn();renderStreak();updateUI();
     if(!gameBooted)bootGame();
+    setTimeout(subscribeToPush, 2000);
     setTimeout(checkVersionModal, 1200);
     setTimeout(updateMissionCard, 1500);
     setTimeout(()=>{checkMissedTasksOnOpen();updateHudRaceRank();updateUI();}, 800);
@@ -1228,6 +1277,7 @@ async function cloudSave() {
             mission_counts: missionCounts,
             race_rank: raceRankData,
             penalty_data: penaltyData,
+            holiday_mode: holidayMode,
             updated_at: new Date().toISOString()
         });
         setSyncStatus('ok', '');
@@ -1458,7 +1508,7 @@ const coreTasks=[
     {id:'Read',      name:'Read/Study',                   type:'wit',     anim:'sit_down',   timeLabel:'From 5PM',     isEssential:false, check:h=>h>=17},
     {id:'Cranes',    name:'Create 3 Paper Cranes',        type:'wit',     anim:'say',        timeLabel:'After 5PM',    isEssential:false, days:[0,1,3,5], check:h=>h>=17},
     {id:'Dinner',    name:'Have Dinner With Tachyon',     type:'stamina', anim:'eating',     timeLabel:'6PM – 10PM',   isEssential:true,  check:h=>h>=18&&h<22},
-    {id:'Teeth_AM',  name:'Brush Your Teeth (Morning)',     type:'guts',    anim:'giggle',     timeLabel:holidayMode?'10AM – 11AM':'7AM – 9AM',    isEssential:true,  check:h=>holidayMode?h>=10&&h<11:h>=7&&h<9},
+    {id:'Teeth_AM',  name:'Brush Your Teeth (Morning)',     type:'guts',    anim:'giggle',     timeLabel:holidayMode?'Until 11AM':'7AM – 9AM',    isEssential:true,  check:h=>holidayMode?h<11:h>=7&&h<9},
     {id:'Teeth_PM',  name:'Brush Your Teeth (Evening)',     type:'guts',    anim:'giggle',     timeLabel:'After 7PM',    isEssential:true,  check:h=>h>=19&&h<24},
     {id:'Tidy',      name:'Tidy Up Room',                 type:'power',   anim:'float',      timeLabel:'Wed & Sun',    isEssential:false, days:[0,3], check:h=>h<18},
     {id:'Tidy2',     name:'Scrub The Bathroom',           type:'power',   anim:'dash',       timeLabel:'Sun & Wed',    isEssential:false, days:[0,3], check:h=>!holidayMode&&h<18},
@@ -1466,7 +1516,7 @@ const coreTasks=[
     {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',   anim:'dash',       timeLabel:'Sundays',      isEssential:false, days:[0],   check:h=>h<18},
     {id:'Draw',      name:'Draw Something',               type:'wit',     anim:'sit_down',   timeLabel:'2PM - 8PM',    isEssential:false, isSummer:true, check:h=>h>=14&&h<20},
     {id:'Origami',   name:'Learn New Origami',             type:'wit',     anim:'say',        timeLabel:'After 4PM',    isEssential:false, isSummer:true, days:[1,2,4,6], check:h=>h>=16},
-    {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:'3PM – 5PM',    isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&h>=15},
+    {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:holidayMode?'12PM – 5PM':'3PM – 5PM',    isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&(holidayMode?h>=12&&h<17:h>=15)},
     {id:'Class_PsychMon',    name:'Psych Class',         type:'wit', anim:'sit_down', timeLabel:'10AM – 11AM',   isEssential:false, isClass:true, days:[1], check:h=>h>=10&&h<11},
     {id:'Class_MHWed',       name:'Mental Health Class', type:'wit', anim:'sit_down', timeLabel:'11:30AM – 1PM', isEssential:false, isClass:true, days:[3], check:h=>h>=11&&h<13},
     {id:'Class_SocPsychThu', name:'Social Psych Class',  type:'wit', anim:'sit_down', timeLabel:'9AM – 11AM',    isEssential:false, isClass:true, days:[4], check:h=>h>=9&&h<11},

@@ -429,8 +429,8 @@ function checkMissedTasksOnOpen() {
         #task-panel { display: none; width: 95%; max-width: 400px; background: white; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.07); overflow: hidden; }
         #task-panel-header { background: var(--accent); color: white; padding: 12px 16px; font-weight: bold; font-size: 0.88em; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         #task-panel-header button { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; }
-        #holiday-btn { background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.5) !important; border-radius: 8px; padding: 4px 10px !important; font-size: 0.72em !important; font-weight: bold; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
-        #holiday-btn.on { background: white !important; color: var(--accent) !important; }
+        #holiday-btn, #notif-btn { background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.5) !important; border-radius: 8px; padding: 4px 10px !important; font-size: 0.72em !important; font-weight: bold; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+        #holiday-btn.on, #notif-btn.on { background: white !important; color: var(--accent) !important; }
         .tp-body { padding: 14px 16px 16px; }
         .tp-tabs { display: flex; gap: 0; margin-bottom: 14px; border-radius: 10px; overflow: hidden; border: 1.5px solid #eee; }
         .tp-tab { flex: 1; padding: 8px 4px; font-size: 0.68em; font-weight: bold; text-align: center; cursor: pointer; background: #fafafa; color: #a5b1c2; border: none; font-family: inherit; }
@@ -739,6 +739,7 @@ function checkMissedTasksOnOpen() {
             <span>✏️ Manage Tasks</span>
             <div style="display:flex;gap:6px;align-items:center;">
                 <button id="holiday-btn" onclick="toggleHoliday()" title="Toggle Holiday Mode">🏖️ Holiday</button>
+                <button id="notif-btn" onclick="toggleNotifications()" title="Toggle Notifications">🔔 Notifs</button>
                 <button onclick="toggleMenu()">✕</button>
             </div>
         </div>
@@ -810,14 +811,18 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.5';
+const CURRENT_VERSION = '1.6.6';
 
 const CHANGELOG = [
 
+{ version: '1.6.6', changes: [
+    '🐛 Fixed "Notifications not able to be accepted',
+] },
+    
     { version: '1.6.5', changes: [
     '🔔 Push notifications now supported on mobile!',
     '✅ Get notified when each essential task becomes available',
-    '⏰ 15-minute warning if a task isnt done before its window closes',
+    '⏰ 15-minute warning if a task isn\'t done before its window closes',
     '🔬 Field Mission notifications in Summer Mode',
     '☀️ Summer Mode setting now syncs across devices',
 ] },
@@ -1135,6 +1140,34 @@ function clearLegacy(){['agnesStats','agnesHistory','agnesDismissed','agnesCusto
 // -- Holiday mode --------------------------------------------------------------
 let holidayMode = JSON.parse(localStorage.getItem('holidayMode') || 'false');
 function toggleHoliday(){holidayMode=!holidayMode;localStorage.setItem('holidayMode',JSON.stringify(holidayMode));syncHolidayBtn();updateUI();if(currentUser)supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{holiday_mode:holidayMode}).catch(()=>{});}
+
+async function toggleNotifications(){
+    const reg = await navigator.serviceWorker.ready;
+    const existing = await reg.pushManager.getSubscription();
+    if(existing){
+        // Turn off — unsubscribe and clear from Supabase
+        await existing.unsubscribe();
+        if(currentUser) await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{push_subscription:null}).catch(()=>{});
+        syncNotifBtn(false);
+        setStatus('Notifications turned off 🔕', 3000);
+    } else {
+        // Turn on — re-subscribe
+        await subscribeToPush();
+        const sub = await reg.pushManager.getSubscription();
+        syncNotifBtn(!!sub);
+        setStatus(sub ? 'Notifications turned on 🔔' : 'Could not enable notifications — please check your browser settings', 4000);
+    }
+}
+function syncNotifBtn(enabled){
+    const b = document.getElementById('notif-btn');
+    if(b) b.classList.toggle('on', !!enabled);
+}
+async function checkNotifState(){
+    if(!('PushManager' in window)) return;
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    syncNotifBtn(!!sub);
+}
 function syncHolidayBtn(){const b=document.getElementById('holiday-btn');if(b)b.classList.toggle('on',holidayMode);const n=document.getElementById('holiday-notice');if(n)n.style.display=holidayMode?'block':'none';}
 
 // -- Data state ----------------------------------------------------------------
@@ -1532,7 +1565,7 @@ const STAT_ICONS={power:'💪',stamina:'✨',guts:'🔥',wit:'📚'};
 const DAY_NAMES=['Su','Mo','Tu','We','Th','Fr','Sa'];
 let activeTab='custom';
 function switchTab(tab){activeTab=tab;['custom','core','achievements'].forEach((t,i)=>{document.querySelectorAll('.tp-tab')[i].classList.toggle('active',t===tab);document.getElementById('tab-'+t).classList.toggle('active',t===tab);});if(tab==='core')renderCoreTaskEditor();if(tab==='achievements')renderAchievements();}
-function toggleMenu(){const panel=document.getElementById('task-panel');const open=panel.style.display==='block';panel.style.display=open?'none':'block';if(!open){syncHolidayBtn();renderCustomTasks();if(activeTab==='core')renderCoreTaskEditor();if(activeTab==='achievements')renderAchievements();}}
+function toggleMenu(){const panel=document.getElementById('task-panel');const open=panel.style.display==='block';panel.style.display=open?'none':'block';if(!open){syncHolidayBtn();checkNotifState();renderCustomTasks();if(activeTab==='core')renderCoreTaskEditor();if(activeTab==='achievements')renderAchievements();}}
 
 // -- Core task editor ----------------------------------------------------------
 function renderCoreTaskEditor(){

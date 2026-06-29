@@ -44,3 +44,33 @@ self.addEventListener('fetch', e => {
         caches.match(e.request).then(cached => cached || fetch(e.request))
     );
 });
+
+// -- Push Notifications --------------------------------------------------------
+self.addEventListener('push', e => {
+    if (!e.data) return;
+    const data = e.data.json();
+    e.waitUntil(
+        self.registration.showNotification(data.title, {
+            body: data.body,
+            icon: '/icon-192.png',
+            badge: '/icon-192.png',
+            tag: data.tag || 'uma-task',
+            renotify: true,
+            data: { url: '/' }
+        })
+    );
+});
+
+self.addEventListener('notificationclick', e => {
+    e.notification.close();
+    e.waitUntil(
+        self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+            for (const client of windowClients) {
+                if (client.url.includes(self.location.origin)) {
+                    return client.focus();
+                }
+            }
+            return self.clients.openWindow('/');
+        })
+    );
+});

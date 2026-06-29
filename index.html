@@ -1209,6 +1209,9 @@ function loadSaveData(row){stats=row.stats||{power:0,stamina:0,guts:0,wit:0};his
 
 // -- Auto login ----------------------------------------------------------------
 window.addEventListener('DOMContentLoaded', async () => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(e => console.warn('SW registration failed:', e));
+    }
     syncHolidayBtn();
     const session=getSession();
     if(session){

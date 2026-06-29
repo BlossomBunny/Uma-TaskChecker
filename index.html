@@ -1142,20 +1142,45 @@ let holidayMode = JSON.parse(localStorage.getItem('holidayMode') || 'false');
 function toggleHoliday(){holidayMode=!holidayMode;localStorage.setItem('holidayMode',JSON.stringify(holidayMode));syncHolidayBtn();updateUI();if(currentUser)supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{holiday_mode:holidayMode}).catch(()=>{});}
 
 async function toggleNotifications(){
-    const reg = await navigator.serviceWorker.ready;
-    const existing = await reg.pushManager.getSubscription();
-    if(existing){
-        // Turn off — unsubscribe and clear from Supabase
-        await existing.unsubscribe();
-        if(currentUser) await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{push_subscription:null}).catch(()=>{});
-        syncNotifBtn(false);
-        setStatus('Notifications turned off 🔕', 3000);
-    } else {
-        // Turn on — re-subscribe
-        await subscribeToPush();
-        const sub = await reg.pushManager.getSubscription();
-        syncNotifBtn(!!sub);
-        setStatus(sub ? 'Notifications turned on 🔔' : 'Could not enable notifications — please check your browser settings', 4000);
+    setStatus('Checking notifications… 🔔', 3000);
+    try {
+        if(!('serviceWorker' in navigator) || !('PushManager' in window)){
+            setStatus('Push notifications not supported on this browser 😔', 4000);
+            return;
+        }
+        const reg = await navigator.serviceWorker.ready;
+        const existing = await reg.pushManager.getSubscription();
+        if(existing){
+            await existing.unsubscribe();
+            if(currentUser){
+                try{ await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{push_subscription:null}); }
+                catch(e){ setStatus('Save failed: '+e.message, 5000); return; }
+            }
+            syncNotifBtn(false);
+            setStatus('Notifications turned off 🔕', 3000);
+        } else {
+            const permission = await Notification.requestPermission();
+            if(permission !== 'granted'){
+                setStatus('Permission denied — check your browser or phone settings', 5000);
+                return;
+            }
+            const sub = await reg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+            });
+            if(!currentUser){ setStatus('Not logged in — please log in first', 4000); return; }
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            try {
+                await supaFetch(`agnes_saves?id=eq.${currentUser.id}`,'PATCH',{push_subscription: sub.toJSON(), timezone: tz});
+                syncNotifBtn(true);
+                setStatus('Notifications turned on 🔔', 3000);
+            } catch(e) {
+                setStatus('Subscribed but save failed: '+e.message, 6000);
+            }
+        }
+    } catch(e) {
+        setStatus('Notification error: '+e.message, 6000);
+        console.error('toggleNotifications error:', e);
     }
 }
 function syncNotifBtn(enabled){

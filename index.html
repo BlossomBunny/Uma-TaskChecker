@@ -811,7 +811,7 @@ function checkMissedTasksOnOpen() {
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.6.7';
+const CURRENT_VERSION = '1.6.6';
 
 const CHANGELOG = [
 
@@ -1560,7 +1560,7 @@ function isTaskWindowClosedToday(task) {
     
 // -- Injection Friday ----------------------------------------------------------
 const INJECTION_REF=new Date(2025,4,9);
-function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return false;const diff=Math.round((now-INJECTION_REF)/86400000);return diff>=0&&diff%14===0;}
+function isInjectionFriday(){const now=new Date();if(now.getDay()!==5)return false;const midnight=new Date(now);midnight.setHours(0,0,0,0);const diff=Math.round((midnight-INJECTION_REF)/86400000);return diff>=0&&diff%14===0;}
 
 // -- Core tasks ----------------------------------------------------------------
 const coreTasks=[
@@ -1583,7 +1583,7 @@ const coreTasks=[
     {id:'Laundry',   name:'Do Laundry With Tachyon',      type:'power',   anim:'dash',       timeLabel:'Sundays',      isEssential:false, days:[0],   check:h=>h<18},
     {id:'Draw',      name:'Draw Something',               type:'wit',     anim:'sit_down',   timeLabel:'2PM - 8PM',    isEssential:false, isSummer:true, check:h=>h>=14&&h<20},
     {id:'Origami',   name:'Learn New Origami',             type:'wit',     anim:'say',        timeLabel:'After 4PM',    isEssential:false, isSummer:true, days:[1,2,4,6], check:h=>h>=16},
-    {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:holidayMode?'12PM – 5PM':'3PM – 5PM',    isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&(holidayMode?h>=12&&h<17:h>=15)},
+    {id:'Injection', name:"Tachyon's Newest Injection",   type:'guts',    anim:'giggle',     timeLabel:holidayMode?'12PM – 5PM':'3PM – 5PM',    isEssential:true,  isInjection:true, check:h=>isInjectionFriday()&&(holidayMode?h>=12:h>=15)},
     {id:'Class_PsychMon',    name:'Psych Class',         type:'wit', anim:'sit_down', timeLabel:'10AM – 11AM',   isEssential:false, isClass:true, days:[1], check:h=>h>=10&&h<11},
     {id:'Class_MHWed',       name:'Mental Health Class', type:'wit', anim:'sit_down', timeLabel:'11:30AM – 1PM', isEssential:false, isClass:true, days:[3], check:h=>h>=11&&h<13},
     {id:'Class_SocPsychThu', name:'Social Psych Class',  type:'wit', anim:'sit_down', timeLabel:'9AM – 11AM',    isEssential:false, isClass:true, days:[4], check:h=>h>=9&&h<11},

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tachyon-v1.6.9';
+const CACHE_NAME = 'tachyon-v1.7.0';
 const PRECACHE = [
     '/',
     '/index.html',

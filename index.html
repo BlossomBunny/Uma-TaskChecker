@@ -1,406 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js">
-// -- Field Mission System --
-const FIELD_MISSIONS = [
-    "Find a pink flower — what species is it? Report back to Tachyon!",
-    "Spot a bird and identify the breed for Tachyon's records!",
-    "Find a dog outside — what breed is it? Tachyon needs the data!",
-    "Go cloud gazing and learn one fun fact about a type of cloud you see.",
-    "Find a tree and identify the species. Tachyon is watching.",
-    "Spot an insect and identify it for the research files!",
-    "Find something blue in nature — what is it exactly?",
-    "Find a seed or berry and identify the plant it came from.",
-    "Find a feather outside — what bird might it belong to?",
-    "Go somewhere within walking distance you've never been before.",
-    "Find interesting architecture nearby and sketch or photograph it.",
-    "Find a cat outside — what colour and markings does it have?",
-    "Spot a cloud that looks like something — what does it resemble?",
-    "Find a puddle or body of water — what's living in or around it?",
-    "Find something man-made being reclaimed by nature.",
-    "Spot 3 different types of plant on a single walk.",
-    "Find an interesting rock or stone — what type might it be?",
-    "Draw something you find outside today for Tachyon's files.",
-    "Find evidence of an animal (tracks, burrow, nest) — what made it?",
-    "Find a flower that isn't pink — identify it for Tachyon!",
-    "Photograph something that made you smile outside today.",
-    "Find a plant with an interesting smell — identify it!",
-    "Spot something in nature that comes in pairs or symmetrical patterns.",
-    "Find the oldest-looking thing outside — what is it?",
-];
-
-const MISSION_SKIP_MSGS = [
-    "I'll let it slide this once. No slacking off! 🤨",
-    "Hmm. Very well. But Tachyon expects better tomorrow! 🧪",
-    "The research suffers, but I suppose it can't be helped... 🤨",
-    "One miss is forgivable. Two is a pattern. 🔬",
-];
-
-function getTodayMission() {
-    const now = new Date();
-    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
-    return { text: FIELD_MISSIONS[dayOfYear % FIELD_MISSIONS.length], id: dayOfYear % FIELD_MISSIONS.length };
-}
-
-function getMissionState() {
-    const today = new Date().toDateString();
-    const s = missionData || {};
-    if (s.date !== today) return { date: today, seen: false, completed: false, skipped: false };
-    return s;
-}
-
-function saveMissionState(state) {
-    missionData = state;
-    scheduleSave();
-}
-
-function getMissionTimeRemaining() {
-    const now = new Date();
-    const end = new Date(now); end.setHours(18, 0, 0, 0);
-    const diff = end - now;
-    if (diff <= 0) return null;
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    return { h, m, diff, text: h > 0 ? h + 'h ' + m + 'm left' : m + 'm left' };
-}
-
-function updateMissionCard() {
-    if (!holidayMode) {
-        document.getElementById('field-mission').classList.remove('summer-active');
-        return;
-    }
-    const h = new Date().getHours();
-    if (h < 10 || h >= 18) {
-        // Outside mission hours
-        const card = document.getElementById('field-mission');
-        const state = getMissionState();
-        if (h >= 18 && !state.completed && !state.skipped && state.seen) {
-            // Show expired
-            card.classList.add('summer-active');
-            document.getElementById('fm-mission-text').innerHTML = '<strong>' + getTodayMission().text + '</strong>';
-            document.getElementById('fm-btns').style.display = 'none';
-            document.getElementById('fm-expired').style.display = 'block';
-            document.getElementById('fm-timer').textContent = '⏰ Expired';
-            document.getElementById('fm-timer').className = 'critical';
-            // Fade out after 60s
-            setTimeout(() => card.classList.remove('summer-active'), 60000);
-        } else {
-            card.classList.remove('summer-active');
-        }
-        return;
-    }
-
-    const state = getMissionState();
-    if (state.completed || state.skipped) {
-        document.getElementById('field-mission').classList.remove('summer-active');
-        return;
-    }
-
-    // Show mission card
-    const mission = getTodayMission();
-    const card = document.getElementById('field-mission');
-    card.classList.add('summer-active');
-    document.getElementById('fm-mission-text').innerHTML = '<strong>🧪 Mission:</strong> ' + mission.text;
-    document.getElementById('fm-btns').style.display = 'flex';
-    document.getElementById('fm-expired').style.display = 'none';
-
-    // Update timer
-    const remaining = getMissionTimeRemaining();
-    const timerEl = document.getElementById('fm-timer');
-    if (remaining) {
-        timerEl.textContent = remaining.text;
-        timerEl.className = remaining.diff < 1800000 ? 'critical' : remaining.diff < 7200000 ? 'urgent' : '';
-    }
-
-    // Show announcement if not seen yet
-    if (!state.seen) {
-        state.seen = true;
-        saveMissionState(state);
-        showMissionAnnouncement(mission.text);
-    }
-}
-
-function showMissionAnnouncement(text) {
-    document.getElementById('mission-announce-text').textContent = text;
-    const overlay = document.getElementById('mission-announce');
-    overlay.classList.add('show');
-    if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
-    setStatus('📋 New field mission from Tachyon! Check it out! 🔬', 10000);
-}
-
-function acceptMission() {
-    document.getElementById('mission-announce').classList.remove('show');
-}
-
-function completeMission() {
-    const state = getMissionState();
-    state.completed = true;
-    state.completedAt = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-    saveMissionState(state);
-
-    // XP reward — 30 wit
-    stats['wit'] = (stats['wit'] || 0) + 30;
-    missionCounts.completed = (missionCounts.completed || 0) + 1;
-
-    // Mission streak
-    const yesterday = new Date(Date.now() - 86400000).toDateString();
-    const lastMission = missionCounts.lastCompleted || '';
-    missionCounts.missionStreak = (lastMission === yesterday) ? (missionCounts.missionStreak || 0) + 1 : 1;
-    missionCounts.lastCompleted = new Date().toDateString();
-
-    scheduleSave();
-    updateMissionCard();
-    updateUI();
-
-    const msgs = [
-        'Excellent field data! Tachyon is very pleased! 🔬🌸',
-        'Outstanding research! The experiment advances! 🧪✨',
-        'Field data logged! Tachyon approves greatly! 🔬',
-        'Remarkable work out there! Science marches on! 🌸🧪',
-    ];
-    setStatus(msgs[Math.floor(Math.random() * msgs.length)], 10000);
-    if (agnes) { agnes.setFlipX(false); agnes.play('cheer'); }
-    showEmoteAndItem(null, EMOTE.science, true);
-    checkAchievements();
-
-    // Check speed scout (completed within 1hr of 10AM)
-    const now = new Date();
-    const missionStart = new Date(); missionStart.setHours(10, 0, 0, 0);
-    if (now - missionStart < 3600000) {
-        window._speedScoutToday = true;
-        missionCounts.speedScout = true;
-        scheduleSave();
-    }
-    checkAchievements();
-}
-
-function skipMission() {
-    const state = getMissionState();
-    state.skipped = true;
-    saveMissionState(state);
-    missionCounts.skipped = (missionCounts.skipped || 0) + 1;
-    missionCounts.missionStreak = 0;
-    scheduleSave();
-    updateMissionCard();
-    const msg = MISSION_SKIP_MSGS[Math.floor(Math.random() * MISSION_SKIP_MSGS.length)];
-    setStatus(msg, 6000);
-    if (agnes) { agnes.setFlipX(false); agnes.play('say'); }
-}
-
-
-// -- RaceRank System --
-const RACERANK_PROMOTION_MSGS = {
-    'OP':   { msg: "You've outgrown the preliminaries! The real experiment begins now! 🧪", colour: '#74b9ff' },
-    'GIII': { msg: "You've entered the Grade races! Tachyon is taking this very seriously! 🏅", colour: '#55efc4' },
-    'GII':  { msg: "Grade II! The competition gets fierce from here! Tachyon is proud! 🌟", colour: '#fd79a8' },
-    'GI':   { msg: "Grade I! You're among the elite now! Tachyon is genuinely in awe! 👑", colour: '#fdcb6e' },
-    'EX':   { msg: "EX RANK! You've transcended normal rankings! Tachyon proclaims you her greatest experiment! 🔥", colour: '#e17055' },
-};
-
-function checkRaceRankPromotion() {
-    const thresholds = getRaceThresholds();
-    const sssThreshold = thresholds[thresholds.length - 1];
-    const allSSS = ['power','stamina','guts','wit'].every(s => (stats[s]||0) >= sssThreshold);
-    if (!allSSS) return;
-    const currentIdx = RACE_RANKS.indexOf(raceRankData.current);
-    if (currentIdx >= RACE_RANKS.length - 1) return; // already EX
-    const newRaceRank = RACE_RANKS[currentIdx + 1];
-    const oldRaceRank = raceRankData.current;
-
-    // Save best XP before reset
-    ['power','stamina','guts','wit'].forEach(s => {
-        raceRankData.bestXP[s] = Math.max(raceRankData.bestXP[s]||0, stats[s]||0);
-    });
-
-    // Reset stats to 0 for new rank
-    stats = {power:0, stamina:0, guts:0, wit:0};
-    raceRankData.current = newRaceRank;
-    raceRankData.history = raceRankData.history || [];
-    raceRankData.history.push({rank: oldRaceRank, date: new Date().toISOString()});
-    scheduleSave();
-
-    // Show ceremony
-    showRaceRankUp(oldRaceRank, newRaceRank);
-}
-
-function showRaceRankUp(oldRank, newRank) {
-    const info = RACERANK_PROMOTION_MSGS[newRank] || { msg: 'A new chapter begins!', colour: '#a29bfe' };
-    document.getElementById('racerank-old').textContent = oldRank + ' SSS →';
-    document.getElementById('racerank-badge-big').textContent = RACE_RANK_BADGES[newRank] || '🌟';
-    document.getElementById('racerank-new-name').textContent = newRank;
-    document.getElementById('racerank-new-name').style.color = info.colour;
-    document.getElementById('racerank-msg').textContent = info.msg;
-    document.getElementById('racerank-close').style.background = info.colour;
-    document.getElementById('racerank-card').style.borderColor = info.colour;
-    document.getElementById('racerank-overlay').classList.add('show');
-    // Mega confetti
-    spawnRaceRankConfetti(info.colour);
-    // Agnes extended cheer
-    if (agnes && window.phaserScene) {
-        if (window.cancelCurrent) window.cancelCurrent();
-        agnes.setFlipX(false);
-        agnes.play('cheer');
-        window._rankUpCelebrating = true;
-    }
-    updateHudRaceRank();
-    checkAchievements();
-}
-
-function closeRaceRankUp() {
-    document.getElementById('racerank-overlay').classList.remove('show');
-    window._rankUpCelebrating = false;
-    if (window.phaserSceneNext) window.phaserSceneNext(2000);
-    updateUI();
-}
-
-function spawnRaceRankConfetti(accentColour) {
-    const colors = ['#f8a5c2','#a29bfe','#74b9ff','#55efc4','#fdcb6e','#fd79a8', accentColour];
-    for (let i = 0; i < 120; i++) {
-        const el = document.createElement('div');
-        el.className = 'confetti-piece';
-        el.style.cssText = `
-            left:${Math.random()*100}%;top:-10px;
-            background:${colors[Math.floor(Math.random()*colors.length)]};
-            width:${6+Math.random()*10}px;height:${6+Math.random()*10}px;
-            border-radius:${Math.random()>0.5?'50%':'2px'};
-            animation-duration:${2+Math.random()*3}s;
-            animation-delay:${Math.random()*0.8}s;
-        `;
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 5000);
-    }
-}
-
-function updateHudRaceRank() {
-    const rr = getCurrentRaceRank();
-    const colour = RACE_RANK_COLOURS[rr] || '#a29bfe';
-    const badge = document.getElementById('hud-racerank-badge');
-    const label = document.getElementById('hud-racerank-label');
-    if (badge) {
-        badge.textContent = RACE_RANK_BADGES[rr] + ' ' + rr;
-        badge.style.background = colour;
-    }
-    if (label) {
-        const thresholds = getRaceThresholds();
-        const sss = thresholds[thresholds.length-1];
-        const allSSS = ['power','stamina','guts','wit'].every(s=>(stats[s]||0)>=sss);
-        label.textContent = allSSS ? '✨ All SSS! Ready to promote!' : '';
-    }
-}
-
-// -- Penalty System --
-const MISSED_MSGS = [
-    "You missed a task! Tachyon is disappointed... 🤨",
-    "No excuses! The data suffers when you slack off! 🤨",
-    "A missed task means lost progress! Don't let it happen again! 🧪",
-    "Tachyon notes the absence. This will reflect in the results! 🔬",
-    "The experiment requires consistency! Tachyon is not pleased. 🤨",
-];
-const DISMISSED_MSGS = [
-    "Skipping tasks isn't free you know... 🤨",
-    "Tachyon will allow it. This time. 🤨",
-    "Fine. But every skip has a cost! 🧪",
-];
-
-function applyPenalty(statType, amount, isMissed) {
-    stats[statType] = Math.max(0, (stats[statType]||0) - amount);
-    scheduleSave();
-    const msgs = isMissed ? MISSED_MSGS : DISMISSED_MSGS;
-    setStatus(msgs[Math.floor(Math.random()*msgs.length)], 10000);
-    showEmoteAndItem(null, EMOTE.anger, false);
-    // Flash the stat row
-    const row = document.querySelector('.stat-row:has(#bar-' + statType + ')');
-    if (row) { row.classList.add('penalty-flash'); setTimeout(()=>row.classList.remove('penalty-flash'), 700); }
-}
-
-function checkMissedTasks() {
-    const today = new Date().toDateString();
-    const h = new Date().getHours();
-    const day = new Date().getDay();
-    // Ensure we have a record for today
-    if (!penaltyData.checked) penaltyData.checked = {};
-    if (!penaltyData.checked[today]) penaltyData.checked[today] = {};
-
-    coreTasks.forEach(task => {
-        const taskDays = task.days || [0,1,2,3,4,5,6];
-        if (!taskDays.includes(day)) return;
-        if (task.isInjection && !isInjectionFriday()) return;
-        if (task.noPenalty) return;
-        // Task was available today but window has now closed
-        const wasActive = task.check(h-1 < 0 ? 0 : h-1); // was it active last hour?
-        const isActive = task.check(h);
-        const windowJustClosed = wasActive && !isActive;
-        if (!windowJustClosed) return;
-        const penaltyKey = task.id + '_' + h;
-        if (penaltyData.checked[today][penaltyKey]) return; // already penalised
-        penaltyData.checked[today][penaltyKey] = true;
-
-        const done = history[task.id] === today;
-        const skipped = dismissed[task.id] === today;
-        if (done) return; // completed, no penalty
-
-        if (skipped) {
-            // Dismissed: flat -5 to task's stat
-            const statType = task.isInjection ? 'guts' : (task.type || 'power');
-            applyPenalty(statType, 5, false);
-            if (task.isInjection) applyPenalty('power', 5, false);
-        } else {
-            // Truly missed: full penalty
-            const amount = task.isInjection ? 25 : 10;
-            const statType = task.isInjection ? 'guts' : (task.type || 'power');
-            applyPenalty(statType, amount, true);
-            if (task.isInjection) applyPenalty('power', amount, true);
-        }
-        scheduleSave();
-    });
-    penaltyData.lastChecked = today + '_' + h;
-}
-
-// Check penalties on app open for any missed windows since last check
-function checkMissedTasksOnOpen() {
-    const today = new Date().toDateString();
-    const now = new Date();
-    const h = now.getHours();
-    const day = now.getDay();
-    if (!penaltyData.checked) penaltyData.checked = {};
-    if (!penaltyData.checked[today]) penaltyData.checked[today] = {};
-
-    coreTasks.forEach(task => {
-        const taskDays = task.days || [0,1,2,3,4,5,6];
-        if (!taskDays.includes(day)) return;
-        if (task.isInjection && !isInjectionFriday()) return;
-
-        // Find all hours today where this task was active and window has since closed
-        for (let ph = 0; ph < h; ph++) {
-            const wasActive = task.check(ph);
-            const stillActive = task.check(ph + 1);
-            if (!wasActive || stillActive) continue; // wasn't a closing window
-            const penaltyKey = task.id + '_' + (ph+1);
-            if (penaltyData.checked[today][penaltyKey]) continue;
-            penaltyData.checked[today][penaltyKey] = true;
-
-            const done = history[task.id] === today;
-            const skipped = dismissed[task.id] === today;
-            if (done) continue;
-
-            if (skipped) {
-                const statType = task.isInjection ? 'guts' : (task.type || 'power');
-                stats[statType] = Math.max(0, (stats[statType]||0) - 5);
-                if (task.isInjection) stats['power'] = Math.max(0, (stats['power']||0) - 5);
-            } else {
-                const amount = task.isInjection ? 25 : 10;
-                const statType = task.isInjection ? 'guts' : (task.type || 'power');
-                stats[statType] = Math.max(0, (stats[statType]||0) - amount);
-                if (task.isInjection) stats['power'] = Math.max(0, (stats['power']||0) - amount);
-            }
-        }
-    });
-    scheduleSave();
-}
-
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser-arcade-physics.min.js"></script>
     <style>
         :root { --accent: #f8a5c2; --bg: #fff0f5; --bar-bg: #dfe6e9; --dismiss: #b2bec3; }
         body { background: var(--bg); display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; color: #596275; margin: 0; padding: 10px; box-sizing: border-box; }
@@ -578,6 +181,21 @@ function checkMissedTasksOnOpen() {
         @keyframes hudFlash { 0%,100%{box-shadow:0 5px 15px rgba(0,0,0,0.05)} 50%{box-shadow:0 0 30px rgba(248,165,194,0.6)} }
         #hud.flashing { animation: hudFlash 0.4s ease 4; }
         /* -- Version popup -- */
+        /* Second Chance */
+        .sc-open { display:block; width:100%; margin-top:10px; background:white; color:var(--accent); border:2px dashed var(--accent); padding:9px 12px; border-radius:10px; cursor:pointer; font-weight:bold; font-size:0.8em; }
+        #sc-backdrop { display:none; position:fixed; inset:0; z-index:9992; background:rgba(0,0,0,0.25); }
+        #sc-backdrop.show { display:block; }
+        #sc-modal { display:none; position:fixed; z-index:9993; left:50%; top:50%; transform:translate(-50%,-50%); background:white; border:2px solid var(--accent); border-radius:16px; padding:16px; box-shadow:0 8px 24px rgba(248,165,194,0.3); width:calc(100vw - 32px); max-width:340px; max-height:80vh; overflow-y:auto; box-sizing:border-box; color:#596275; }
+        #sc-modal.show { display:block; }
+        #sc-modal h4 { margin:0 0 4px; color:var(--accent); font-size:1em; }
+        #sc-modal .sc-sub { font-size:0.75em; color:#a5b1c2; margin:0 0 12px; line-height:1.5; }
+        #sc-modal .sc-close { position:absolute; top:10px; right:12px; background:none; border:none; color:#b2bec3; font-size:1em; cursor:pointer; }
+        .sc-item { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid #f1f2f6; }
+        .sc-name { font-weight:bold; font-size:0.85em; }
+        .sc-meta { font-size:0.72em; color:#a5b1c2; margin-top:2px; }
+        .sc-item .btn-check { white-space:nowrap; }
+        .sc-item .btn-check:disabled { background:var(--dismiss); cursor:not-allowed; }
+        .sc-empty { text-align:center; padding:14px 0 4px; font-size:0.82em; color:var(--accent); font-weight:bold; }
     </style>
 </head>
 <body>
@@ -807,15 +425,31 @@ function checkMissedTasksOnOpen() {
     <div id="checklist">
         <h3>Today's Schedule</h3>
         <div id="task-list"></div>
+        <div id="sc-wrap"></div>
+    </div>
+    <div id="sc-backdrop" onclick="closeSecondChance()"></div>
+    <div id="sc-modal">
+        <button class="sc-close" onclick="closeSecondChance()">&#x2715;</button>
+        <h4>🔁 Second Chance</h4>
+        <p class="sc-sub">Did a task but forgot to tick it off? Claim it here before midnight to undo the penalty, earn half XP and keep your streak alive.<br><b id="sc-left"></b></p>
+        <div id="sc-list"></div>
     </div>
 </div>
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.7.2';
+const CURRENT_VERSION = '1.7.3';
 
 const CHANGELOG = [
 
+{ version: '1.7.3', changes: [
+    "🔁 Second Chance! Forgot to tick a task you did? Claim it before midnight (3 per day) — penalty undone, half XP, streak saved",
+    "↩️ Dismissed a task by accident? Un-skip it while its window is still open",
+    "🐛 Water no longer causes penalties (for real this time!)",
+    "🐛 Hidden tasks (classes in Summer Mode, summer tasks outside it) no longer cost XP",
+    "🎨 Sorry! A bug was docking Wit for 'Draw Something' every evening — everyone gets +100 Wit as an apology",
+    "🧹 Behind-the-scenes cleanup — removed ~400 lines of unused duplicate code",
+] },
 { version: '1.7.2', changes: [
     "🍳 Breakfast and morning teeth brushing are now both 'Before 11AM'",
 ] },
@@ -1259,13 +893,13 @@ async function submitLogin(){
                 stats:legacy?.stats||{power:0,stamina:0,guts:0,wit:0},
                 history:legacy?.history||{},
                 dismissed:legacy?.dismissed||{},
-                missed:legacy?.missed||{},                    // ← NEW
+                missed:legacy?.missed||{},
                 custom_tasks:legacy?.custom_tasks||[],
                 core_task_overrides:{},
                 streaks:{current:0,best:0,lastDate:''},
                 achievements:{},
                 task_counts:{},
-                penalty_data:{}
+                penalty_data:{compensations:{drawBug:true}} // new accounts were never affected
             };
             const created=await supaFetch('agnes_saves','POST',payload);
             currentUser={id:created[0].id,username};
@@ -1325,10 +959,30 @@ function urlBase64ToUint8Array(base64String) {
     return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
 }
 
+// -- One-off compensations -----------------------------------------------------
+// Each grant runs once per account; the flag lives in penaltyData (saved to the cloud).
+const COMPENSATIONS=[
+    {id:'drawBug',stat:'wit',amount:100,msg:"Tachyon found a bug that docked your Wit for 'Draw Something'... here's +100 Wit as an apology! 🎨🌸"},
+];
+function applyCompensations(){
+    if(!penaltyData.compensations)penaltyData.compensations={};
+    const due=COMPENSATIONS.filter(c=>!penaltyData.compensations[c.id]);
+    if(!due.length)return;
+    due.forEach((c,i)=>{
+        const before=getRank(stats[c.stat]||0);
+        stats[c.stat]=(stats[c.stat]||0)+c.amount;
+        penaltyData.compensations[c.id]=new Date().toISOString();
+        const after=getRank(stats[c.stat]||0);
+        setTimeout(()=>{setStatus(c.msg,12000);if(after>before)setTimeout(()=>showRankUp(c.stat,after),1500);},2500+i*6000);
+    });
+    scheduleSave();
+}
+
 function showApp(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
     document.getElementById('welcome-name').textContent='Hi, '+currentUser.username+'! 🌸';
+    applyCompensations();
     syncHolidayBtn();renderStreak();updateUI();
     if(!gameBooted)bootGame();
     setTimeout(subscribeToPush, 2000);
@@ -1349,7 +1003,7 @@ async function cloudSave() {
             stats,
             history,
             dismissed,
-            missed,                    // Now safe to send
+            missed,
             custom_tasks: customTasksRaw,
             core_task_overrides: coreTaskOverrides,
             streaks: streakData,
@@ -1489,7 +1143,6 @@ function achProgress(def){
 function renderAchievements(){document.getElementById('ach-grid').innerHTML=ACH_DEFS.map(def=>`<div class="ach-card ${achievements[def.id]?'unlocked':'locked'}"><span class="ach-icon-lg">${def.icon}</span><div class="ach-cname">${def.name}</div><div class="ach-prog">${achProgress(def)}</div></div>`).join('');}
 
 // ==================== STREAK TOOLTIP ====================
-// Place this EARLY in the <script> — right after renderStreak() function
 
 function openStreakTooltip(e) {
     e.stopPropagation();
@@ -1676,7 +1329,7 @@ function updateUI(){
         const eligible=taskDays.includes(day)&&task.check(h);
         const histKey=(task.id==='Water')?'Water_'+h:task.id;
         const done=history[histKey]===today,skipped=dismissed[task.id]===today;
-        if(_lastVisible.has(task.id)&&!eligible&&!done&&!skipped&&!base.isInjection&&!base.isTablet)setStatus('You missed a task! Better try again next time! 😔',4000);
+        if(_lastVisible.has(task.id)&&!eligible&&!done&&!skipped&&!base.isInjection&&!base.isTablet)setStatus('You missed a task! 😔 Did it anyway? Use a Second Chance below!',6000);
         if(base.isInjection&&!done&&!skipped&&h>=17)needInjNag=true;
         if(base.isTablet&&!done&&!skipped&&h>=12)needTabNag=true;
         if(eligible&&!done&&!skipped){
@@ -1701,6 +1354,7 @@ function updateUI(){
     if(needTabNag&&!_naggingTab){_naggingTab=true;startTabNag();}
     if(!needTabNag&&_naggingTab){_naggingTab=false;stopTabNag();}
     if(visible===0)container.innerHTML=`<div class="all-done">🌸 All done for today! Great job!</div>`;
+    renderSecondChanceButton();
     renderStreak();
 }
 
@@ -1781,6 +1435,70 @@ function complete(id,anim,type,isInjection,isTablet,h){
 }
 
 function dismiss(id){dismissed[id]=new Date().toDateString();scheduleSave();setStatus('Okay, skipping that one... 😤',3000);updateUI();}
+
+// -- Second Chance -------------------------------------------------------------
+// Lets the player claim tasks they actually did but forgot to tick (missed or skipped) until midnight.
+// Refunds the penalty, gives half XP, counts toward the streak. Limited per day (stored in penaltyData).
+const SECOND_CHANCE_MAX=3;
+const SC_MSGS=["Records amended! Don't make a habit of it~ 📝🌸","You DID do it? Fine, Tachyon will correct the data! 🧪","Second chance granted! The experiment continues! 🔬✨"];
+function getSecondChanceState(){const today=new Date().toDateString();if(!penaltyData.secondChance||penaltyData.secondChance.date!==today)penaltyData.secondChance={date:today,used:0};return penaltyData.secondChance;}
+function secondChancesLeft(){return Math.max(0,SECOND_CHANCE_MAX-getSecondChanceState().used);}
+function wasPenalisedToday(id){const c=((penaltyData.checked||{})[new Date().toDateString()])||{};return Object.keys(c).some(k=>{const m=k.match(/^(.*)_(\d+)$/);return m&&m[1]===id;});}
+function getSecondChanceTasks(){
+    const today=new Date().toDateString(),day=new Date().getDay(),h=new Date().getHours();
+    return coreTasks.map(getEffectiveTask).filter(task=>{
+        const base=coreTasks.find(t=>t.id===task.id);
+        if(base.noPenalty)return false;
+        if(base.isClass&&holidayMode)return false;
+        if(base.isSummer&&!holidayMode)return false;
+        if(base.isInjection&&!isInjectionFriday())return false;
+        if(!(task.days||[0,1,2,3,4,5,6]).includes(day))return false;
+        if(history[task.id]===today)return false;
+        return dismissed[task.id]===today||missed[task.id]===today;
+    }).map(task=>{
+        const base=coreTasks.find(t=>t.id===task.id);
+        const penalised=wasPenalisedToday(task.id);
+        const free=!penalised&&task.check(h); // skipped by accident, window still open: just un-skip
+        const isInj=!!base.isInjection;
+        const refund=!penalised?0:(missed[task.id]===today?(isInj?25:10):5);
+        const gain=isInj?12:5;
+        return{task,base,free,isInj,refund,gain,penStat:isInj?'guts':(base.type||'power'),gainStat:isInj?'guts':(task.type||'power')};
+    });
+}
+function claimSecondChance(id){
+    const today=new Date().toDateString();
+    const it=getSecondChanceTasks().find(x=>x.task.id===id);if(!it)return;
+    if(it.free){delete dismissed[id];scheduleSave();setStatus("Un-skipped! It's back on your list~ 🌸",5000);closeSecondChance();updateUI();return;}
+    if(secondChancesLeft()<=0){setStatus('No second chances left today! 😤',4000);renderSecondChanceList();return;}
+    const rankBefore=getRank(stats[it.gainStat]||0);
+    if(it.refund){stats[it.penStat]=(stats[it.penStat]||0)+it.refund;if(it.isInj)stats.power=(stats.power||0)+it.refund;}
+    stats[it.gainStat]=(stats[it.gainStat]||0)+it.gain;if(it.isInj)stats.power=(stats.power||0)+it.gain;
+    const rankAfter=getRank(stats[it.gainStat]||0);
+    history[id]=today;delete missed[id];delete dismissed[id];
+    taskCounts[id]=(taskCounts[id]||0)+1;
+    getSecondChanceState().used++;
+    scheduleSave();closeSecondChance();
+    if(window.cancelIdleTimer)window.cancelIdleTimer();
+    if(agnes){agnes.setFlipX(false);agnes.play(it.base.anim||'cheer');}
+    if(rankAfter>rankBefore)setTimeout(()=>showRankUp(it.gainStat,rankAfter),600);
+    else setStatus(randFrom(SC_MSGS),10000);
+    showEmoteAndItem(id,EMOTE.happy,true);
+    updateUI();tryAdvanceStreak();checkAchievements();checkRaceRankPromotion();updateHudRaceRank();
+}
+function renderSecondChanceList(){
+    const today=new Date().toDateString(),items=getSecondChanceTasks(),left=secondChancesLeft();
+    document.getElementById('sc-left').textContent=`${left}/${SECOND_CHANCE_MAX} second chances left today`;
+    document.getElementById('sc-list').innerHTML=items.length?items.map(it=>{
+        const status=dismissed[it.task.id]===today?'Skipped':'Missed';
+        const statTxt=it.isInj?'GUTS + POWER':it.gainStat.toUpperCase();
+        const meta=it.free?`${status} · window still open`:`${status} · +${it.refund+it.gain} ${statTxt}`;
+        const disabled=!it.free&&left<=0;
+        return `<div class="sc-item"><div><div class="sc-name">${it.task.name}</div><div class="sc-meta">${meta}</div></div><button class="btn-check" ${disabled?'disabled':''} onclick="claimSecondChance('${it.task.id}')">${it.free?'Un-skip':'I did it!'}</button></div>`;
+    }).join(''):'<div class="sc-empty">Nothing to fix — no missed tasks today! 🌸</div>';
+}
+function openSecondChance(){renderSecondChanceList();document.getElementById('sc-backdrop').classList.add('show');document.getElementById('sc-modal').classList.add('show');}
+function closeSecondChance(){document.getElementById('sc-backdrop').classList.remove('show');document.getElementById('sc-modal').classList.remove('show');}
+function renderSecondChanceButton(){const w=document.getElementById('sc-wrap');if(!w)return;const n=getSecondChanceTasks().length;w.innerHTML=n?`<button class="sc-open" onclick="openSecondChance()">🔁 Forgot to tick something? (${n})</button>`:'';}
 
 // -- Status / bored ------------------------------------------------------------
 let statusTimeout=null,boredTimeout=null;
@@ -2287,6 +2005,8 @@ function checkMissedTasks() {
         const taskDays = task.days || [0,1,2,3,4,5,6];
         if (!taskDays.includes(day)) return;
         if (task.isInjection && !isInjectionFriday()) return;
+        if (task.noPenalty) return;
+        if ((task.isClass && holidayMode) || (task.isSummer && !holidayMode)) return; // hidden tasks can't be missed
 
         const wasActive = task.check(h-1 < 0 ? 0 : h-1);
         const isActive = task.check(h);
@@ -2310,7 +2030,7 @@ function checkMissedTasks() {
             if (task.isInjection) applyPenalty('power', 5, false);
         } else {
             // Truly missed
-            missed[task.id] = today;           // ← IMPORTANT
+            missed[task.id] = today;
             const amount = task.isInjection ? 25 : 10;
             const statType = task.isInjection ? 'guts' : (task.type || 'power');
             applyPenalty(statType, amount, true);
@@ -2335,6 +2055,7 @@ function checkMissedTasksOnOpen() {
         if (!taskDays.includes(day)) return;
         if (task.isInjection && !isInjectionFriday()) return;
         if (task.noPenalty) return;
+        if ((task.isClass && holidayMode) || (task.isSummer && !holidayMode)) return; // hidden tasks can't be missed
 
         for (let ph = 0; ph < h; ph++) {
             const wasActive = task.check(ph);
@@ -2356,7 +2077,7 @@ function checkMissedTasksOnOpen() {
                 stats[statType] = Math.max(0, (stats[statType]||0) - 5);
                 if (task.isInjection) stats['power'] = Math.max(0, (stats['power']||0) - 5);
             } else {
-                missed[task.id] = today;           // ← IMPORTANT
+                missed[task.id] = today;
                 const amount = task.isInjection ? 25 : 10;
                 const statType = task.isInjection ? 'guts' : (task.type || 'power');
                 stats[statType] = Math.max(0, (stats[statType]||0) - amount);

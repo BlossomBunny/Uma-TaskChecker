@@ -438,10 +438,15 @@
 
 <script>
 // -- Version system ------------------------------------------------------------
-const CURRENT_VERSION = '1.7.3';
+const CURRENT_VERSION = '1.7.4';
 
 const CHANGELOG = [
 
+{ version: '1.7.4', changes: [
+    "📈 Stats no longer show 'MAX' at S rank — keep climbing to SS and SSS (good luck!)",
+    "🎉 New rank-up celebrations for SS and SSS",
+    "🔔 Fixed reminders saying '15 minutes left' when tasks still had hours to go",
+] },
 { version: '1.7.3', changes: [
     "🔁 Second Chance! Forgot to tick a task you did? Claim it before midnight (3 per day) — penalty undone, half XP, streak saved",
     "↩️ Dismissed a task by accident? Un-skip it while its window is still open",
@@ -655,10 +660,10 @@ function getRankProgress(xp) {
     return { pct: Math.round(((xp - low) / (high - low)) * 100), label: `${xp - low}/${high - low}` };
 }
 const RANK_MSGS = {
-    power:   { E:'Tachyon notices your improved physique! 💪', D:'Getting stronger! The data is promising! 💪', C:'Impressive power levels! Tachyon is taking notes! 💪', B:'Remarkable strength! A worthy test subject! 💪', A:'Elite power! Tachyon is genuinely impressed! 💪', S:'MAXIMUM POWER! Tachyon\'s experiment is a resounding success! 🌟💪' },
-    stamina: { E:'Your energy is improving! ✨', D:'Excellent stamina growth! Tachyon approves! ✨', C:'Outstanding endurance! The research continues! ✨', B:'Incredible vitality! A model test subject! ✨', A:'Peak stamina achieved! Tachyon is delighted! ✨', S:'LEGENDARY STAMINA! Tachyon can barely contain her excitement! 🌟✨' },
-    guts:    { E:'Growing bolder! Tachyon likes the spirit! 🔥', D:'Real courage emerging! The experiment progresses! 🔥', C:'Impressive resilience! Tachyon is proud! 🔥', B:'Exceptional guts! You make a fine test subject! 🔥', A:'Unbreakable! Tachyon is in awe! 🔥', S:'MAXIMUM GUTS! Nothing can stop you now! 🌟🔥' },
-    wit:     { E:'Sharpening that mind! 📚', D:'Excellent intellectual growth! 📚', C:'Remarkable wit! Tachyon\'s favourite kind of subject! 📚', B:'Brilliant! The mind data is extraordinary! 📚', A:'Genius-level wit! Tachyon might be slightly jealous! 📚', S:'SUPREME WIT! Tachyon proclaims you her greatest experiment! 🌟📚' },
+    power:   { E:'Tachyon notices your improved physique! 💪', D:'Getting stronger! The data is promising! 💪', C:'Impressive power levels! Tachyon is taking notes! 💪', B:'Remarkable strength! A worthy test subject! 💪', A:'Elite power! Tachyon is genuinely impressed! 💪', S:'S-rank power! Tachyon\'s experiment is a resounding success! 🌟💪', SS:'SS-rank?! Tachyon is rewriting her hypotheses! 🌟🌟💪', SSS:'MAXIMUM POWER! SSS! Tachyon has never seen data like this! 👑🔥💪' },
+    stamina: { E:'Your energy is improving! ✨', D:'Excellent stamina growth! Tachyon approves! ✨', C:'Outstanding endurance! The research continues! ✨', B:'Incredible vitality! A model test subject! ✨', A:'Peak stamina achieved! Tachyon is delighted! ✨', S:'S-rank stamina! Tachyon can barely contain her excitement! 🌟✨', SS:'SS-rank stamina! You could run Tachyon\'s entire lab on this energy! 🌟🌟✨', SSS:'LEGENDARY STAMINA! SSS! Tachyon declares you limitless! 👑🔥✨' },
+    guts:    { E:'Growing bolder! Tachyon likes the spirit! 🔥', D:'Real courage emerging! The experiment progresses! 🔥', C:'Impressive resilience! Tachyon is proud! 🔥', B:'Exceptional guts! You make a fine test subject! 🔥', A:'Unbreakable! Tachyon is in awe! 🔥', S:'S-rank guts! Nothing can stop you now! 🌟🔥', SS:'SS-rank guts! Tachyon is genuinely a little scared of you! 🌟🌟🔥', SSS:'MAXIMUM GUTS! SSS! An unbreakable test subject! 👑🔥🔥' },
+    wit:     { E:'Sharpening that mind! 📚', D:'Excellent intellectual growth! 📚', C:'Remarkable wit! Tachyon\'s favourite kind of subject! 📚', B:'Brilliant! The mind data is extraordinary! 📚', A:'Genius-level wit! Tachyon might be slightly jealous! 📚', S:'S-rank wit! Tachyon is taking notes from YOU now! 🌟📚', SS:'SS-rank wit! Tachyon wants you as a co-author! 🌟🌟📚', SSS:'SUPREME WIT! SSS! Tachyon proclaims you her greatest experiment! 👑🔥📚' },
 };
 
 // getRank and getRankProgress defined above with RaceRank support
@@ -1315,7 +1320,7 @@ function startHintCycle(){if(hintInterval)return;setTimeout(()=>{doHint();hintIn
 // -- UI update -----------------------------------------------------------------
 let _lastVisible=new Set();
 function updateUI(){
-    ['power','stamina','guts','wit'].forEach(s=>{const v=stats[s]||0;const rank=getRank(v);const{pct,label}=getRankProgress(v);const bar=document.getElementById('bar-'+s);if(bar)bar.style.width=pct+'%';const rnk=document.getElementById('rank-'+s);if(rnk)rnk.textContent=RANK_NAMES[rank];const xpEl=document.getElementById('xp-'+s);if(xpEl)xpEl.textContent=rank>=6?'MAX':label;});
+    ['power','stamina','guts','wit'].forEach(s=>{const v=stats[s]||0;const rank=getRank(v);const{pct,label}=getRankProgress(v);const bar=document.getElementById('bar-'+s);if(bar)bar.style.width=pct+'%';const rnk=document.getElementById('rank-'+s);if(rnk)rnk.textContent=RANK_NAMES[rank];const xpEl=document.getElementById('xp-'+s);if(xpEl)xpEl.textContent=rank>=RANK_NAMES.length-1?'MAX':label;});
     const h=new Date().getHours(),today=new Date().toDateString(),day=new Date().getDay();
     const container=document.getElementById('task-list');if(!container)return;
     container.innerHTML='';
